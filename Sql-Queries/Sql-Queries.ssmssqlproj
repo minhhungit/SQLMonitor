@@ -133,17 +133,17 @@
           <AssociatedConnUserName />
           <FullPath>QRY-RC-Workload-Delta-By-Reads.sql</FullPath>
         </FileNode>
-        <FileNode Name="QRY-ResourceConsumption-Infra-Normalized.sql">
+        <FileNode Name="QRY-XEventMetrics-Infra-Normalized.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>QRY-ResourceConsumption-Infra-Normalized.sql</FullPath>
+          <FullPath>QRY-XEventMetrics-Infra-Normalized.sql</FullPath>
         </FileNode>
-        <FileNode Name="QRY-ResourceConsumption-Infra-Raw.sql">
+        <FileNode Name="QRY-XEventMetrics-Infra-Raw.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>QRY-ResourceConsumption-Infra-Raw.sql</FullPath>
+          <FullPath>QRY-XEventMetrics-Infra-Raw.sql</FullPath>
         </FileNode>
         <FileNode Name="QRY-sp_BlitzCache-Specific.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>

@@ -1,5 +1,5 @@
 /*
-	Version -> v1.3.2
+	Version -> v1.5.1
 	-----------------
 
 	https://www.sommarskog.se/grantperm.html
