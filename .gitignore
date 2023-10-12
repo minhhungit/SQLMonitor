@@ -2,6 +2,12 @@
 /Org-Project*/*
 /Sensitive/*
 /Work/*
+/Work-*/*
+/Sql-Queries-Office/*
+/Sql-Queries-Work/*
+/Sql-Queries-Personal/*
+/Sql-Queries-Private/*
+/Sql-Queries-Volatile/*
 /Volatile/*
 /Private/*
 /Private/Private.ssmssqlproj
