@@ -32,9 +32,10 @@ BEGIN
 
 	/*
 		Version:		1.6.0
-		Date:			2023-07-14 - Initial draft
-						2023-07-27 - Added truncate table parameter
+		Date:			2023-10-17 - Add Latency Dashboard for AG
 						2023-08-30 - Adding @schedule_minutes parameter
+						2023-07-27 - Added truncate table parameter
+						2023-07-14 - Initial draft
 
 		EXEC dbo.usp_wrapper_GetAllServerCollectedData 
 			@recipients = 'some_dba_mail_id@gmail.com', 
@@ -70,7 +71,8 @@ BEGIN
 	IF (@recipients IS NULL OR @recipients = 'some_dba_mail_id@gmail.com') AND @verbose = 0
 		raiserror ('@recipients is mandatory parameter', 20, -1) with log;
 
-	IF @step_name NOT IN ('dbo.sql_agent_jobs_all_servers','dbo.disk_space_all_servers','dbo.log_space_consumers_all_servers','dbo.tempdb_space_usage_all_servers')
+	IF @step_name NOT IN ('dbo.sql_agent_jobs_all_servers','dbo.disk_space_all_servers','dbo.log_space_consumers_all_servers',
+						'dbo.tempdb_space_usage_all_servers','dbo.ag_health_state_all_servers')
 		THROW 50001, '''step_name'' Parameter value is invalid.', 1;		
 
 	-- Variables for Try/Catch Block
@@ -160,6 +162,27 @@ if	1=1 --( (select isnull(max(collection_time_utc),''2023-01-01 00:00'') from db
 begin
 	exec dbo.usp_GetAllServerCollectedData 
 					@result_to_table = ''dbo.tempdb_space_usage_all_servers'',
+					@verbose = @verbose,
+					@truncate_table = @truncate_table,
+					@has_staging_table = @has_staging_table
+end
+else
+	print ''Did not meet schedule requirement.''+char(13);';
+			IF @verbose > 0
+				PRINT @_sql;
+			EXEC sp_executesql @_sql, @_params, @verbose, @truncate_table, @has_staging_table, @schedule_minutes;
+		END
+
+
+		IF @step_name = 'dbo.ag_health_state_all_servers'
+		BEGIN
+			IF @verbose > 0
+				PRINT 'dbo.ag_health_state_all_servers';
+			SET @_sql = N'-- Collect AG Latency from All Servers Every 2 Minutes
+if	1=1 --( (select isnull(max(collection_time_utc),''2023-01-01 00:00'') from dbo.ag_health_state_all_servers) < dateadd(minute, -@schedule_minutes, getutcdate()) )
+begin
+	exec dbo.usp_GetAllServerCollectedData 
+					@result_to_table = ''dbo.ag_health_state_all_servers'',
 					@verbose = @verbose,
 					@truncate_table = @truncate_table,
 					@has_staging_table = @has_staging_table
