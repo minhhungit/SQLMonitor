@@ -66,8 +66,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -233,8 +232,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue",
-                          "value": null
+                          "color": "blue"
                         }
                       ]
                     }
@@ -286,8 +284,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-purple",
-                          "value": null
+                          "color": "super-light-purple"
                         }
                       ]
                     }
@@ -481,8 +478,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -517,8 +513,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -555,8 +550,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -600,8 +594,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue",
-                          "value": null
+                          "color": "blue"
                         }
                       ]
                     }
@@ -682,8 +675,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -2028,6 +2020,16 @@
                         }
                       ]
                     }
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "Replica Ag Latency Trend",
+                        "url": "d/ag_health_state?var-server=${__data.fields.sql_instance}&var-replica_server_name=${__data.fields.replica_server_name}"
+                      }
+                    ]
                   }
                 ]
               },
@@ -2107,6 +2109,16 @@
                         }
                       ]
                     }
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "Database Ag Latency Trend",
+                        "url": "d/ag_health_state?var-server=${__data.fields.sql_instance}&var-database=${__data.fields.database_name}"
+                      }
+                    ]
                   }
                 ]
               },
@@ -2678,6 +2690,16 @@
                         }
                       ]
                     }
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "Instance Ag Latency Details",
+                        "url": "d/ag_health_state?var-server=${__data.fields.sql_instance}&viewPanel=147"
+                      }
+                    ]
                   }
                 ]
               },
@@ -4682,8 +4704,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1697540821468",
-          "value": "1697540821468"
+          "text": "1698378680623",
+          "value": "1698378680623"
         },
         "datasource": {
           "type": "mssql",
@@ -4721,6 +4743,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - All Servers",
   "uid": "distributed_live_dashboard_all_servers",
-  "version": 66,
+  "version": 67,
   "weekStart": ""
 }

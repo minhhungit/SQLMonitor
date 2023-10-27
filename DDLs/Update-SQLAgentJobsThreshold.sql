@@ -381,7 +381,9 @@ from dbo.sql_agent_job_thresholds sajt
 where 1=1
 and sajt.JobCategory = '(dba) SQLMonitor'
 and (	sajt.JobName like '(dba) Run-BlitzIndex'
-	or	sajt.JobName like '(dba) Run-BlitzIndex - %'
+	or	(	sajt.JobName like '(dba) Run-BlitzIndex - %'
+		and	sajt.JobName not like '(dba) Run-BlitzIndex - Weekly%'
+		)
 	)
 and sajt.Successfull_Execution_ClockTime_Threshold_Minutes = -1
 go

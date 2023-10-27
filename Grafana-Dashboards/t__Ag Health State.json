@@ -2011,14 +2011,14 @@
           "type": "mssql",
           "uid": "${DS_SQLSERVER}"
         },
-        "definition": "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;\nSET QUOTED_IDENTIFIER OFF\nDECLARE @sql varchar(max) = \"\nselect top 1 collection_time _utc\nfrom [$dba_db].dbo.ag_health_state\norder by collection_time_utc desc\n\"\nSET QUOTED_IDENTIFIER ON\n\n--IF ('$server' = SERVERPROPERTY('ServerName'))\nif ($is_local = 1)\n  EXEC (@sql);\nELSE\n  EXEC (@sql) AT [$server];",
+        "definition": "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;\nSET QUOTED_IDENTIFIER OFF\nDECLARE @sql varchar(max) = \"\nselect top 1 collection_time_utc\nfrom [$dba_db].dbo.ag_health_state\norder by collection_time_utc desc\n\"\nSET QUOTED_IDENTIFIER ON\n\n--IF ('$server' = SERVERPROPERTY('ServerName'))\nif ($is_local = 1)\n  EXEC (@sql);\nELSE\n  EXEC (@sql) AT [$server];",
         "hide": 2,
         "includeAll": false,
         "label": "Ag Health State Collection Time UTC",
         "multi": false,
         "name": "ag_health_state_collection_time_utc",
         "options": [],
-        "query": "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;\nSET QUOTED_IDENTIFIER OFF\nDECLARE @sql varchar(max) = \"\nselect top 1 collection_time _utc\nfrom [$dba_db].dbo.ag_health_state\norder by collection_time_utc desc\n\"\nSET QUOTED_IDENTIFIER ON\n\n--IF ('$server' = SERVERPROPERTY('ServerName'))\nif ($is_local = 1)\n  EXEC (@sql);\nELSE\n  EXEC (@sql) AT [$server];",
+        "query": "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;\nSET QUOTED_IDENTIFIER OFF\nDECLARE @sql varchar(max) = \"\nselect top 1 collection_time_utc\nfrom [$dba_db].dbo.ag_health_state\norder by collection_time_utc desc\n\"\nSET QUOTED_IDENTIFIER ON\n\n--IF ('$server' = SERVERPROPERTY('ServerName'))\nif ($is_local = 1)\n  EXEC (@sql);\nELSE\n  EXEC (@sql) AT [$server];",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -2233,6 +2233,6 @@
   "timezone": "browser",
   "title": "t__Ag Health State",
   "uid": "ag_health_state",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
