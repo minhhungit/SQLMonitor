@@ -20,6 +20,8 @@ $currentTime = Get-Date
 $SqlServerVersionsQuery = (Invoke-WebRequest $GitHubURL -UseBasicParsing).Content
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Execute query against [$SqlInstance].[$Database].$TableName.."
-Invoke-DbaQuery -SqlInstance $SqlInstance -Database $Database -Query $SqlServerVersionsQuery -EnableException;
+$sqlInstanceObj = Connect-DbaInstance -SqlInstance $SqlInstance -ClientName "(dba) Update-SqlServerVersions" -TrustServerCertificate -ErrorAction Stop
+Invoke-DbaQuery -SqlInstance $sqlInstanceObj -Database $Database -Query $SqlServerVersionsQuery -EnableException;
+
 
 

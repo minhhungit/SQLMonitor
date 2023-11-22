@@ -57,9 +57,12 @@ else {
 }
 $lastImportedFile = $null
 
+# Create Server Object
+$sqlInstanceObj = Connect-DbaInstance -SqlInstance $SqlInstance -ClientName "(dba) Collect-PerfmonData" -TrustServerCertificate -ErrorAction Stop
+
 # Get latest imported file
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetch details of last imported file from [$SqlInstance].[$Database].$TablePerfmonFiles.."
-$lastImportedFile = Invoke-DbaQuery -SqlInstance $SqlInstance -Database $Database -Query "select top 1 file_name from $TablePerfmonFiles where host_name = '$computerName' and file_name like '$computerName%' order by file_name desc" | Select-Object -ExpandProperty file_name;
+$lastImportedFile = Invoke-DbaQuery -SqlInstance $sqlInstanceObj -Database $Database -Query "select top 1 file_name from $TablePerfmonFiles where host_name = '$computerName' and file_name like '$computerName%' order by file_name desc" | Select-Object -ExpandProperty file_name;
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$lastImportedFile => '$lastImportedFile'."
 
 Write-Debug "Stop collector set"
@@ -212,7 +215,7 @@ foreach($file in $pfCollectorFiles)
 
                                     $instance
                                }} | 
-                Write-DbaDbTableData -SqlInstance $SqlInstance -Database $Database -Table $TablePerfmonCounters -EnableException
+                Write-DbaDbTableData -SqlInstance $sqlInstanceObj -Database $Database -Table $TablePerfmonCounters -EnableException
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "File import complete.."
 
     
@@ -222,7 +225,7 @@ foreach($file in $pfCollectorFiles)
         insert $TablePerfmonFiles (host_name, file_name, file_path)
         select @host_name, @file_name, @file_path;
 "@
-        Invoke-DbaQuery -SqlInstance $SqlInstance -Database $Database -Query $sqlInsertFile -SqlParameter @{host_name = $computerName; file_name = $file; file_path = "$pfCollectorFolder\$file"} -EnableException
+        Invoke-DbaQuery -SqlInstance $sqlInstanceObj -Database $Database -Query $sqlInsertFile -SqlParameter @{host_name = $computerName; file_name = $file; file_path = "$pfCollectorFolder\$file"} -EnableException
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Entry made.."
 
         if($CleanupFiles) {
@@ -245,7 +248,7 @@ foreach($file in $pfCollectorFiles)
             insert $TablePerfmonFiles (host_name, file_name, file_path)
             select @host_name, @file_name, @file_path;
 "@
-            Invoke-DbaQuery -SqlInstance $SqlInstance -Database $Database -Query $sqlInsertFile -SqlParameter @{host_name = $computerName; file_name = $file; file_path = "$pfCollectorFolder\$file"} -EnableException
+            Invoke-DbaQuery -SqlInstance $sqlInstanceObj -Database $Database -Query $sqlInsertFile -SqlParameter @{host_name = $computerName; file_name = $file; file_path = "$pfCollectorFolder\$file"} -EnableException
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Skip Entry made into [$SqlInstance].[$Database].$TablePerfmonFiles.."
 
             # Try to remove file for which we got error
