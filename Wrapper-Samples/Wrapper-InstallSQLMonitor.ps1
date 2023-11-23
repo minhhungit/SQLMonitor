@@ -80,7 +80,34 @@ F:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params -PreQuery $dropWh
 #>
 
 <#
-Invoke-WebRequest https://github.com/imajaydwivedi/SQLMonitor/archive/refs/heads/dev.zip -OutFile "$env:USERPROFILE\Downloads\sqlmonitor.zip"
+# **************** Download other github repos/modules/files ***********************
+
+# **__ SQLMonitor __**
+Invoke-WebRequest https://github.com/imajaydwivedi/SQLMonitor/archive/refs/heads/dev.zip `
+            -OutFile "$($env:USERPROFILE)\Downloads\sqlmonitor.zip"
+
+# **__ dbatools & dbatools.library __**
+Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
+
+# **__ Darling Data __**
+Invoke-WebRequest https://github.com/erikdarlingdata/DarlingData/archive/refs/heads/main.zip `
+            -OutFile "$($env:USERPROFILE)\Downloads\DarlingData-main.zip"
+
+# **__ Ola Hallengren Maintenance Solution __**
+Invoke-WebRequest https://github.com/olahallengren/sql-server-maintenance-solution/archive/refs/heads/master.zip `
+            -OutFile "$($env:USERPROFILE)\Downloads\sql-server-maintenance-solution-master.zip"
+
+# **__ First Responder Kit from latest release __**
+if ($true) {
+    $repo = "BrentOzarULTD/SQL-Server-First-Responder-Kit"
+    $tags = "https://api.github.com/repos/$repo/tags"
+
+    $tagName = (Invoke-WebRequest $tags | ConvertFrom-Json)[0].name
+    $releaseZip = "https://github.com/BrentOzarULTD/SQL-Server-First-Responder-Kit/archive/refs/tags/$tagName.zip"
+
+    Invoke-WebRequest $releaseZip `
+            -OutFile "$($env:USERPROFILE)\Downloads\SQL-Server-First-Responder-Kit-$tagName.zip"
+}
 #>
 
 <#
@@ -102,11 +129,6 @@ Enter-PSSession -ComputerName '192.168.56.31' -Credential $localAdmin -Authentic
 Test-WSMan '192.168.56.31' -Credential $localAdmin -Authentication Negotiate
 
 Get-ChildItem C:\SQLMonitor -Recurse -File | Unblock-File -Verbose
-#>
-
-<#
-# Download dbatools & dbatools.library using below command
-Save-Module dbatools -Path 'D:\Github\dbatools'
 #>
 
 <#
