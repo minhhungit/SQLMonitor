@@ -89,6 +89,9 @@ Invoke-WebRequest https://github.com/imajaydwivedi/SQLMonitor/archive/refs/heads
 # **__ dbatools & dbatools.library __**
 Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
 
+# **__ PoshRSJob on Inventory __**
+Install-Module PoshRSJob -Scope AllUsers -Verbose
+
 # **__ Darling Data __**
 Invoke-WebRequest https://github.com/erikdarlingdata/DarlingData/archive/refs/heads/main.zip `
             -OutFile "$($env:USERPROFILE)\Downloads\DarlingData-main.zip"
@@ -103,11 +106,24 @@ if ($true) {
     $tags = "https://api.github.com/repos/$repo/tags"
 
     $tagName = (Invoke-WebRequest $tags | ConvertFrom-Json)[0].name
-    $releaseZip = "https://github.com/BrentOzarULTD/SQL-Server-First-Responder-Kit/archive/refs/tags/$tagName.zip"
+    $releaseZip = "https://github.com/$repo/archive/refs/tags/$tagName.zip"
 
     Invoke-WebRequest $releaseZip `
             -OutFile "$($env:USERPROFILE)\Downloads\SQL-Server-First-Responder-Kit-$tagName.zip"
 }
+
+# **__ PoshRSJob - Download from Github __**
+if ($true) {
+    $repo = "proxb/PoshRSJob"
+    $releases = "https://api.github.com/repos/$repo/releases"
+
+    $tagName = (Invoke-WebRequest $releases | ConvertFrom-Json)[0].tag_name
+    $releaseZip = "https://github.com/$repo/releases/download/$tagName/PoshRSJob.zip"
+
+    Invoke-WebRequest $releaseZip `
+            -OutFile "$($env:USERPROFILE)\Downloads\PoshRSJob.zip"
+}
+
 #>
 
 <#
