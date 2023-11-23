@@ -9,7 +9,7 @@ $params = @{
     DbaDatabase = 'DBA'
     #HostName = 'Workstation'
     #RetentionDays = 7
-    DbaToolsFolderPath = 'D:\Github\dbatools' # Download from Releases section
+    DbaToolsFolderPath = 'D:\Github\dbatools' # Download using Save-Module command
     #FirstResponderKitZipFile = 'D:\Softwares\SQL-Server-First-Responder-Kit-20230613.zip' # Download from Releases section
     #DarlingDataZipFile = 'D:\Softwares\DarlingData-main.zip' # Download from Code dropdown    
     #OlaHallengrenSolutionZipFile = 'D:\Github\sql-server-maintenance-solution-master.zip' # Download from Code dropdown
@@ -81,7 +81,6 @@ F:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params -PreQuery $dropWh
 
 <#
 Invoke-WebRequest https://github.com/imajaydwivedi/SQLMonitor/archive/refs/heads/dev.zip -OutFile "$env:USERPROFILE\Downloads\sqlmonitor.zip"
-Invoke-WebRequest https://github.com/dataplat/dbatools/releases/download/v1.1.142/dbatools-signed.zip -OutFile "$env:USERPROFILE\Downloads\dbatools.zip"
 #>
 
 <#
