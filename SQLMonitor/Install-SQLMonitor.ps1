@@ -197,7 +197,8 @@ $ErrorActionPreference = "Stop"
 $sqlmonitorVersion = '1.5.0.6'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
-    v1.6.0 - 2023-Sep-30
+    v1.6.0 - 2023-Dec-30
+        -> Issue#12 - Compatibility with new dbatools version
 
     v1.5.0.6 - Intermediate Release - 2023-Aug-30
         -> Issue#7 - Dashboard for SQL Agent Jobs
@@ -1849,9 +1850,30 @@ $stepName = '9__CopyDbaToolsModule2Host'
 if($stepName -in $Steps2Execute) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$DbaToolsFolderPath = '$DbaToolsFolderPath'"
+    $dbaToolsLibraryFolderPath = "$DbaToolsFolderPath.library"
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$dbaToolsLibraryFolderPath = '$dbaToolsLibraryFolderPath'"
+
+    # Get dbatools config file path to retrive version info
+    $dbatoolsConfigFileFullPath = if($DbaToolsFolderPath.EndsWith('\')) {$DbaToolsFolderPath+"dbatools.psd1"} else {"$DbaToolsFolderPath\dbatools.psd1"}
+    if(-not (Test-Path $dbatoolsConfigFileFullPath)) {
+        $dbatoolsConfigFile = Get-ChildItem -Path $DbaToolsFolderPath -Recurse -File `
+                                | Where-Object {$_.Name -eq 'dbatools.psd1'} | Sort-Object -Property LastWriteTime -Descending `
+                                | Select-Object -First 1
+        $dbatoolsConfigFileDirectory =  $dbatoolsConfigFile.DirectoryName
+        $dbatoolsConfigFileFullPath =  $dbatoolsConfigFile.FullName
+    }
+
+    # Read config file and parse data
+    Import-LocalizedData -BaseDirectory $dbatoolsConfigFileDirectory -FileName 'dbatools.psd1' -BindingVariable configData
+
+    # Check if module is post 2.x.x
+    $isDbatoolsLibraryRequired = $true
+    if([int]($configData.ModuleVersion).Split('.')[0] -lt 2) {
+        $isDbatoolsLibraryRequired = $false
+    }
     
-    # Copy dbatools on HostName provided
-    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Finding valid PSModule path on [$HostName].."
+    # Get PSModule path on HostName provided
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Finding valid PSModule path on [$HostName].."
     $remoteModulePath = Invoke-Command -Session $ssn4PerfmonSetup -ScriptBlock {
         $modulePath = $null
         if('C:\Program Files\WindowsPowerShell\Modules' -in $($env:PSModulePath -split ';')) {
@@ -1863,39 +1885,84 @@ if($stepName -in $Steps2Execute) {
         $modulePath
     }
 
-    $dbatoolsRemotePath = Join-Path $remoteModulePath 'dbatools'
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Copy dbatools module from '$DbaToolsFolderPath' to host [$HostName] on '$dbatoolsRemotePath'.."
-    
-    if( (Invoke-Command -Session $ssn4PerfmonSetup -ScriptBlock {Test-Path $Using:dbatoolsRemotePath}) ) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "'$dbatoolsRemotePath' already exists on host [$HostName]."
-    }
-    else {
-        Copy-Item $DbaToolsFolderPath -Destination $dbatoolsRemotePath -ToSession $ssn4PerfmonSetup -Recurse
-    }
-
-    # Copy dbatools folder on Jobs Server Host
-    if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -and ($ssn4PerfmonSetup -ne $ssnJobServer) )
+    # Copy dbatools module on remote host
+    if ($true) 
     {
-        "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Finding valid PSModule path on [$($ssnJobServer.ComputerName)].."
-        $remoteModulePath = Invoke-Command -Session $ssnJobServer -ScriptBlock {
-            $modulePath = $null
-            if('C:\Program Files\WindowsPowerShell\Modules' -in $($env:PSModulePath -split ';')) {
-                $modulePath = 'C:\Program Files\WindowsPowerShell\Modules'
-            }
-            else {
-                $modulePath = $($env:PSModulePath -split ';') | Where-Object {$_ -like '*Microsoft SQL Server*'} | select -First 1
-            }
-            $modulePath
-        }
-
         $dbatoolsRemotePath = Join-Path $remoteModulePath 'dbatools'
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Copy dbatools module from '$DbaToolsFolderPath' to host [$($ssnJobServer.ComputerName)] on '$dbatoolsRemotePath'.."
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Copy dbatools module from '$DbaToolsFolderPath' to host [$HostName] on '$dbatoolsRemotePath'.."
     
-        if( (Invoke-Command -Session $ssnJobServer -ScriptBlock {Test-Path $Using:dbatoolsRemotePath}) ) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "'$dbatoolsRemotePath' already exists on host [$($ssnJobServer.ComputerName)]."
+        if( (Invoke-Command -Session $ssn4PerfmonSetup -ScriptBlock {Test-Path $Using:dbatoolsRemotePath}) ) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "'$dbatoolsRemotePath' already exists on host [$HostName]."
         }
         else {
-            Copy-Item $DbaToolsFolderPath -Destination $dbatoolsRemotePath -ToSession $ssnJobServer -Recurse
+            Copy-Item $DbaToolsFolderPath -Destination $dbatoolsRemotePath -ToSession $ssn4PerfmonSetup -Recurse
+        }
+
+        # Copy dbatools folder on Jobs Server Host
+        if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -and ($ssn4PerfmonSetup -ne $ssnJobServer) )
+        {
+            "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Finding valid PSModule path on [$($ssnJobServer.ComputerName)].."
+            $remoteModulePath = Invoke-Command -Session $ssnJobServer -ScriptBlock {
+                $modulePath = $null
+                if('C:\Program Files\WindowsPowerShell\Modules' -in $($env:PSModulePath -split ';')) {
+                    $modulePath = 'C:\Program Files\WindowsPowerShell\Modules'
+                }
+                else {
+                    $modulePath = $($env:PSModulePath -split ';') | Where-Object {$_ -like '*Microsoft SQL Server*'} | select -First 1
+                }
+                $modulePath
+            }
+
+            $dbatoolsRemotePath = Join-Path $remoteModulePath 'dbatools'
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Copy dbatools module from '$DbaToolsFolderPath' to host [$($ssnJobServer.ComputerName)] on '$dbatoolsRemotePath'.."
+    
+            if( (Invoke-Command -Session $ssnJobServer -ScriptBlock {Test-Path $Using:dbatoolsRemotePath}) ) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "'$dbatoolsRemotePath' already exists on host [$($ssnJobServer.ComputerName)]."
+            }
+            else {
+                Copy-Item $DbaToolsFolderPath -Destination $dbatoolsRemotePath -ToSession $ssnJobServer -Recurse
+            }
+        }
+    }
+
+
+    # Copy dbatools.library module on remote host
+    if ($isDbatoolsLibraryRequired) 
+    {
+        $dbatoolsLibraryRemotePath = Join-Path $remoteModulePath 'dbatools.library'
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Copy dbatools.library module from '$dbaToolsLibraryFolderPath' to host [$HostName] on '$dbatoolsLibraryRemotePath'.."
+    
+        if( (Invoke-Command -Session $ssn4PerfmonSetup -ScriptBlock {Test-Path $Using:dbatoolsLibraryRemotePath}) ) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "'$dbatoolsLibraryRemotePath' already exists on host [$HostName]."
+        }
+        else {
+            Copy-Item $dbaToolsLibraryFolderPath -Destination $dbatoolsLibraryRemotePath -ToSession $ssn4PerfmonSetup -Recurse
+        }
+
+        # Copy dbatools.library folder on Jobs Server Host
+        if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -and ($ssn4PerfmonSetup -ne $ssnJobServer) )
+        {
+            "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Finding valid PSModule path on [$($ssnJobServer.ComputerName)].."
+            $remoteModulePath = Invoke-Command -Session $ssnJobServer -ScriptBlock {
+                $modulePath = $null
+                if('C:\Program Files\WindowsPowerShell\Modules' -in $($env:PSModulePath -split ';')) {
+                    $modulePath = 'C:\Program Files\WindowsPowerShell\Modules'
+                }
+                else {
+                    $modulePath = $($env:PSModulePath -split ';') | Where-Object {$_ -like '*Microsoft SQL Server*'} | select -First 1
+                }
+                $modulePath
+            }
+
+            $dbatoolsLibraryRemotePath = Join-Path $remoteModulePath 'dbatools.library'
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Copy dbatools.library module from '$dbaToolsLibraryFolderPath' to host [$($ssnJobServer.ComputerName)] on '$dbatoolsLibraryRemotePath'.."
+    
+            if( (Invoke-Command -Session $ssnJobServer -ScriptBlock {Test-Path $Using:dbatoolsLibraryRemotePath}) ) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "'$dbatoolsLibraryRemotePath' already exists on host [$($ssnJobServer.ComputerName)]."
+            }
+            else {
+                Copy-Item $dbaToolsLibraryFolderPath -Destination $dbatoolsLibraryRemotePath -ToSession $ssnJobServer -Recurse
+            }
         }
     }
 }

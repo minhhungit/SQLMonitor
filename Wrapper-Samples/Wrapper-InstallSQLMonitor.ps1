@@ -105,3 +105,15 @@ Test-WSMan '192.168.56.31' -Credential $localAdmin -Authentication Negotiate
 Get-ChildItem C:\SQLMonitor -Recurse -File | Unblock-File -Verbose
 #>
 
+<#
+# Download dbatools & dbatools.library using below command
+Save-Module dbatools -Path 'D:\Github\dbatools'
+#>
+
+<#
+# Add SQLAgent Service Account to below local windows groups.
+    # Computer Management > System Tools > Local Users and Groups > Groups
+1) Administrators
+2) Performance Log Users
+3) Performance Monitor Users
+#>
