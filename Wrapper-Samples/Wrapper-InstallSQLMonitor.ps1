@@ -91,6 +91,7 @@ Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
 
 # **__ PoshRSJob on Inventory __**
 Install-Module PoshRSJob -Scope AllUsers -Verbose
+Save-Module PoshRSJob -Path "$($env:USERPROFILE)\Downloads\"
 
 # **__ Darling Data __**
 Invoke-WebRequest https://github.com/erikdarlingdata/DarlingData/archive/refs/heads/main.zip `
