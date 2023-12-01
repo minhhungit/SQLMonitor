@@ -42,7 +42,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Update-S
 		@retry_attempts=2, 
 		@retry_interval=1, 
 		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'powershell.exe -executionpolicy bypass -Noninteractive C:\SQLMonitor\sqlserver-versions-update.ps1 -SqlInstance localhost', 
+		@command=N'powershell.exe -executionpolicy bypass -Noninteractive C:\SQLMonitor\sqlserver-versions-update.ps1 -SqlInstance localhost -ErrorAction Stop', 
 		@flags=40
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1

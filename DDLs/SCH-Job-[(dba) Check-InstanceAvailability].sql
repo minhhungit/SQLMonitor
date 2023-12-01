@@ -45,7 +45,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Check-In
 		@retry_attempts=1, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'powershell.exe -executionpolicy bypass -Noninteractive  C:\SQLMonitor\check-instance-availability.ps1 -InventoryServer localhost -InventoryDatabase DBA -Threads 4', 
+		@command=N'powershell.exe -executionpolicy bypass -Noninteractive  C:\SQLMonitor\check-instance-availability.ps1 -InventoryServer localhost -InventoryDatabase DBA -Threads 4 -ErrorAction Stop', 
 		@flags=40
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
