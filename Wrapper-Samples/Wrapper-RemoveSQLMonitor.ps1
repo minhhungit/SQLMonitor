@@ -6,14 +6,14 @@ cls
 Import-Module dbatools;
 $params = @{
     SqlInstanceToBaseline = 'Experiment'
-    #DbaDatabase = 'DBA_Admin'
+    #DbaDatabase = 'DBA'
     #HostName = 'Experiment'
     InventoryServer = 'SQLMonitor'
     InventoryDatabase = 'DBA'
     #RemoteSQLMonitorPath = 'C:\SQLMonitor'
     #SqlCredential = $saAdmin
     #WindowsCredential = $localAdmin
-    #SkipSteps = @("43__RemovePerfmonFilesFromDisk")
+    #SkipSteps = @("43__RemovePerfmonFilesFromDisk")    
     #StartAtStep = '30__DropLogin_Grafana'
     #StopAtStep = '11__RemoveJob_RunBlitzIndex'
     #SqlInstanceForTsqlJobs = 'Experiment\SQL2019'
@@ -24,9 +24,15 @@ $params = @{
     #SkipDropProc = $true
     #SkipDropView = $true
     #ConfirmValidationOfMultiInstance = $true
-    DryRun = $false
+    #ActionType = "Update"
+    #OnlySteps = @("16__RemoveJob_RunBlitz","70__DropTable_Blitz")
+    #DryRun = $false
 }
-F:\GitHub\SQLMonitor\SQLMonitor\Remove-SQLMonitor.ps1 @Params #-Debug
+
+#$preSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'sqlagentservice@gmail.com', @drop_recreate = 1"
+#$postSQL = Get-Content "D:\GitHub-Personal\SQLMonitor\DDLs\Update-SQLAgentJobsThreshold.sql"
+#D:\GitHub\SQLMonitor\SQLMonitor\Remove-SQLMonitor.ps1 @Params #-Debug -PreQuery $preSQL -PostQuery $postSQL
+D:\GitHub\SQLMonitor\SQLMonitor\Remove-SQLMonitor.ps1 @Params
 
 
 #Get-DbaDbMailProfile -SqlInstance '192.168.56.31' -SqlCredential $personalCredential

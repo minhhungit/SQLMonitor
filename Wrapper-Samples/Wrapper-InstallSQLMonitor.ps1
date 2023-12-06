@@ -65,9 +65,10 @@ $params = @{
     #JobsExecutionWaitTimeoutMinutes = 15
 }
 
-#$postSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'ajay.1dwivedi@angelbroking.com', @drop_recreate = 1"
+#$preSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'sqlagentservice@gmail.com', @drop_recreate = 1"
 #$postSQL = Get-Content "D:\GitHub-Personal\SQLMonitor\DDLs\Update-SQLAgentJobsThreshold.sql"
-D:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params #-Debug #-PostQuery $postSQL
+#D:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params #-Debug -PreQuery $preSQL -PostQuery $postSQL
+D:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params
 
 #Get-Help F:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 -ShowWindow
 

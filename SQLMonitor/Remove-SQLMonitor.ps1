@@ -63,6 +63,41 @@ Param (
                 "88__DropTable_SqlAgentJobsAllServers", "89__DropTable_SqlAgentJobsAllServersStaging", "90__DropTable_TempdbSpaceUsageAllServers",
                 "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk",
                 "94__DropProxy", "95__DropCredential", "96__RemoveInstanceFromInventory")]
+    [String[]]$OnlySteps,
+
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("1__RemoveJob_CheckSQLAgentJobs", "2__RemoveJob_CollectAgHealthState", "3__RemoveJob_CollectDiskSpace",
+                "4__RemoveJob_CollectOSProcesses", "5__RemoveJob_CollectPerfmonData", "6__RemoveJob_CollectPrivilegedInfo",
+                "7__RemoveJob_CollectWaitStats", "8__RemoveJob_CollectXEvents", "9__RemoveJob_PartitionsMaintenance",
+                "10__RemoveJob_PurgeTables", "11__RemoveJob_RemoveXEventFiles", "12__RemoveJob_RunWhoIsActive",
+                "13__RemoveJob_CollectFileIOStats", "14__RemoveJob_CollectMemoryClerks", "15__RemoveJob_RunBlitzIndex",
+                "16__RemoveJob_RunBlitz", "17__RemoveJob_RunLogSaver", "18__RemoveJob_RunTempDbSaver",
+                "19__RemoveJob_UpdateSqlServerVersions", "20__RemoveJob_CheckInstanceAvailability", "21__RemoveJob_GetAllServerInfo",
+                "22__RemoveJob_GetAllServerCollectedData", "23__DropProc_UspExtendedResults", "24__DropProc_UspCollectWaitStats",
+                "25__DropProc_UspRunWhoIsActive", "26__DropProc_UspCollectXEventsXEventMetrics", "27__DropProc_UspPartitionMaintenance",
+                "28__DropProc_UspPurgeTables", "29__DropProc_SpWhatIsRunning", "30__DropProc_UspActiveRequestsCount",
+                "31__DropProc_UspCollectFileIOStats", "32__DropProc_UspEnablePageCompression", "33__DropProc_UspWaitsPerCorePerMinute",
+                "34__DropProc_UspCollectMemoryClerks", "35__DropProc_UspWrapperGetAllServerInfo", "36__DropProc_UspPopulateAllServerVolatileInfoHistory",
+                "37__DropProc_UspGetAllServerInfo", "38__DropView_VwPerformanceCounters", "39__DropView_VwOsTaskList",
+                "40__DropView_VwWaitStatsDeltas", "41__DropView_vw_file_io_stats_deltas", "42__DropView_vw_xevent_metrics",
+                "43__DropView_vw_disk_space", "44__DropView_vw_all_server_info", "45__DropXEvent_XEventMetrics",
+                "46__DropLinkedServer", "47__DropLogin_Grafana", "48__DropTable_XEventMetrics",
+                "49__DropTable_xevent_metrics_queries", "50__DropTable_XEventMetricsProcessedXELFiles", "51__DropTable_WhoIsActive_Staging",
+                "52__DropTable_WhoIsActive", "53__DropTable_PerformanceCounters", "54__DropTable_PurgeTable",
+                "55__DropTable_PerfmonFiles", "56__DropTable_InstanceDetails", "57__DropTable_InstanceHosts",
+                "58__DropTable_OsTaskList", "59__DropTable_BlitzWho", "60__DropTable_BlitzCache",
+                "61__DropTable_ConnectionHistory", "62__DropTable_BlitzFirst", "63__DropTable_BlitzFirstFileStats",
+                "64__DropTable_DiskSpace", "65__DropTable_BlitzFirstPerfmonStats", "66__DropTable_BlitzFirstWaitStats",
+                "67__DropTable_BlitzFirstWaitStatsCategories", "68__DropTable_WaitStats", "69__DropTable_BlitzIndex",
+                "70__DropTable_Blitz", "71__DropTable_FileIOStats", "72__DropTable_MemoryClerks",
+                "73__DropTable_AgHealthState", "74__DropTable_LogSpaceConsumers", "75__DropTable_PrivilegedInfo",
+                "76__DropTable_SqlAgentJobStats", "77__DropTable_SqlAgentJobThresholds", "78__DropTable_TempdbSpaceConsumers",
+                "79__DropTable_TempdbSpaceUsage", "80__DropTable_AllServerCollectionLatencyInfo", "81__DropTable_AllServerVolatileInfoHistory",
+                "82__DropTable_AllServerVolatileInfo", "83__DropTable_AllServerStableInfo", "84__DropTable_DiskSpaceAllServersStaging",
+                "85__DropTable_DiskSpaceAllServers", "86__DropTable_LogSpaceConsumersAllServers", "87__DropTable_LogSpaceConsumersAllServersStaging",
+                "88__DropTable_SqlAgentJobsAllServers", "89__DropTable_SqlAgentJobsAllServersStaging", "90__DropTable_TempdbSpaceUsageAllServers",
+                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk",
+                "94__DropProxy", "95__DropCredential", "96__RemoveInstanceFromInventory")]
     [String]$StartAtStep = "1__RemoveJob_CheckSQLAgentJobs",
 
     [Parameter(Mandatory=$false)]
@@ -154,6 +189,10 @@ Param (
     [bool]$SkipRDPSessionSteps = $false,
 
     [Parameter(Mandatory=$false)]
+    [ValidateSet("Delete","Update")]
+    [String]$ActionType = "Delete",
+
+    [Parameter(Mandatory=$false)]
     [PSCredential]$SqlCredential,
 
     [Parameter(Mandatory=$false)]
@@ -241,6 +280,18 @@ $PowerShellJobSteps = @(
 
 # RDPSessionSteps
 $RDPSessionSteps = @("92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk")
+
+# For "Update" operation, Parameter OnlySteps is mandatory
+if ($ActionType -eq 'Update' -and $OnlySteps.Count -eq 0) {
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "For `"Update`" operation, Parameter `"OnlySteps`" is mandatory." | Write-Host -ForegroundColor Red
+    Write-Error "Stop here. Fix above issue."
+}
+
+# "Delete" operation is not compatible with "OnlySteps" Parameter
+if ($ActionType -eq 'Delete' -and $OnlySteps.Count -gt 0) {
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "`"Delete`" operation is not compatible with `"OnlySteps`" Parameter." | Write-Host -ForegroundColor Red
+    Write-Error "Stop here. Fix above issue."
+}
 
 
 # Add $PowerShellJobSteps to Skip Jobs
@@ -342,6 +393,12 @@ $Steps2Execute += $Steps2ExecuteRaw | ForEach-Object {
                             } 
                             if($passThrough) {$_}
                         }
+
+# Filter for "OnlySteps" parameter
+if($OnlySteps.Count -gt 0) {
+    $Steps2Execute = $Steps2Execute | % {if($_ -in $OnlySteps){$_}}
+}
+
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$StartAtStep -> $StartAtStep.."
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$StopAtStep -> $StopAtStep.."
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Total steps to execute -> $($Steps2Execute.Count)."
@@ -3885,7 +3942,7 @@ else
 
 # 56__DropTable_InstanceDetails
 $stepName = '56__DropTable_InstanceDetails'
-if($stepName -in $Steps2Execute) {
+if( ($stepName -in $Steps2Execute) -and ($ActionType -eq 'Delete') ) {
     $objName = 'instance_details'
     $objType = 'table'
     $objTypeTitleCase = (Get-Culture).TextInfo.ToTitleCase("$objType")
@@ -3924,7 +3981,7 @@ else
 
 # 57__DropTable_InstanceHosts
 $stepName = '57__DropTable_InstanceHosts'
-if($stepName -in $Steps2Execute) {
+if( ($stepName -in $Steps2Execute) -and ($ActionType -eq 'Delete') ) {
     $objName = 'instance_hosts'
     $objType = 'table'
     $objTypeTitleCase = (Get-Culture).TextInfo.ToTitleCase("$objType")
@@ -5523,7 +5580,7 @@ $stepName = '95__DropCredential'
 
 # 96__RemoveInstanceFromInventory
 $stepName = '96__RemoveInstanceFromInventory'
-if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $InventoryServer) ) {
+if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $InventoryServer) -and ($ActionType -eq 'Delete') ) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
 
     if($DryRun) {
