@@ -54,7 +54,7 @@ begin
 	set @cx_name = 'pk_Blitz';
 
 	print 'convert identity column to bigint.'
-	set @sql = 'alter table '+@table_name+' alter column [id] [bigint] NOT NULL';
+	set @sql = 'alter table '+@table_name+' alter column [ID] [bigint] NOT NULL';
 	print @sql;
 	exec (@sql);
 
@@ -79,9 +79,9 @@ begin
 		print 'default constraint already exists for [CheckDate] column.'
 
 	if @is_partitioned = 1
-		set @sql = 'alter table '+@table_name+' add constraint '+@cx_name+' primary key clustered ([CheckDate],[id]) on ps_dba_datetime_monthly ([CheckDate]);';
+		set @sql = 'alter table '+@table_name+' add constraint '+@cx_name+' primary key clustered ([CheckDate],[ID]) on ps_dba_datetime_monthly ([CheckDate]);';
 	else
-		set @sql = 'alter table '+@table_name+' add constraint '+@cx_name+' primary key clustered ([CheckDate],[id]);';
+		set @sql = 'alter table '+@table_name+' add constraint '+@cx_name+' primary key clustered ([CheckDate],[ID]);';
 	print @sql;
 	exec (@sql);
 end
