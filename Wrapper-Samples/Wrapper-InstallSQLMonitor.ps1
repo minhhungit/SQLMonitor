@@ -10,7 +10,7 @@ $params = @{
     #HostName = 'Workstation'
     #RetentionDays = 7
     DbaToolsFolderPath = 'D:\Github\dbatools' # Download using Save-Module command
-    #FirstResponderKitZipFile = 'D:\Softwares\SQL-Server-First-Responder-Kit-20230613.zip' # Download from Releases section
+    #FirstResponderKitZipFile = 'D:\Softwares\SQL-Server-First-Responder-Kit-20231010.zip' # Download from Releases section
     #DarlingDataZipFile = 'D:\Softwares\DarlingData-main.zip' # Download from Code dropdown    
     #OlaHallengrenSolutionZipFile = 'D:\Github\sql-server-maintenance-solution-master.zip' # Download from Code dropdown
     #RemoteSQLMonitorPath = 'C:\SQLMonitor'
@@ -28,12 +28,13 @@ $params = @{
                 "16__CreateJobCollectWaitStats", "17__CreateJobCollectXEvents", "18__CreateJobCollectFileIOStats",
                 "19__CreateJobPartitionsMaintenance", "20__CreateJobPurgeTables", "21__CreateJobRemoveXEventFiles",
                 "22__CreateJobRunLogSaver", "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive",
-                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitzIndexWeekly", "27__CreateJobCollectMemoryClerks",
-                "28__CreateJobCollectPrivilegedInfo", "29__CreateJobCollectAgHealthState", "30__CreateJobCheckSQLAgentJobs",
-                "31__CreateJobUpdateSqlServerVersions", "32__CreateJobCheckInstanceAvailability", "33__CreateJobGetAllServerInfo",
-                "34__CreateJobGetAllServerCollectedData", "35__WhoIsActivePartition", "36__BlitzIndexPartition",
-                "37__EnablePageCompression", "38__GrafanaLogin", "39__LinkedServerOnInventory",
-                "40__LinkedServerForDataDestinationInstance", "41__AlterViewsForDataDestinationInstance")
+                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
+                "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
+                "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
+                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
+                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
+                "43__AlterViewsForDataDestinationInstance")
     #>
     #OnlySteps = @( "2__AllDatabaseObjects", "29__CreateJobCollectAgHealthState" )
     #StartAtStep = '1__sp_WhoIsActive'
@@ -60,6 +61,8 @@ $params = @{
     #OverrideCustomizedTsqlJobs = $false
     #OverrideCustomizedPowerShellJobs = $false
     #UpdateSQLAgentJobsThreshold = $false
+    #XEventDirectory = 'D:\MSSQL15.MSSQLSERVER\XEvents\'
+    #JobsExecutionWaitTimeoutMinutes = 15
 }
 
 #$postSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'ajay.1dwivedi@angelbroking.com', @drop_recreate = 1"

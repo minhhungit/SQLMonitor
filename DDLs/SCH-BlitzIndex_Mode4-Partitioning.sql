@@ -1,4 +1,4 @@
--- SCH-BlitzIndex-Partitioning.sql
+-- SCH-BlitzIndex_Mode4-Partitioning.sql
 IF DB_NAME() = 'master'
 	raiserror ('Kindly execute all queries in [DBA] database', 20, -1) with log;
 go
@@ -10,16 +10,17 @@ declare @cx_name sysname;
 declare @data_space_id int;
 declare @is_partitioned bit = 1;
 declare @sql nvarchar(max);
-set @table_name = 'dbo.BlitzIndex';
+set @table_name = 'dbo.BlitzIndex_Mode4';
 
 select @cx_name = name, @data_space_id = data_space_id 
 from sys.indexes 
 where [object_id] = OBJECT_ID(@table_name) 
 	and type_desc = 'CLUSTERED';
+
 --select [@cx_name] = @cx_name, [@data_space_id] = @data_space_id;
 
 if		( @cx_name is not null and @is_partitioned = 1 and @data_space_id <= 1 )
-	or	( @cx_name is not null and @cx_name <> 'pk_BlitzIndex' )
+	or	( @cx_name is not null and @cx_name <> 'pk_BlitzIndex_Mode4' )
 begin
 	print @table_name+'.'+quotename(@cx_name)+' can be dropped.';
 	set @sql = 'alter table '+@table_name+' drop constraint '+quotename(@cx_name);
@@ -40,18 +41,18 @@ declare @cx_name sysname;
 declare @data_space_id int;
 declare @is_partitioned bit = 1;
 declare @sql nvarchar(max);
-set @table_name = 'dbo.BlitzIndex';
+set @table_name = 'dbo.BlitzIndex_Mode4';
 
+--select [@cx_name] = name, [@data_space_id] = data_space_id 
 select @cx_name = name, @data_space_id = data_space_id 
 from sys.indexes 
 where [object_id] = OBJECT_ID(@table_name) 
 	and type_desc = 'CLUSTERED';
---select [@cx_name] = @cx_name, [@data_space_id] = @data_space_id;
 
 if @cx_name is null
 begin
 	print @table_name+' qualify for partitioning.';
-	set @cx_name = 'pk_BlitzIndex';
+	set @cx_name = 'pk_BlitzIndex_Mode4';
 
 	print 'convert identity column to bigint.'
 	set @sql = 'alter table '+@table_name+' alter column [id] [bigint] NOT NULL';

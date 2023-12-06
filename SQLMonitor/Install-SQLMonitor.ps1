@@ -54,12 +54,13 @@ Param (
                 "16__CreateJobCollectWaitStats", "17__CreateJobCollectXEvents", "18__CreateJobCollectFileIOStats",
                 "19__CreateJobPartitionsMaintenance", "20__CreateJobPurgeTables", "21__CreateJobRemoveXEventFiles",
                 "22__CreateJobRunLogSaver", "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive",
-                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitzIndexWeekly", "27__CreateJobCollectMemoryClerks",
-                "28__CreateJobCollectPrivilegedInfo", "29__CreateJobCollectAgHealthState", "30__CreateJobCheckSQLAgentJobs",
-                "31__CreateJobUpdateSqlServerVersions", "32__CreateJobCheckInstanceAvailability", "33__CreateJobGetAllServerInfo",
-                "34__CreateJobGetAllServerCollectedData", "35__WhoIsActivePartition", "36__BlitzIndexPartition",
-                "37__EnablePageCompression", "38__GrafanaLogin", "39__LinkedServerOnInventory",
-                "40__LinkedServerForDataDestinationInstance", "41__AlterViewsForDataDestinationInstance")]
+                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
+                "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
+                "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
+                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
+                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
+                "43__AlterViewsForDataDestinationInstance")]
     [String]$StartAtStep = "1__sp_WhoIsActive",
 
     [Parameter(Mandatory=$false)]
@@ -71,12 +72,13 @@ Param (
                 "16__CreateJobCollectWaitStats", "17__CreateJobCollectXEvents", "18__CreateJobCollectFileIOStats",
                 "19__CreateJobPartitionsMaintenance", "20__CreateJobPurgeTables", "21__CreateJobRemoveXEventFiles",
                 "22__CreateJobRunLogSaver", "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive",
-                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitzIndexWeekly", "27__CreateJobCollectMemoryClerks",
-                "28__CreateJobCollectPrivilegedInfo", "29__CreateJobCollectAgHealthState", "30__CreateJobCheckSQLAgentJobs",
-                "31__CreateJobUpdateSqlServerVersions", "32__CreateJobCheckInstanceAvailability", "33__CreateJobGetAllServerInfo",
-                "34__CreateJobGetAllServerCollectedData", "35__WhoIsActivePartition", "36__BlitzIndexPartition",
-                "37__EnablePageCompression", "38__GrafanaLogin", "39__LinkedServerOnInventory",
-                "40__LinkedServerForDataDestinationInstance", "41__AlterViewsForDataDestinationInstance")]
+                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
+                "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
+                "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
+                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
+                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
+                "43__AlterViewsForDataDestinationInstance")]
     [String[]]$SkipSteps,
 
     [Parameter(Mandatory=$false)]
@@ -88,12 +90,13 @@ Param (
                 "16__CreateJobCollectWaitStats", "17__CreateJobCollectXEvents", "18__CreateJobCollectFileIOStats",
                 "19__CreateJobPartitionsMaintenance", "20__CreateJobPurgeTables", "21__CreateJobRemoveXEventFiles",
                 "22__CreateJobRunLogSaver", "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive",
-                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitzIndexWeekly", "27__CreateJobCollectMemoryClerks",
-                "28__CreateJobCollectPrivilegedInfo", "29__CreateJobCollectAgHealthState", "30__CreateJobCheckSQLAgentJobs",
-                "31__CreateJobUpdateSqlServerVersions", "32__CreateJobCheckInstanceAvailability", "33__CreateJobGetAllServerInfo",
-                "34__CreateJobGetAllServerCollectedData", "35__WhoIsActivePartition", "36__BlitzIndexPartition",
-                "37__EnablePageCompression", "38__GrafanaLogin", "39__LinkedServerOnInventory",
-                "40__LinkedServerForDataDestinationInstance", "41__AlterViewsForDataDestinationInstance")]
+                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
+                "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
+                "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
+                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
+                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
+                "43__AlterViewsForDataDestinationInstance")]
     [String]$StopAtStep,
 
     [Parameter(Mandatory=$false)]
@@ -105,12 +108,13 @@ Param (
                 "16__CreateJobCollectWaitStats", "17__CreateJobCollectXEvents", "18__CreateJobCollectFileIOStats",
                 "19__CreateJobPartitionsMaintenance", "20__CreateJobPurgeTables", "21__CreateJobRemoveXEventFiles",
                 "22__CreateJobRunLogSaver", "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive",
-                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitzIndexWeekly", "27__CreateJobCollectMemoryClerks",
-                "28__CreateJobCollectPrivilegedInfo", "29__CreateJobCollectAgHealthState", "30__CreateJobCheckSQLAgentJobs",
-                "31__CreateJobUpdateSqlServerVersions", "32__CreateJobCheckInstanceAvailability", "33__CreateJobGetAllServerInfo",
-                "34__CreateJobGetAllServerCollectedData", "35__WhoIsActivePartition", "36__BlitzIndexPartition",
-                "37__EnablePageCompression", "38__GrafanaLogin", "39__LinkedServerOnInventory",
-                "40__LinkedServerForDataDestinationInstance", "41__AlterViewsForDataDestinationInstance")]
+                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
+                "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
+                "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
+                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
+                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
+                "43__AlterViewsForDataDestinationInstance")]
     [String[]]$OnlySteps,
 
     [Parameter(Mandatory=$false)]
@@ -183,6 +187,12 @@ Param (
     [bool]$UpdateSQLAgentJobsThreshold = $true,
 
     [Parameter(Mandatory=$false)]
+    [String]$XEventDirectory,
+
+    [Parameter(Mandatory=$false)]
+    [int]$JobsExecutionWaitTimeoutMinutes = 5,
+
+    [Parameter(Mandatory=$false)]
     [bool]$DryRun = $false,
 
     [Parameter(Mandatory=$false)]
@@ -195,9 +205,11 @@ Param (
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
 $sqlmonitorVersion = '1.5.0.6'
+$sqlmonitorVersionDate = '2023-Dec-05'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v1.6.0 - 2023-Dec-30
+        -> Issue#13 - Capture sp_Blitz & Create Dashboard
         -> Issue#12 - Compatibility with new dbatools version
 
     v1.5.0.6 - Intermediate Release - 2023-Aug-30
@@ -249,6 +261,10 @@ $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 [String]$UspTempDbSaverFileName = "SCH-usp_TempDbSaver.sql"
 [String]$WhoIsActivePartitionFileName = "SCH-WhoIsActive-Partitioning.sql"
 [String]$BlitzIndexPartitionFileName = "SCH-BlitzIndex-Partitioning.sql"
+[String]$BlitzIndexMode0PartitionFileName = "SCH-BlitzIndex_Mode0-Partitioning.sql"
+[String]$BlitzIndexMode1PartitionFileName = "SCH-BlitzIndex_Mode1-Partitioning.sql"
+[String]$BlitzIndexMode4PartitionFileName = "SCH-BlitzIndex_Mode4-Partitioning.sql"
+[String]$BlitzPartitionFileName = "SCH-Blitz-Partitioning.sql"
 [String]$GrafanaLoginFileName = "grafana-login.sql"
 [String]$CheckInstanceAvailabilityJobFileName = "SCH-Job-[(dba) Check-InstanceAvailability].sql"
 [String]$CollectDiskSpaceJobFileName = "SCH-Job-[(dba) Collect-DiskSpace].sql"
@@ -272,6 +288,8 @@ $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 [String]$TestWindowsAdminAccessJobFileName = "SCH-Job-[(dba) Test-WindowsAdminAccess].sql"
 [String]$RunBlitzIndexJobFileName = "SCH-Job-[(dba) Run-BlitzIndex].sql"
 [String]$RunBlitzIndexWeeklyJobFileName = "SCH-Job-[(dba) Run-BlitzIndex - Weekly].sql"
+[String]$RunBlitzJobFileName = "SCH-Job-[(dba) Run-Blitz].sql"
+
 [String]$CollectMemoryClerksJobFileName = "SCH-Job-[(dba) Collect-MemoryClerks].sql"
 [String]$CollectAgHealthStateJobFileName = "SCH-Job-[(dba) Collect-AgHealthState].sql"
 [String]$CheckSQLAgentJobsJobFileName = "SCH-Job-[(dba) Check-SQLAgentJobs].sql"
@@ -301,7 +319,7 @@ if($SqlInstanceToBaseline -ne $InventoryServer) {
 if(-not [String]::IsNullOrEmpty($Port4SqlInstanceToBaseline)) {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "SQL Port for [$SqlInstanceToBaseline] => $Port4SqlInstanceToBaseline." | Write-Host -ForegroundColor Yellow
 }
-"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'START:', "Deploying SQLMonitor v$sqlmonitorVersion.." | Write-Host -ForegroundColor Yellow
+"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'START:', "Deploying SQLMonitor v$sqlmonitorVersion released on $sqlmonitorVersionDate.." | Write-Host -ForegroundColor Yellow
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'START:', "For issues with this version, kindly visit $releaseDiscussionURL" | Write-Host -ForegroundColor Yellow
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'START:', "For general support, join #sqlmonitor channel on 'sqlcommunity.slack.com <https://ajaydwivedi.com/go/slack>' workspace.`n" | Write-Host -ForegroundColor Yellow
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'START:', "For paid support, kindly reach out to 'Ajay Dwivedi <ajay.dwivedi2007@gmail.com>'`n" | Write-Host -ForegroundColor Yellow
@@ -316,26 +334,27 @@ $AllSteps = @(  "1__sp_WhoIsActive", "2__AllDatabaseObjects", "3__XEventSession"
                 "16__CreateJobCollectWaitStats", "17__CreateJobCollectXEvents", "18__CreateJobCollectFileIOStats",
                 "19__CreateJobPartitionsMaintenance", "20__CreateJobPurgeTables", "21__CreateJobRemoveXEventFiles",
                 "22__CreateJobRunLogSaver", "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive",
-                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitzIndexWeekly", "27__CreateJobCollectMemoryClerks",
-                "28__CreateJobCollectPrivilegedInfo", "29__CreateJobCollectAgHealthState", "30__CreateJobCheckSQLAgentJobs",
-                "31__CreateJobUpdateSqlServerVersions", "32__CreateJobCheckInstanceAvailability", "33__CreateJobGetAllServerInfo",
-                "34__CreateJobGetAllServerCollectedData", "35__WhoIsActivePartition", "36__BlitzIndexPartition",
-                "37__EnablePageCompression", "38__GrafanaLogin", "39__LinkedServerOnInventory",
-                "40__LinkedServerForDataDestinationInstance", "41__AlterViewsForDataDestinationInstance")
+                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
+                "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
+                "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
+                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
+                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
+                "43__AlterViewsForDataDestinationInstance")
 
 # TSQL Jobs
 $TsqlJobSteps = @(
                 "16__CreateJobCollectWaitStats", "17__CreateJobCollectXEvents", "18__CreateJobCollectFileIOStats",
                 "19__CreateJobPartitionsMaintenance", "20__CreateJobPurgeTables", "22__CreateJobRunLogSaver",
                 "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive", "21__CreateJobRemoveXEventFiles",
-                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitzIndexWeekly", "27__CreateJobCollectMemoryClerks",
-                "28__CreateJobCollectPrivilegedInfo", "29__CreateJobCollectAgHealthState", "30__CreateJobCheckSQLAgentJobs", 
-                "33__CreateJobGetAllServerInfo", "34__CreateJobGetAllServerCollectedData")
+                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly", 
+                "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState", 
+                "31__CreateJobCheckSQLAgentJobs", "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData")
 
 # PowerShell Jobs
 $PowerShellJobSteps = @(
                 "13__CreateJobCollectDiskSpace", "14__CreateJobCollectOSProcesses", "15__CreateJobCollectPerfmonData",
-                "31__CreateJobUpdateSqlServerVersions", "32__CreateJobCheckInstanceAvailability")
+                "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability")
 
 # RDPSessionSteps
 $RDPSessionSteps = @("9__CopyDbaToolsModule2Host", "10__CopyPerfmonFolder2Host", "11__SetupPerfmonDataCollector")
@@ -374,8 +393,8 @@ if($SkipTsqlJobs) {
 }
 
 # Skip Compression
-if($SkipPageCompression -and ('37__EnablePageCompression' -notin $SkipSteps)) {
-    $SkipSteps += @('37__EnablePageCompression')
+if($SkipPageCompression -and ('39__EnablePageCompression' -notin $SkipSteps)) {
+    $SkipSteps += @('39__EnablePageCompression')
 }
 
 # For backward compatability
@@ -459,6 +478,10 @@ $UspLogSaverFilePath = "$ddlPath\$UspLogSaverFileName"
 $UspTempDbSaverFilePath = "$ddlPath\$UspTempDbSaverFileName"
 $WhoIsActivePartitionFilePath = "$ddlPath\$WhoIsActivePartitionFileName"
 $BlitzIndexPartitionFilePath = "$ddlPath\$BlitzIndexPartitionFileName"
+$BlitzPartitionFilePath = "$ddlPath\$BlitzPartitionFileName"
+$BlitzIndexMode0PartitionFilePath = "$ddlPath\$BlitzIndexMode0PartitionFileName"
+$BlitzIndexMode1PartitionFilePath = "$ddlPath\$BlitzIndexMode1PartitionFileName"
+$BlitzIndexMode4PartitionFilePath = "$ddlPath\$BlitzIndexMode4PartitionFileName"
 $GrafanaLoginFilePath = "$ddlPath\$GrafanaLoginFileName"
 $CheckInstanceAvailabilityJobFilePath = "$ddlPath\$CheckInstanceAvailabilityJobFileName"
 $CollectDiskSpaceJobFilePath = "$ddlPath\$CollectDiskSpaceJobFileName"
@@ -479,6 +502,7 @@ $RunTempDbSaverJobFilePath = "$ddlPath\$RunTempDbSaverJobFileName"
 $RunWhoIsActiveJobFilePath = "$ddlPath\$RunWhoIsActiveJobFileName"
 $RunBlitzIndexJobFilePath = "$ddlPath\$RunBlitzIndexJobFileName"
 $RunBlitzIndexWeeklyJobFilePath = "$ddlPath\$RunBlitzIndexWeeklyJobFileName"
+$RunBlitzJobFilePath = "$ddlPath\$RunBlitzJobFileName"
 $CollectMemoryClerksJobFilePath = "$ddlPath\$CollectMemoryClerksJobFileName"
 $CollectAgHealthStateJobFilePath = "$ddlPath\$CollectAgHealthStateJobFileName"
 $CheckSQLAgentJobsJobFilePath = "$ddlPath\$CheckSQLAgentJobsJobFileName"
@@ -1667,6 +1691,7 @@ if($stepName -in $Steps2Execute)
         $sqlSetPurgeThreshold = @"
 update dbo.purge_table 
 set retention_days = case when table_name like 'dbo.BlitzIndex%' then $RetentionDays*6 
+                            when table_name like 'dbo.Blitz%' then $RetentionDays*6 
                             when table_name = 'dbo.disk_space' then  $RetentionDays*6 
                             when table_name = 'dbo.file_io_stats' then  $RetentionDays*6 
                             when table_name = 'dbo.memory_clerks' then  $RetentionDays*6 
@@ -1729,17 +1754,27 @@ if( ($stepName -in $Steps2Execute) -and ($MajorVersion -ge 11) ) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$XEventSessionFilePath = '$XEventSessionFilePath'"
 
-    $dbaDatabasePathParent = Split-Path $dbaDatabasePath -Parent
-    if($dbaDatabasePathParent.Length -eq 3) {
-        $xEventTargetPathDirectory = "${dbaDatabasePathParent}xevents"
-    }
-    else {
-        $xEventTargetPathDirectoryParent = Split-Path $dbaDatabasePathParent -Parent
-        if($xEventTargetPathDirectoryParent.Length -eq 3) {
-            $xEventTargetPathDirectory = "$(Split-Path $dbaDatabasePathParent -Parent)xevents"
+    # If no XEvent directory provided, then use same as DBA database
+    if( [String]::IsNullOrEmpty($XEventDirectory) )
+    {
+        $dbaDatabasePathParent = Split-Path $dbaDatabasePath -Parent
+        if($dbaDatabasePathParent.Length -eq 3) {
+            $xEventTargetPathDirectory = "${dbaDatabasePathParent}xevents"
         }
         else {
-            $xEventTargetPathDirectory = "$($xEventTargetPathDirectoryParent)\xevents"
+            $xEventTargetPathDirectoryParent = Split-Path $dbaDatabasePathParent -Parent
+            if($xEventTargetPathDirectoryParent.Length -eq 3) {
+                $xEventTargetPathDirectory = "$(Split-Path $dbaDatabasePathParent -Parent)xevents"
+            }
+            else {
+                $xEventTargetPathDirectory = "$($xEventTargetPathDirectoryParent)\xevents"
+            }
+        }
+    }
+    else {
+        $xEventTargetPathDirectory = $XEventDirectory
+        if($XEventDirectory.EndsWith('\')) {
+            $xEventTargetPathDirectory = $XEventDirectory.TrimEnd('\')
         }
     }
 
@@ -3370,8 +3405,108 @@ if($stepName -in $Steps2Execute)
 }
 
 
-# 26__CreateJobRunBlitzIndexWeekly
-$stepName = '26__CreateJobRunBlitzIndexWeekly'
+# 26__CreateJobRunBlitz
+$stepName = '26__CreateJobRunBlitz'
+if($stepName -in $Steps2Execute) 
+{
+    $jobName = '(dba) Run-Blitz'
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$RunBlitzJobFilePath = '$RunBlitzJobFilePath'"
+
+    # Append HostName if Job Server is different    
+    $jobNameNew = $jobName
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
+        $jobNameNew = "$jobName - $SqlInstanceToBaseline"
+        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+    }
+
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
+    $sqlRunBlitzJob = [System.IO.File]::ReadAllText($RunBlitzJobFilePath)
+    $sqlRunBlitzJob = $sqlRunBlitzJob.Replace('-S localhost', "-S `"$sqlInstanceOnJobStep`"")
+    $sqlRunBlitzJob = $sqlRunBlitzJob.Replace('-d DBA', "-d `"$DbaDatabase`"")
+    $sqlRunBlitzJob = $sqlRunBlitzJob.Replace("''DBA''", "''$DbaDatabase''" )
+    $sqlRunBlitzJob = $sqlRunBlitzJob.Replace("'DBA'", "'$DbaDatabase'" )
+    $sqlRunBlitzJob = $sqlRunBlitzJob.Replace("''some_dba_mail_id@gmail.com''", "''$($DbaGroupMailId -join ';')''" )
+    if($jobNameNew -ne $jobName) {
+        $sqlRunBlitzJob = $sqlRunBlitzJob.Replace($jobName, $jobNameNew)
+    }
+
+    # If Express edition, and Task scheduler jobs are required
+    if( ((-not [String]::IsNullOrEmpty($WindowsCredential)) -or ($ssnHostName -eq $env:COMPUTERNAME)) `
+        -and ($isExpressEdition -or $ForceSetupOfTaskSchedulerJobs) -and ($ConfirmSetupOfTaskSchedulerJobs -or $ForceSetupOfTaskSchedulerJobs) )
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Extract Job command from '$RunBlitzJobFilePath'.."
+        [String]$jobArguments = $null
+        if($sqlRunBlitzJob -match "@command=N'sqlcmd (?'arguments'.*)',") {
+            $jobArguments = $Matches['arguments']
+            $jobArguments = $jobArguments.Replace("''","'").Replace(";;",";")
+        }
+
+        if([String]::IsNullOrEmpty($jobArguments)) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+        }
+
+        $jobDescription = "Run Job [$jobName] daily at 10:00 pm"
+        $timeIntervalMinutes = "00:00"
+        $taskPath = '\DBA\'
+        $parameters = @{
+            Session = $ssn4PerfmonSetup
+            ScriptBlock = {
+                Param ($jobName, $jobDescription, $jobArguments, $timeIntervalMinutes, $taskPath, $logsPath, $SkipTsqlJobs)
+
+                $currentTime = Get-Date
+                #$durationString = ($currentTime.AddMinutes(1)).ToString('HH:mm')
+                $durationString = '22:00'
+
+                $doStuff = New-ScheduledTaskAction -Execute 'sqlcmd' -Argument "$jobArguments -o `"$logsPath\$jobName.txt`""
+                $timeToDoStuff = New-ScheduledTaskTrigger -Daily -DaysInterval 1 -RandomDelay "00:30" -At $durationString
+                #$timeToDoStuff.Repetition = $(New-ScheduledTaskTrigger -Once -RandomDelay "00:30" -At $durationString -RepetitionDuration "23:59" -RepetitionInterval $timeIntervalMinutes).Repetition
+                $settingsForTheStuff = New-ScheduledTaskSettingsSet
+                $runAsUser = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+                $finalBuildOfTheStuff = New-ScheduledTask -Action $doStuff -Trigger $timeToDoStuff -Settings $settingsForTheStuff -Principal $runAsUser -Description $jobDescription
+
+                $taskObj = @()
+                try { $taskObj += Get-ScheduledTask -TaskName $jobName -TaskPath $taskPath -ErrorAction SilentlyContinue }
+                catch { "Some Error" | Out-Null }
+
+                $isCreated = $false
+                if([String]::IsNullOrEmpty($taskObj)) {
+                    Register-ScheduledTask -TaskName $jobName -InputObject $finalBuildOfTheStuff -TaskPath $taskPath | Out-Null
+                    $isCreated = $true
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] created in Windows Task Scheduler."
+                }
+                elseif ($SkipTsqlJobs -eq $false) {
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Drop/Recreate Job [$jobName] in Windows Task Scheduler.."
+                    $taskObj | Unregister-ScheduledTask -Confirm:$false | Out-Null
+                    Register-ScheduledTask -TaskName $jobName -InputObject $finalBuildOfTheStuff -TaskPath $taskPath | Out-Null
+                    $isCreated = $true
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] dropped & recreated in Windows Task Scheduler."
+                }
+                else {
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] already exists in Windows Task Scheduler."
+                }
+
+                if($isCreated) {
+                    Start-ScheduledTask -TaskName $jobName -TaskPath $taskPath | Out-Null
+                }
+            }
+            ArgumentList = $jobName, $jobDescription, $jobArguments, $timeIntervalMinutes, $taskPath, $logsPath, $SkipTsqlJobs
+        }
+
+        Invoke-Command @parameters -ErrorAction Stop
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Kindly ensure windows Task Scheduler job [$($taskPath)$($jobName)] is running without Error." #| Write-Host -ForegroundColor Yellow
+    }
+    else # If not express edition
+    {
+        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRunBlitzJob -EnableException
+    }
+}
+
+
+# 27__CreateJobRunBlitzIndexWeekly
+$stepName = '27__CreateJobRunBlitzIndexWeekly'
 if($stepName -in $Steps2Execute) 
 {
     $jobName = '(dba) Run-BlitzIndex - Weekly'
@@ -3472,8 +3607,8 @@ if($stepName -in $Steps2Execute)
 }
 
 
-# 27__CreateJobCollectMemoryClerks
-$stepName = '27__CreateJobCollectMemoryClerks'
+# 28__CreateJobCollectMemoryClerks
+$stepName = '28__CreateJobCollectMemoryClerks'
 if($stepName -in $Steps2Execute) 
 {
     $jobName = '(dba) Collect-MemoryClerks'
@@ -3570,8 +3705,8 @@ if($stepName -in $Steps2Execute)
 
 
 
-# 28__CreateJobCollectPrivilegedInfo
-$stepName = '28__CreateJobCollectPrivilegedInfo'
+# 29__CreateJobCollectPrivilegedInfo
+$stepName = '29__CreateJobCollectPrivilegedInfo'
 if($stepName -in $Steps2Execute) 
 {
     $jobName = '(dba) Collect-PrivilegedInfo'
@@ -3667,8 +3802,8 @@ if($stepName -in $Steps2Execute)
 }
 
 
-# 29__CreateJobCollectAgHealthState
-$stepName = '29__CreateJobCollectAgHealthState'
+# 30__CreateJobCollectAgHealthState
+$stepName = '30__CreateJobCollectAgHealthState'
 if($stepName -in $Steps2Execute) 
 {
     $jobName = '(dba) Collect-AgHealthState'
@@ -3765,8 +3900,8 @@ if($stepName -in $Steps2Execute)
 
 
 
-# 30__CreateJobCheckSQLAgentJobs
-$stepName = '30__CreateJobCheckSQLAgentJobs'
+# 31__CreateJobCheckSQLAgentJobs
+$stepName = '31__CreateJobCheckSQLAgentJobs'
 if($stepName -in $Steps2Execute) 
 {
     $jobName = '(dba) Check-SQLAgentJobs'
@@ -3862,8 +3997,8 @@ if($stepName -in $Steps2Execute)
 }
 
 
-# 31__CreateJobUpdateSqlServerVersions
-$stepName = '31__CreateJobUpdateSqlServerVersions'
+# 32__CreateJobUpdateSqlServerVersions
+$stepName = '32__CreateJobUpdateSqlServerVersions'
 if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer) 
 {
     $jobName = '(dba) Update-SqlServerVersions'
@@ -3959,8 +4094,8 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
 }
 
 
-# 32__CreateJobCheckInstanceAvailability
-$stepName = '32__CreateJobCheckInstanceAvailability'
+# 33__CreateJobCheckInstanceAvailability
+$stepName = '33__CreateJobCheckInstanceAvailability'
 if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer) 
 {
     $jobName = '(dba) Check-InstanceAvailability'
@@ -4058,8 +4193,8 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
 }
 
 
-# 33__CreateJobGetAllServerInfo
-$stepName = '33__CreateJobGetAllServerInfo'
+# 34__CreateJobGetAllServerInfo
+$stepName = '34__CreateJobGetAllServerInfo'
 if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer) 
 {
     $jobName = '(dba) Get-AllServerInfo'
@@ -4165,8 +4300,8 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
 }
 
 
-# 34__CreateJobGetAllServerCollectedData
-$stepName = '34__CreateJobGetAllServerCollectedData'
+# 35__CreateJobGetAllServerCollectedData
+$stepName = '35__CreateJobGetAllServerCollectedData'
 if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer) 
 {
     $jobName = '(dba) Get-AllServerCollectedData'
@@ -4272,8 +4407,8 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
 }
 
 
-# 35__WhoIsActivePartition
-$stepName = '35__WhoIsActivePartition'
+# 36__WhoIsActivePartition
+$stepName = '36__WhoIsActivePartition'
 if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$WhoIsActivePartitionFilePath = '$WhoIsActivePartitionFilePath'"
@@ -4310,38 +4445,231 @@ if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
 }
 
 
-# 36__BlitzIndexPartition
-$stepName = '36__BlitzIndexPartition'
-if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
+# 37__BlitzIndexPartition
+$stepName = '37__BlitzIndexPartition'
+#if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
+if($stepName -in $Steps2Execute) 
+{
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$BlitzIndexPartitionFilePath = '$BlitzIndexPartitionFilePath'"
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "ALTER [dbo].[BlitzIndex] table to partitioned table on [$SqlInstanceToBaseline].."
-    $sqlPartitionBlitzIndex = [System.IO.File]::ReadAllText($BlitzIndexPartitionFilePath).Replace("[DBA]", "[$DbaDatabase]")
-    
-    $BlitzIndexExists = @()
-    $loopStartTime = Get-Date
-    $sleepDurationSeconds = 30
-    $loopTotalDurationThresholdSeconds = 300    
-    
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existance of table [dbo].[BlitzIndex] on [$SqlInstanceToBaseline].."
-    while ($BlitzIndexExists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
+
+    # Create CX on dbo.BlitzIndex
+    $tableName = "BlitzIndex"
+    if($tableName -eq "BlitzIndex")
     {
-        $BlitzIndexExists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
-                                    -Query "if OBJECT_ID('dbo.BlitzIndex') is not null select OBJECT_ID('dbo.BlitzIndex') as BlitzIndexObjectID" -EnableException
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$BlitzIndexPartitionFilePath = '$BlitzIndexPartitionFilePath'"
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "ALTER [dbo].[BlitzIndex] table to partitioned table on [$SqlInstanceToBaseline].."
+        $sqlPartitionBlitzIndex = [System.IO.File]::ReadAllText($BlitzIndexPartitionFilePath).Replace("[DBA]", "[$DbaDatabase]")
+
+        # Modify content if SQL Server does not support Partitioning
+        if($IsNonPartitioned) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Remove partition flag from '$BlitzIndexPartitionFileName'.."
+            $sqlPartitionBlitzIndex = $sqlPartitionBlitzIndex.Replace('declare @is_partitioned bit = 1;', 'declare @is_partitioned bit = 0;')
+        }
+    
+        $BlitzIndexExists = @()
+        $loopStartTime = Get-Date
+        $sleepDurationSeconds = 30
+        $loopTotalDurationThresholdSeconds = $JobsExecutionWaitTimeoutMinutes*60
+    
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existance of table [dbo].[BlitzIndex] on [$SqlInstanceToBaseline].."
+        while ($BlitzIndexExists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
+        {
+            $BlitzIndexExists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+                                        -Query "if OBJECT_ID('dbo.BlitzIndex') is not null select OBJECT_ID('dbo.BlitzIndex') as BlitzIndexObjectID" -EnableException
+
+            if($BlitzIndexExists.Count -eq 0) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Wait for $sleepDurationSeconds seconds as table dbo.BlitzIndex still does not exist.."
+                Start-Sleep -Seconds $sleepDurationSeconds
+            }
+        }
 
         if($BlitzIndexExists.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Wait for $sleepDurationSeconds seconds as table dbo.BlitzIndex still does not exist.."
-            Start-Sleep -Seconds $sleepDurationSeconds
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex] to create table dbo.BlitzIndex." | Write-Host -ForegroundColor Red        
+            "STOP here, and fix above issue." | Write-Error
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex] into partitioned table.."
+            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndex -EnableException
         }
     }
 
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex] into partitioned table.."
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndex -EnableException
+    # Create CX on dbo.BlitzIndex_Mode0
+    $tableName = "BlitzIndex_Mode0"
+    if($tableName -eq "BlitzIndex_Mode0")
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$BlitzIndexMode0PartitionFilePath = '$BlitzIndexMode0PartitionFilePath'"
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "ALTER [dbo].[BlitzIndex_Mode0] table to partitioned table on [$SqlInstanceToBaseline].."
+        $sqlPartitionBlitzIndexMode0 = [System.IO.File]::ReadAllText($BlitzIndexMode0PartitionFilePath).Replace("[DBA]", "[$DbaDatabase]")
+
+        # Modify content if SQL Server does not support Partitioning
+        if($IsNonPartitioned) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Remove partition flag from '$BlitzIndexMode0PartitionFileName'.."
+            $sqlPartitionBlitzIndexMode0 = $sqlPartitionBlitzIndexMode0.Replace('declare @is_partitioned bit = 1;', 'declare @is_partitioned bit = 0;')
+        }
+    
+        $BlitzIndexMode0Exists = @()
+        $loopStartTime = Get-Date
+        $sleepDurationSeconds = 30
+        $loopTotalDurationThresholdSeconds = $JobsExecutionWaitTimeoutMinutes*60
+    
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existence of table [dbo].[BlitzIndex_Mode0] on [$SqlInstanceToBaseline].."
+        while ($BlitzIndexMode0Exists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
+        {
+            $BlitzIndexMode0Exists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+                                        -Query "if OBJECT_ID('dbo.BlitzIndex_Mode0') is not null select OBJECT_ID('dbo.BlitzIndex_Mode0') as BlitzIndexObjectID" -EnableException
+
+            if($BlitzIndexMode0Exists.Count -eq 0) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Wait for $sleepDurationSeconds seconds as table dbo.BlitzIndex_Mode0 still does not exist.."
+                Start-Sleep -Seconds $sleepDurationSeconds
+            }
+        }
+
+        if($BlitzIndexMode0Exists.Count -eq 0) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode0." | Write-Host -ForegroundColor Red        
+            "STOP here, and fix above issue." | Write-Error
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode0] into partitioned table.."
+            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode0 -EnableException
+        }
+    }
+
+    # Create CX on dbo.BlitzIndex_Mode1
+    $tableName = "BlitzIndex_Mode1"
+    if($tableName -eq "BlitzIndex_Mode1")
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$BlitzIndexMode1PartitionFilePath = '$BlitzIndexMode1PartitionFilePath'"
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "ALTER [dbo].[BlitzIndex_Mode1] table to partitioned table on [$SqlInstanceToBaseline].."
+        $sqlPartitionBlitzIndexMode1 = [System.IO.File]::ReadAllText($BlitzIndexMode1PartitionFilePath).Replace("[DBA]", "[$DbaDatabase]")
+
+        # Modify content if SQL Server does not support Partitioning
+        if($IsNonPartitioned) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Remove partition flag from '$BlitzIndexMode1PartitionFileName'.."
+            $sqlPartitionBlitzIndexMode1 = $sqlPartitionBlitzIndexMode1.Replace('declare @is_partitioned bit = 1;', 'declare @is_partitioned bit = 0;')
+        }
+    
+        $BlitzIndexMode1Exists = @()
+        $loopStartTime = Get-Date
+        $sleepDurationSeconds = 30
+        $loopTotalDurationThresholdSeconds = $JobsExecutionWaitTimeoutMinutes*60
+    
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existence of table [dbo].[BlitzIndex_Mode1] on [$SqlInstanceToBaseline].."
+        while ($BlitzIndexMode1Exists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
+        {
+            $BlitzIndexMode1Exists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+                                        -Query "if OBJECT_ID('dbo.BlitzIndex_Mode1') is not null select OBJECT_ID('dbo.BlitzIndex_Mode1') as BlitzIndexObjectID" -EnableException
+
+            if($BlitzIndexMode1Exists.Count -eq 0) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Wait for $sleepDurationSeconds seconds as table dbo.BlitzIndex_Mode1 still does not exist.."
+                Start-Sleep -Seconds $sleepDurationSeconds
+            }
+        }
+
+        if($BlitzIndexMode1Exists.Count -eq 0) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode1." | Write-Host -ForegroundColor Red        
+            "STOP here, and fix above issue." | Write-Error
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode1] into partitioned table.."
+            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode1 -EnableException
+        }
+    }
+
+    # Create CX on dbo.BlitzIndex_Mode4
+    $tableName = "BlitzIndex_Mode4"
+    if($tableName -eq "BlitzIndex_Mode4")
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$BlitzIndexMode4PartitionFilePath = '$BlitzIndexMode4PartitionFilePath'"
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "ALTER [dbo].[BlitzIndex_Mode4] table to partitioned table on [$SqlInstanceToBaseline].."
+        $sqlPartitionBlitzIndexMode4 = [System.IO.File]::ReadAllText($BlitzIndexMode4PartitionFilePath).Replace("[DBA]", "[$DbaDatabase]")
+
+        # Modify content if SQL Server does not support Partitioning
+        if($IsNonPartitioned) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Remove partition flag from '$BlitzIndexMode4PartitionFileName'.."
+            $sqlPartitionBlitzIndexMode4 = $sqlPartitionBlitzIndexMode4.Replace('declare @is_partitioned bit = 1;', 'declare @is_partitioned bit = 0;')
+        }
+    
+        $BlitzIndexMode4Exists = @()
+        $loopStartTime = Get-Date
+        $sleepDurationSeconds = 30
+        $loopTotalDurationThresholdSeconds = $JobsExecutionWaitTimeoutMinutes*60
+    
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existence of table [dbo].[BlitzIndex_Mode4] on [$SqlInstanceToBaseline].."
+        while ($BlitzIndexMode4Exists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
+        {
+            $BlitzIndexMode4Exists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+                                        -Query "if OBJECT_ID('dbo.BlitzIndex_Mode4') is not null select OBJECT_ID('dbo.BlitzIndex_Mode4') as BlitzIndexObjectID" -EnableException
+
+            if($BlitzIndexMode4Exists.Count -eq 0) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Wait for $sleepDurationSeconds seconds as table dbo.BlitzIndex_Mode4 still does not exist.."
+                Start-Sleep -Seconds $sleepDurationSeconds
+            }
+        }
+
+        if($BlitzIndexMode4Exists.Count -eq 0) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode4." | Write-Host -ForegroundColor Red        
+            "STOP here, and fix above issue." | Write-Error
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode4] into partitioned table.."
+            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode4 -EnableException
+        }
+    }
 }
 
 
-# 37__EnablePageCompression
-$stepName = '37__EnablePageCompression'
+# 38__BlitzPartition
+$stepName = '38__BlitzPartition'
+#if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
+if($stepName -in $Steps2Execute) 
+{
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
+
+    # Create CX on dbo.Blitz
+    $tableName = "Blitz"
+    if($tableName -eq "Blitz")
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$BlitzPartitionFilePath = '$BlitzPartitionFilePath'"
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "ALTER [dbo].[Blitz] table to partitioned table on [$SqlInstanceToBaseline].."
+        $sqlPartitionBlitz = [System.IO.File]::ReadAllText($BlitzPartitionFilePath).Replace("[DBA]", "[$DbaDatabase]")
+
+        # Modify content if SQL Server does not support Partitioning
+        if($IsNonPartitioned) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Remove partition flag from '$BlitzPartitionFileName'.."
+            $sqlPartitionBlitz = $sqlPartitionBlitz.Replace('declare @is_partitioned bit = 1;', 'declare @is_partitioned bit = 0;')
+        }
+    
+        $BlitzExists = @()
+        $loopStartTime = Get-Date
+        $sleepDurationSeconds = 30
+        $loopTotalDurationThresholdSeconds = $JobsExecutionWaitTimeoutMinutes*60
+    
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existence of table [dbo].[Blitz] on [$SqlInstanceToBaseline].."
+        while ($BlitzExists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
+        {
+            $BlitzExists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+                                        -Query "if OBJECT_ID('dbo.Blitz') is not null select OBJECT_ID('dbo.Blitz') as BlitzIndexObjectID" -EnableException
+
+            if($BlitzExists.Count -eq 0) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Wait for $sleepDurationSeconds seconds as table dbo.Blitz still does not exist.."
+                Start-Sleep -Seconds $sleepDurationSeconds
+            }
+        }
+
+        if($BlitzExists.Count -eq 0) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.Blitz." | Write-Host -ForegroundColor Red        
+            "STOP here, and fix above issue." | Write-Error
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[Blitz] into partitioned table.."
+            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitz -EnableException
+        }
+    }
+}
+
+
+# 39__EnablePageCompression
+$stepName = '39__EnablePageCompression'
 if( ($stepName -in $Steps2Execute) -and ($SkipPageCompression -eq $false) -and $IsCompressionSupported) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
 
@@ -4351,8 +4679,8 @@ if( ($stepName -in $Steps2Execute) -and ($SkipPageCompression -eq $false) -and $
 }
 
 
-# 38__GrafanaLogin
-$stepName = '38__GrafanaLogin'
+# 40__GrafanaLogin
+$stepName = '40__GrafanaLogin'
 if($stepName -in $Steps2Execute) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$GrafanaLoginFilePath = '$GrafanaLoginFilePath'"
@@ -4363,8 +4691,8 @@ if($stepName -in $Steps2Execute) {
 }
 
 
-# 39__LinkedServerOnInventory
-$stepName = '39__LinkedServerOnInventory'
+# 41__LinkedServerOnInventory
+$stepName = '41__LinkedServerOnInventory'
 if($stepName -in $Steps2Execute -and $SqlInstanceToBaselineWithOutPort -ne $InventoryServerWithOutPort) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$LinkedServerOnInventoryFilePath = '$LinkedServerOnInventoryFilePath'"
@@ -4387,8 +4715,8 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaselineWithOutPort -ne $Inve
 }
 
 
-# 40__LinkedServerForDataDestinationInstance
-$stepName = '40__LinkedServerForDataDestinationInstance'
+# 42__LinkedServerForDataDestinationInstance
+$stepName = '42__LinkedServerForDataDestinationInstance'
 if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstanceAsDataDestination) )
 {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
@@ -4415,8 +4743,8 @@ if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstance
 }
 
 
-# 41__AlterViewsForDataDestinationInstance
-$stepName = '41__AlterViewsForDataDestinationInstance'
+# 43__AlterViewsForDataDestinationInstance
+$stepName = '43__AlterViewsForDataDestinationInstance'
 if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstanceAsDataDestination) )
 {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
@@ -4553,11 +4881,13 @@ $timeTaken = New-TimeSpan -Start $startTime -End $(Get-Date)
     .PARAMETER SQLMonitorPath
     Path of SQLMonitor tool parent folder. This is the folder that contains other folders/files like Alerting, Credential-Manager, DDLs, SQLMonitor, Inventory etc.
     .PARAMETER DbaToolsFolderPath
-    Local directory path of dbatools powershell module that was downloaded locally from github https://github.com/dataplat/dbatools.
+    Local directory path of dbatools powershell module that was downloaded locally from github https://github.com/dataplat/dbatools or using Save-Module.
     .PARAMETER FirstResponderKitZipFile
     Specifies the path to a local file to install FRK from. This should be the zip file as distributed by the maintainers. If this parameter is not specified, the latest version will be downloaded and installed from https://github.com/BrentOzarULTD/SQL-Server-First-Responder-Kit
     .PARAMETER DarlingDataZipFile
     Specifies the path to a local file to install from. This should be the zip file as distributed by the maintainers. If this parameter is not specified, the latest version will be downloaded and installed from https://github.com/erikdarlingdata/DarlingData
+    .PARAMETER OlaHallengrenSolutionZipFile
+    Specifies the path to a local file to be used for installation of Ola Hallengren Mailtenance Solution objects except jobs. It can be download using https://github.com/olahallengren/sql-server-maintenance-solution/archive/refs/heads/master.zip
     .PARAMETER RemoteSQLMonitorPath
     Desired SQLMonitor folder location on [SqlInstanceToBaseline] or [SqlInstanceForDataCollectionJobs]. At this path, folder SQLMonitor\SQLMonitor would be copied. On target instance, all the SQL Agent jobs would call the scripts from this folder.
     .PARAMETER DbaGroupMailId
@@ -4596,10 +4926,30 @@ $timeTaken = New-TimeSpan -Start $startTime -End $(Get-Date)
     When enabled, database collations checks are skipped. This means we don't validate if the collation of DBA database  is same as system databases or not.
     .PARAMETER SkipPageCompression
     When enabled, page data compression of SQLMonitor tables is skipped.
+    .PARAMETER SkipDriveCheck
+    When enabled, script ignores the location of DBA database even if its present in C:\ drive
+    .PARAMETER SkipPingCheck
+    When enabled, ping operation is not done for connectivity validation
+    .PARAMETER HasCustomizedTsqlJobs
+    When enabled, assumption is that SQL Agent jobs running sqlcmd/tsql queries have modified version. This flag ensures that these jobs/steps are skipped in upgrades unless OverrideCustomizedTsqlJobs parameter is used
+    .PARAMETER HasCustomizedPowerShellJobs
+    When enabled, assumption is that SQL Agent jobs running powershell scripts have modified version. This flag ensures that these jobs/steps are skipped in upgrades unless OverrideCustomizedPowerShellJobs parameter is used
+    .PARAMETER OverrideCustomizedTsqlJobs
+    When enabled, any upgrade of SQLMonitor will drop/create the SQL Agent jobs running sqlcmd/tsql queries even if they are modified on server
+    .PARAMETER OverrideCustomizedPowerShellJobs
+    When enabled, any upgrade of SQLMonitor will drop/create the SQL Agent jobs running Powershell scripts even if they are modified on server
+    .PARAMETER ForceSetupOfTaskSchedulerJobs
+    When enabled, all the jobs are created in windows Task Scheduler instead of SQLAgent
     .PARAMETER ConfirmValidationOfMultiInstance
     If required for confirmation from end user in case multiple SQL Instances are found on same host. At max, perfmon data can be pushed to only one SQL Instance.
     .PARAMETER ConfirmSetupOfTaskSchedulerJobs
     If SQLInstance is SQL Express edition, then this parameter ensures that local SQLInstance level jobs are created in Windows Task Scheduler.
+    .PARAMETER UpdateSQLAgentJobsThreshold
+    when enabled, appropriate thresholds are set in table dbo.sql_agent_job_thresholds using script \DDLs\Update-SQLAgentJobsThreshold.sql
+    .PARAMETER XEventDirectory
+    Directory for saving Extended Events files. By default, a directory named xevents is created on parent path of DBA database files directory
+    .PARAMETER JobsExecutionWaitTimeoutMinutes
+    Time in minutes. Script will wait for maximum this duration for execution of SQLAgent jobs like [(dba) Run-BlitzIndex] or [(dba) Run-BlitzIndex - Weekly] etc
     .PARAMETER DryRun
     When enabled, only messages are printed, but actual changes are NOT made.
     .PARAMETER PreQuery
@@ -4617,7 +4967,7 @@ $params = @{
     #SqlCredential = $saAdmin
     #WindowsCredential = $LabCredential
     #SkipSteps = @("11__SetupPerfmonDataCollector", "12__CreateJobCollectOSProcesses","13__CreateJobCollectPerfmonData")
-    #StartAtStep = '38__GrafanaLogin'
+    #StartAtStep = '40__GrafanaLogin'
     #StopAtStep = '21__WhoIsActivePartition'
     #DropCreatePowerShellJobs = $true
     #DryRun = $false
@@ -4644,7 +4994,7 @@ $params = @{
     SqlCredential = $saAdmin
     WindowsCredential = $LabCredential
     #SkipSteps = @("11__SetupPerfmonDataCollector", "12__CreateJobCollectOSProcesses","13__CreateJobCollectPerfmonData")
-    #StartAtStep = '38__GrafanaLogin'
+    #StartAtStep = '40__GrafanaLogin'
     #StopAtStep = '21__WhoIsActivePartition'
     #DropCreatePowerShellJobs = $true
     #DryRun = $false
@@ -4662,7 +5012,3 @@ Owner Ajay Kumar Dwivedi (ajay.dwivedi2007@gmail.com)
     https://ajaydwivedi.com/youtube/sqlmonitor
     https://ajaydwivedi.com/blog/sqlmonitor    
 #>
-
-
-
-
