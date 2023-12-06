@@ -18,21 +18,21 @@
     {
       "name": "VAR_BLITZINDEX_MODE0_TABLE_NAME",
       "type": "constant",
-      "label": "BlitzIndex Table",
+      "label": "BlitzIndex_Mode0 Table",
       "value": "dbo.BlitzIndex_Mode0",
       "description": ""
     },
     {
       "name": "VAR_BLITZINDEX_MODE1_TABLE_NAME",
       "type": "constant",
-      "label": "BlitzIndex Table",
+      "label": "BlitzIndex_Mode1 Table",
       "value": "dbo.BlitzIndex_Mode1",
       "description": ""
     },
     {
       "name": "VAR_BLITZINDEX_MODE4_TABLE_NAME",
       "type": "constant",
-      "label": "BlitzIndex Table",
+      "label": "BlitzIndex_Mode4 Table",
       "value": "dbo.BlitzIndex_Mode4",
       "description": ""
     }
@@ -43,7 +43,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.4.7"
+      "version": "10.1.0"
     },
     {
       "type": "datasource",
@@ -1199,7 +1199,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -1582,7 +1582,7 @@
       },
       {
         "hide": 2,
-        "label": "BlitzIndex Table",
+        "label": "BlitzIndex_Mode0 Table",
         "name": "blitzindex_mode0_table_name",
         "query": "${VAR_BLITZINDEX_MODE0_TABLE_NAME}",
         "skipUrlSync": false,
@@ -1602,7 +1602,7 @@
       },
       {
         "hide": 2,
-        "label": "BlitzIndex Table",
+        "label": "BlitzIndex_Mode1 Table",
         "name": "blitzindex_mode1_table_name",
         "query": "${VAR_BLITZINDEX_MODE1_TABLE_NAME}",
         "skipUrlSync": false,
@@ -1622,7 +1622,7 @@
       },
       {
         "hide": 2,
-        "label": "BlitzIndex Table",
+        "label": "BlitzIndex_Mode4 Table",
         "name": "blitzindex_mode4_table_name",
         "query": "${VAR_BLITZINDEX_MODE4_TABLE_NAME}",
         "skipUrlSync": false,
@@ -1658,6 +1658,6 @@
   "timezone": "",
   "title": "t___BlitzIndex_Analysis",
   "uid": "PkaYSnOVk",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }
