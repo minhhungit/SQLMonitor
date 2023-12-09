@@ -4805,7 +4805,7 @@ if($UpdateSQLAgentJobsThreshold) {
         $errMessage = $_.Exception.Message
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
         if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure SQLAgent job [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure all SQLAgent jobs, and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
         }
         "STOP here, and fix above issue." | Write-Error
     }
