@@ -762,7 +762,7 @@ if( (-not $SkipRDPSessionSteps) ) #-and ($HostName -ne $env:COMPUTERNAME)
 
 
 # Check No of SQL Services on HostName
-if( ($SkipRemovePowerShellJobs -eq $false) -or ('11__RemoveJob_RemoveXEventFiles' -in $Steps2Execute) )
+if( (($SkipRemovePowerShellJobs -eq $false) -or ('11__RemoveJob_RemoveXEventFiles' -in $Steps2Execute)) -and ($SkipRDPSessionSteps -eq $false) )
 {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for number of SQLServices on [$HostName].."
 
