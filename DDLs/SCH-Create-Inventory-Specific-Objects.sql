@@ -2,6 +2,7 @@
 	Version -> v1.6.0
 	-----------------
 
+	2023-10-16 - Enhancement#5 - Dashboard for AlwaysOn Latency
 	2023-07-14 - Enhancement#268 - Add tables sql_agent_job_stats & memory_clerks in Collection Latency Dashboard
 	2023-06-16 - Enhancement#262 - Add is_enabled on Inventory.DBA.dbo.instance_details
 	2022-03-31 - Enhancement#227 - Add CollectionTime of Each Table Data
@@ -81,6 +82,13 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[tempd
 	DROP TABLE [dbo].[tempdb_space_usage_all_servers]
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ag_health_state_all_servers]') AND type in (N'U'))
+	DROP TABLE [dbo].[ag_health_state_all_servers]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ag_health_state_all_servers__staging]') AND type in (N'U'))
+	DROP TABLE [dbo].[ag_health_state_all_servers__staging]
+GO
 
 CREATE TABLE [dbo].[all_server_stable_info]
 (
@@ -412,6 +420,67 @@ CREATE TABLE dbo.tempdb_space_usage_all_servers__staging
 );
 go
 
+CREATE TABLE dbo.ag_health_state_all_servers
+(	
+	[sql_instance] [varchar](255) not null,
+	[replica_server_name] [varchar](255) NULL,
+	[is_primary_replica] [bit] not null,
+	[database_name] [varchar](255) not null,
+	[ag_name] [sysname] not null,
+	[ag_listener] [varchar](114) null,
+	[is_local] [bit] not null,
+	[is_distributed] [bit] not null,
+	[synchronization_state_desc] [varchar](60) NULL,
+	[synchronization_health_desc] [varchar](60) NULL,
+	[latency_seconds] [bigint] NULL,
+	[redo_queue_size] [bigint] NULL,
+	[log_send_queue_size] [bigint] NULL,
+	[last_redone_time] [datetime] NULL,
+	[log_send_rate] [bigint] NULL,
+	[redo_rate] [bigint] NULL,
+	[estimated_redo_completion_time_min] [numeric](26, 6) NULL,
+	[last_commit_time] [datetime] NULL,
+	[is_suspended] [bit] NULL,
+	[suspend_reason_desc] [varchar](125) NULL,
+
+	[updated_date_utc] datetime2 NOT NULL,
+	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_ag_health_state_all_servers] clustered ([sql_instance], [replica_server_name]),
+	index [replica_server_name__database_name] nonclustered ([replica_server_name], [database_name])
+);
+go
+
+CREATE TABLE dbo.ag_health_state_all_servers__staging
+(	
+	[sql_instance] [varchar](255) not null,
+	[replica_server_name] [varchar](255) NULL,
+	[is_primary_replica] [bit] not null,
+	[database_name] [varchar](255) not null,
+	[ag_name] [sysname] not null,
+	[ag_listener] [varchar](114) null,
+	[is_local] [bit] not null,
+	[is_distributed] [bit] not null,
+	[synchronization_state_desc] [varchar](60) NULL,
+	[synchronization_health_desc] [varchar](60) NULL,
+	[latency_seconds] [bigint] NULL,
+	[redo_queue_size] [bigint] NULL,
+	[log_send_queue_size] [bigint] NULL,
+	[last_redone_time] [datetime] NULL,
+	[log_send_rate] [bigint] NULL,
+	[redo_rate] [bigint] NULL,
+	[estimated_redo_completion_time_min] [numeric](26, 6) NULL,
+	[last_commit_time] [datetime] NULL,
+	[is_suspended] [bit] NULL,
+	[suspend_reason_desc] [varchar](125) NULL,
+
+	[updated_date_utc] datetime2 NOT NULL,
+	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_ag_health_state_all_servers__staging] clustered ([sql_instance], [replica_server_name]),
+	index [replica_server_name__database_name] nonclustered ([replica_server_name], [database_name])
+);
+go
 
 if not exists (select 1 from dbo.purge_table where table_name = 'dbo.all_server_volatile_info_history')
 begin

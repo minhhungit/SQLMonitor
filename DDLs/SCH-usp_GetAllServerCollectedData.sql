@@ -33,7 +33,8 @@ BEGIN
 
 	/*
 		Version:		1.6.0
-		Date:			2023-07-27 - Add truncate table feature
+		Date:			2023-10-17 - Add Latency Dashboard for AG
+						2023-07-27 - Add truncate table feature
 						2023-08-13 - Add dbo.disk_space_all_servers
 
 		exec dbo.usp_GetAllServerCollectedData 
@@ -48,7 +49,8 @@ BEGIN
 	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 	SET LOCK_TIMEOUT 60000; -- 60 seconds
 
-	IF @result_to_table NOT IN ('dbo.sql_agent_jobs_all_servers','dbo.disk_space_all_servers','dbo.log_space_consumers_all_servers','dbo.tempdb_space_usage_all_servers')
+	IF @result_to_table NOT IN ('dbo.sql_agent_jobs_all_servers','dbo.disk_space_all_servers','dbo.log_space_consumers_all_servers',
+								'dbo.tempdb_space_usage_all_servers','dbo.ag_health_state_all_servers')
 		THROW 50001, '''result_to_table'' Parameter value is invalid.', 1;		
 
 	DECLARE @_tbl_servers table (srv_name varchar(125));
@@ -326,6 +328,53 @@ where tsu.collection_time = (select top 1 l.collection_time from dbo.tempdb_spac
 				insert into [dbo].[tempdb_space_usage_all_servers__staging]
 				(	[sql_instance], [data_size_mb], [data_used_mb], [data_used_pct], [log_size_mb], [log_used_mb], 
 					[log_used_pct], [version_store_mb], [version_store_pct], [updated_date_utc]
+				)
+				exec (@_sql);
+			end try
+			begin catch
+				-- print @_sql;
+				print char(10)+char(13)+'Error occurred while executing below query on '+quotename(@_srv_name)+char(10)+'     '+@_sql;
+				print  '	ErrorNumber => '+convert(varchar,ERROR_NUMBER());
+				print  '	ErrorSeverity => '+convert(varchar,ERROR_SEVERITY());
+				print  '	ErrorState => '+convert(varchar,ERROR_STATE());
+				--print  '	ErrorProcedure => '+ERROR_PROCEDURE();
+				print  '	ErrorLine => '+convert(varchar,ERROR_LINE());
+				print  '	ErrorMessage => '+ERROR_MESSAGE();
+			end catch
+		end
+
+		-- dbo.ag_health_state_all_servers
+		if @_linked_server_failed = 0 and @result_to_table = 'dbo.ag_health_state_all_servers'
+		begin
+			set @_sql =  "
+SET QUOTED_IDENTIFIER ON;
+SET NOCOUNT ON;
+IF OBJECT_ID('dbo.ag_health_state') IS NOT NULL
+BEGIN
+	select  [sql_instance] = '"+@_srv_name+"',
+			[replica_server_name], [is_primary_replica], [database_name], [ag_name], [ag_listener], 
+			[is_local], [is_distributed], [synchronization_state_desc], [synchronization_health_desc], 
+			[latency_seconds], [redo_queue_size], [log_send_queue_size], [last_redone_time], 
+			[log_send_rate], [redo_rate], [estimated_redo_completion_time_min], [last_commit_time], 
+			[is_suspended], [suspend_reason_desc],
+			[updated_date_utc] = [collection_time_utc]
+	from dbo.ag_health_state ahs
+	where ahs.collection_time_utc = (select max(i.collection_time_utc) from dbo.ag_health_state i);
+END
+"
+			-- Decorate for remote query if LinkedServer
+			if @_isLocalHost = 0
+				set @_sql = 'select * from openquery(' + QUOTENAME(@_srv_name) + ', "'+ @_sql + '")';
+			if @verbose >= 1
+				print @_crlf+@_sql+@_crlf;
+		
+			begin try
+				insert into [dbo].[ag_health_state_all_servers__staging]
+				(	sql_instance, replica_server_name, is_primary_replica, [database_name], ag_name, ag_listener, 
+					is_local, is_distributed, synchronization_state_desc, synchronization_health_desc, 
+					latency_seconds, redo_queue_size, log_send_queue_size, last_redone_time, log_send_rate, 
+					redo_rate, estimated_redo_completion_time_min, last_commit_time, is_suspended, 
+					suspend_reason_desc, updated_date_utc
 				)
 				exec (@_sql);
 			end try

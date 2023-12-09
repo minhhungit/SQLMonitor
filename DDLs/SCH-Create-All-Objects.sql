@@ -1,5 +1,5 @@
 /*
-	Version -> v1.3.2
+	Version -> v1.5.1
 	-----------------
 
 	https://www.sommarskog.se/grantperm.html
@@ -208,6 +208,18 @@ begin
 	select	table_name = 'dbo.BlitzIndex_Mode4', 
 			date_key = 'run_datetime', 
 			retention_days = 180, 
+			purge_row_size = 100000,
+			reference = 'SQLMonitor Data Collection'
+end
+go
+
+if not exists (select 1 from dbo.purge_table where table_name = 'dbo.Blitz')
+begin
+	insert dbo.purge_table
+	(table_name, date_key, retention_days, purge_row_size, reference)
+	select	table_name = 'dbo.Blitz', 
+			date_key = 'CheckDate', 
+			retention_days = 365,
 			purge_row_size = 100000,
 			reference = 'SQLMonitor Data Collection'
 end

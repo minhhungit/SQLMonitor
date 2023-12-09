@@ -9,8 +9,8 @@ $params = @{
     DbaDatabase = 'DBA'
     #HostName = 'Workstation'
     #RetentionDays = 7
-    DbaToolsFolderPath = 'D:\Github\dbatools' # Download from Releases section
-    #FirstResponderKitZipFile = 'D:\Softwares\SQL-Server-First-Responder-Kit-20230613.zip' # Download from Releases section
+    DbaToolsFolderPath = 'D:\Github\dbatools' # Download using Save-Module command
+    #FirstResponderKitZipFile = 'D:\Softwares\SQL-Server-First-Responder-Kit-20231010.zip' # Download from Releases section
     #DarlingDataZipFile = 'D:\Softwares\DarlingData-main.zip' # Download from Code dropdown    
     #OlaHallengrenSolutionZipFile = 'D:\Github\sql-server-maintenance-solution-master.zip' # Download from Code dropdown
     #RemoteSQLMonitorPath = 'C:\SQLMonitor'
@@ -28,12 +28,13 @@ $params = @{
                 "16__CreateJobCollectWaitStats", "17__CreateJobCollectXEvents", "18__CreateJobCollectFileIOStats",
                 "19__CreateJobPartitionsMaintenance", "20__CreateJobPurgeTables", "21__CreateJobRemoveXEventFiles",
                 "22__CreateJobRunLogSaver", "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive",
-                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitzIndexWeekly", "27__CreateJobCollectMemoryClerks",
-                "28__CreateJobCollectPrivilegedInfo", "29__CreateJobCollectAgHealthState", "30__CreateJobCheckSQLAgentJobs",
-                "31__CreateJobUpdateSqlServerVersions", "32__CreateJobCheckInstanceAvailability", "33__CreateJobGetAllServerInfo",
-                "34__CreateJobGetAllServerCollectedData", "35__WhoIsActivePartition", "36__BlitzIndexPartition",
-                "37__EnablePageCompression", "38__GrafanaLogin", "39__LinkedServerOnInventory",
-                "40__LinkedServerForDataDestinationInstance", "41__AlterViewsForDataDestinationInstance")
+                "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
+                "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
+                "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
+                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
+                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
+                "43__AlterViewsForDataDestinationInstance")
     #>
     #OnlySteps = @( "2__AllDatabaseObjects", "29__CreateJobCollectAgHealthState" )
     #StartAtStep = '1__sp_WhoIsActive'
@@ -60,11 +61,14 @@ $params = @{
     #OverrideCustomizedTsqlJobs = $false
     #OverrideCustomizedPowerShellJobs = $false
     #UpdateSQLAgentJobsThreshold = $false
+    #XEventDirectory = 'D:\MSSQL15.MSSQLSERVER\XEvents\'
+    #JobsExecutionWaitTimeoutMinutes = 15
 }
 
-#$postSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'ajay.1dwivedi@angelbroking.com', @drop_recreate = 1"
+#$preSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'sqlagentservice@gmail.com', @drop_recreate = 1"
 #$postSQL = Get-Content "D:\GitHub-Personal\SQLMonitor\DDLs\Update-SQLAgentJobsThreshold.sql"
-D:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params #-Debug #-PostQuery $postSQL
+#D:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params #-Debug -PreQuery $preSQL -PostQuery $postSQL
+D:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params
 
 #Get-Help F:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 -ShowWindow
 
@@ -80,8 +84,51 @@ F:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params -PreQuery $dropWh
 #>
 
 <#
-Invoke-WebRequest https://github.com/imajaydwivedi/SQLMonitor/archive/refs/heads/dev.zip -OutFile "$env:USERPROFILE\Downloads\sqlmonitor.zip"
-Invoke-WebRequest https://github.com/dataplat/dbatools/releases/download/v1.1.142/dbatools-signed.zip -OutFile "$env:USERPROFILE\Downloads\dbatools.zip"
+# **************** Download other github repos/modules/files ***********************
+
+# **__ SQLMonitor __**
+Invoke-WebRequest https://github.com/imajaydwivedi/SQLMonitor/archive/refs/heads/dev.zip `
+            -OutFile "$($env:USERPROFILE)\Downloads\sqlmonitor.zip"
+
+# **__ dbatools & dbatools.library __**
+Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
+
+# **__ PoshRSJob on Inventory __**
+Install-Module PoshRSJob -Scope AllUsers -Verbose
+Save-Module PoshRSJob -Path "$($env:USERPROFILE)\Downloads\"
+
+# **__ Darling Data __**
+Invoke-WebRequest https://github.com/erikdarlingdata/DarlingData/archive/refs/heads/main.zip `
+            -OutFile "$($env:USERPROFILE)\Downloads\DarlingData-main.zip"
+
+# **__ Ola Hallengren Maintenance Solution __**
+Invoke-WebRequest https://github.com/olahallengren/sql-server-maintenance-solution/archive/refs/heads/master.zip `
+            -OutFile "$($env:USERPROFILE)\Downloads\sql-server-maintenance-solution-master.zip"
+
+# **__ First Responder Kit from latest release __**
+if ($true) {
+    $repo = "BrentOzarULTD/SQL-Server-First-Responder-Kit"
+    $tags = "https://api.github.com/repos/$repo/tags"
+
+    $tagName = (Invoke-WebRequest $tags | ConvertFrom-Json)[0].name
+    $releaseZip = "https://github.com/$repo/archive/refs/tags/$tagName.zip"
+
+    Invoke-WebRequest $releaseZip `
+            -OutFile "$($env:USERPROFILE)\Downloads\SQL-Server-First-Responder-Kit-$tagName.zip"
+}
+
+# **__ PoshRSJob - Download from Github __**
+if ($true) {
+    $repo = "proxb/PoshRSJob"
+    $releases = "https://api.github.com/repos/$repo/releases"
+
+    $tagName = (Invoke-WebRequest $releases | ConvertFrom-Json)[0].tag_name
+    $releaseZip = "https://github.com/$repo/releases/download/$tagName/PoshRSJob.zip"
+
+    Invoke-WebRequest $releaseZip `
+            -OutFile "$($env:USERPROFILE)\Downloads\PoshRSJob.zip"
+}
+
 #>
 
 <#
@@ -105,3 +152,10 @@ Test-WSMan '192.168.56.31' -Credential $localAdmin -Authentication Negotiate
 Get-ChildItem C:\SQLMonitor -Recurse -File | Unblock-File -Verbose
 #>
 
+<#
+# Add SQLAgent Service Account to below local windows groups.
+    # Computer Management > System Tools > Local Users and Groups > Groups
+1) Administrators
+2) Performance Log Users
+3) Performance Monitor Users
+#>

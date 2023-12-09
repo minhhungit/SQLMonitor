@@ -61,11 +61,35 @@
           <AssociatedConnUserName />
           <FullPath>grafana-login.sql</FullPath>
         </FileNode>
+        <FileNode Name="SCH-BlitzIndex_Mode0-Partitioning.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-BlitzIndex_Mode0-Partitioning.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SCH-BlitzIndex_Mode1-Partitioning.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-BlitzIndex_Mode1-Partitioning.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SCH-BlitzIndex_Mode4-Partitioning.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-BlitzIndex_Mode4-Partitioning.sql</FullPath>
+        </FileNode>
         <FileNode Name="SCH-BlitzIndex-Partitioning.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>SCH-BlitzIndex-Partitioning.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SCH-Blitz-Partitioning.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-Blitz-Partitioning.sql</FullPath>
         </FileNode>
         <FileNode Name="SCH-Create-All-Objects.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
@@ -192,6 +216,12 @@
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>SCH-Job-[(dba) Remove-XEventFiles].sql</FullPath>
+        </FileNode>
+        <FileNode Name="SCH-Job-[(dba) Run-Blitz].sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-Job-[(dba) Run-Blitz].sql</FullPath>
         </FileNode>
         <FileNode Name="SCH-Job-[(dba) Run-BlitzIndex - Weekly].sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
@@ -325,6 +355,12 @@
           <AssociatedConnUserName />
           <FullPath>SCH-usp_GetAllServerCollectedData.sql</FullPath>
         </FileNode>
+        <FileNode Name="SCH-usp_GetAllServerHaDrLatency.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-usp_GetAllServerHaDrLatency.sql</FullPath>
+        </FileNode>
         <FileNode Name="SCH-usp_GetAllServerInfo.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
@@ -396,6 +432,12 @@
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
           <FullPath>SCH-WhoIsActive-Partitioning.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SQLQuery1.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>SQLQuery1.sql</FullPath>
         </FileNode>
         <FileNode Name="Update-SQLAgentJobsThreshold.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>

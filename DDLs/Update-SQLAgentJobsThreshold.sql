@@ -367,6 +367,28 @@ go
 update sajt
 set		[Expected-Max-Duration(Min)] = 60,
 		Continous_Failure_Threshold = 2,
+		Successfull_Execution_ClockTime_Threshold_Minutes = 21600,
+		StopJob_If_LongRunning =  0,
+		StopJob_If_NotSuccessful_In_ThresholdTime = 0,
+		RestartJob_If_NotSuccessful_In_ThresholdTime = 0,
+		RestartJob_If_Failed = 0,
+		Kill_Job_Blocker = 0,
+		Alert_When_Blocked = 0,
+		EnableJob_If_Found_Disabled = 0,
+		IgnoreJob = 0,
+		Include_In_MailNotification = 0
+from dbo.sql_agent_job_thresholds sajt
+where 1=1
+and sajt.JobCategory = '(dba) SQLMonitor'
+and (	sajt.JobName like '(dba) Run-Blitz%'
+	and	sajt.JobName not like '(dba) Run-BlitzIndex%'
+	)
+and sajt.Successfull_Execution_ClockTime_Threshold_Minutes = -1
+go
+
+update sajt
+set		[Expected-Max-Duration(Min)] = 60,
+		Continous_Failure_Threshold = 2,
 		Successfull_Execution_ClockTime_Threshold_Minutes = 4320,
 		StopJob_If_LongRunning =  0,
 		StopJob_If_NotSuccessful_In_ThresholdTime = 0,
@@ -381,7 +403,9 @@ from dbo.sql_agent_job_thresholds sajt
 where 1=1
 and sajt.JobCategory = '(dba) SQLMonitor'
 and (	sajt.JobName like '(dba) Run-BlitzIndex'
-	or	sajt.JobName like '(dba) Run-BlitzIndex - %'
+	or	(	sajt.JobName like '(dba) Run-BlitzIndex - %'
+		and	sajt.JobName not like '(dba) Run-BlitzIndex - Weekly%'
+		)
 	)
 and sajt.Successfull_Execution_ClockTime_Threshold_Minutes = -1
 go

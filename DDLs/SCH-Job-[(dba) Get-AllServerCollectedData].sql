@@ -42,7 +42,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'dbo.sql_
 		@retry_attempts=0, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'sqlcmd -E -b -S localhost -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.sql_agent_jobs_all_servers'', @schedule_minutes = 10, @verbose = 0;"', 
+		@command=N'sqlcmd -E -b -S localhost -H "(dba) Get-AllServerCollectedData - dbo.sql_agent_jobs_all_servers" -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.sql_agent_jobs_all_servers'', @schedule_minutes = 10, @verbose = 0;"', 
 		@flags=40
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
@@ -56,7 +56,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'dbo.disk
 		@retry_attempts=0, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'sqlcmd -E -b -S localhost -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.disk_space_all_servers'', @schedule_minutes = 15, @verbose = 0;"', 
+		@command=N'sqlcmd -E -b -S localhost -H "(dba) Get-AllServerCollectedData - dbo.disk_space_all_servers" -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.disk_space_all_servers'', @schedule_minutes = 15, @verbose = 0;"', 
 		@flags=40
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
@@ -70,12 +70,26 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'dbo.log_
 		@retry_attempts=0, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'sqlcmd -E -b -S localhost -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.log_space_consumers_all_servers'', @schedule_minutes = 5, @verbose = 0;"', 
+		@command=N'sqlcmd -E -b -S localhost -H "(dba) Get-AllServerCollectedData - dbo.log_space_consumers_all_servers" -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.log_space_consumers_all_servers'', @schedule_minutes = 5, @verbose = 0;"', 
 		@flags=40
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'dbo.tempdb_space_usage_all_servers', 
 		@step_id=4, 
+		@cmdexec_success_code=0, 
+		@on_success_action=3, 
+		@on_success_step_id=0, 
+		@on_fail_action=3, 
+		@on_fail_step_id=0, 
+		@retry_attempts=0, 
+		@retry_interval=0, 
+		@os_run_priority=0, @subsystem=N'CmdExec', 
+		@command=N'sqlcmd -E -b -S localhost -H "(dba) Get-AllServerCollectedData - dbo.tempdb_space_usage_all_servers" -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.tempdb_space_usage_all_servers'', @schedule_minutes = 5, @verbose = 0;"', 
+		@flags=40
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'dbo.ag_health_state_all_servers', 
+		@step_id=5, 
 		@cmdexec_success_code=0, 
 		@on_success_action=1, 
 		@on_success_step_id=0, 
@@ -84,7 +98,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'dbo.temp
 		@retry_attempts=0, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'sqlcmd -E -b -S localhost -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.tempdb_space_usage_all_servers'', @schedule_minutes = 5, @verbose = 0;"', 
+		@command=N'sqlcmd -E -b -S localhost -H "(dba) Get-AllServerCollectedData - dbo.ag_health_state_all_servers" -d DBA -Q "EXEC dbo.usp_wrapper_GetAllServerCollectedData @recipients = ''some_dba_mail_id@gmail.com'', @step_name = ''dbo.ag_health_state_all_servers'', @schedule_minutes = 1, @verbose = 0, @truncate_table = 1, @has_staging_table = 1;"', 
 		@flags=40
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1

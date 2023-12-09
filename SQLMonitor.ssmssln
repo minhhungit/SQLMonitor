@@ -29,6 +29,8 @@ Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "z__POC__z", "z__POC__z\z__P
 EndProject
 Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Sql-Queries-Work", "Sql-Queries-Work\Sql-Queries-Work.ssmssqlproj", "{71007107-7371-4FA7-9510-357C3738812B}"
 EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Work-SOC-Project", "Work-SOC-Project\Work-SOC-Project.ssmssqlproj", "{BB731120-D924-4882-BF4A-54C0DA7FF385}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Default = Default|Default
@@ -46,8 +48,9 @@ Global
 		{AC9DE31A-9BFE-4040-9913-8B2546A2730D}.Default|Default.ActiveCfg = Default
 		{719D9F57-63FF-4A99-870B-BAC8B25845E2}.Default|Default.ActiveCfg = Default
 		{DDEB4AE5-E859-4681-8FCF-078C2BE3D244}.Default|Default.ActiveCfg = Default
-		{93073FD2-E416-41F1-8DBD-FF9C9FBB43B8}.Default|Default.ActiveCfg = Default
 		{71007107-7371-4FA7-9510-357C3738812B}.Default|Default.ActiveCfg = Default
+		{E8804972-4FF6-46F5-B4D3-E914D2341503}.Default|Default.ActiveCfg = Default
+		{BB731120-D924-4882-BF4A-54C0DA7FF385}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

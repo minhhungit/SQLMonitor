@@ -1,8 +1,8 @@
 USE [msdb]
 GO
 
-if exists (select * from msdb.dbo.sysjobs_view where name = N'(dba) Update-SqlServerVersions') and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
-	EXEC msdb.dbo.sp_delete_job @job_name=N'(dba) Update-SqlServerVersions', @delete_unused_schedule=1
+if exists (select * from msdb.dbo.sysjobs_view where name = N'(dba) Run-Blitz')
+	EXEC msdb.dbo.sp_delete_job @job_name=N'(dba) Run-Blitz', @delete_unused_schedule=1
 GO
 
 BEGIN TRANSACTION
@@ -17,49 +17,41 @@ IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 END
 
 DECLARE @jobId BINARY(16)
-EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'(dba) Update-SqlServerVersions', 
+EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'(dba) Run-Blitz', 
 		@enabled=1, 
 		@notify_level_eventlog=0, 
 		@notify_level_email=0, 
 		@notify_level_netsend=0, 
 		@notify_level_page=0, 
 		@delete_level=0, 
-		@description=N'This job fetches script "https://raw.githubusercontent.com/BrentOzarULTD/SQL-Server-First-Responder-Kit/dev/SqlServerVersions.sql", and updates table [master].[dbo].[SqlServerVersions]
-
-https://ajaydwivedi.com/github/sqlmonitor', 
+		@description=N'Capture Overall Server Health Checks', 
 		@category_name=N'(dba) SQLMonitor', 
 		--@owner_login_name=N'sa', 
 		@job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
-EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Update-SqlServerVersions', 
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'sp_Blitz', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
 		@on_success_action=1, 
 		@on_success_step_id=0, 
 		@on_fail_action=2, 
 		@on_fail_step_id=0, 
-		@retry_attempts=2, 
-		@retry_interval=1, 
+		@retry_attempts=0, 
+		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'powershell.exe -executionpolicy bypass -Noninteractive C:\SQLMonitor\sqlserver-versions-update.ps1 -SqlInstance localhost -ErrorAction Stop', 
-		@flags=40
+		@command=N'sqlcmd -E -b -S localhost -H "(dba) Run-Blitz" -d DBA -Q "EXEC master.dbo.sp_Blitz @CheckUserDatabaseObjects = 1, @BringThePain = 1, @CheckServerInfo = 1, @OutputDatabaseName = ''DBA'', @OutputSchemaName = ''dbo'', @OutputTableName = ''Blitz'';"', 
+		@flags=8
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'(dba) Update-SqlServerVersions', 
+EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'(dba) Run-Blitz', 
 		@enabled=1, 
 		@freq_type=8, 
-		@freq_interval=40, 
-		@freq_subday_type=1, 
-		@freq_subday_interval=0, 
-		@freq_relative_interval=0, 
+		@freq_interval=32, 
 		@freq_recurrence_factor=1, 
-		@active_start_date=20220515, 
-		@active_end_date=99991231, 
-		@active_start_time=0, 
-		@active_end_time=235959
-		--@schedule_uid=N'30731c94-4aee-486b-a86f-d609ec3af51c'
+		@active_start_time=220000
+		--,@schedule_uid=N'cc775d0e-ad80-4318-8894-c58fedcdabb4'
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_add_jobserver @job_id = @jobId, @server_name = N'(local)'
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
@@ -70,6 +62,10 @@ QuitWithRollback:
 EndSave:
 GO
 
-IF APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
-	EXEC msdb.dbo.sp_start_job @job_name=N'(dba) Update-SqlServerVersions';
+--exec master.dbo.sp_Blitz @CheckUserDatabaseObjects = 0, @BringThePain = 0, @CheckServerInfo = 1, @OutputDatabaseName = 'DBA', @OutputSchemaName = 'dbo', @OutputTableName = 'Blitz';
 GO
+
+-- Executing this job caused delay in deployment of SQLMonitor.
+EXEC msdb.dbo.sp_start_job @job_name=N'(dba) Run-Blitz'
+GO
+

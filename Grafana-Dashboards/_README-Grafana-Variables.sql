@@ -32,6 +32,9 @@ d/disk_space?var-server=${server}&var-database=${__data.fields.database_name}&vi
 
 https://ajaydwivedi.ddns.net:3000/d/disk_space/t-disk-space?orgId=1&var-sqlmonitor_datasource=ygPVA4snk&var-server=21L-LTPABL-1187&var-inventory_db=DBA&var-is_local=1&var-dba_db=DBA&var-perfmon_host_name=21L-LTPABL-1187&var-host_name=21L-LTPABL-1187&var-ip=192.168.1.5&var-fqdn=WORKGROUP&var-diskspace_table_name=dbo.vw_disk_space&var-diskspace_collection_time_utc=1693558809487&var-sql_schedulers=8&var-sqlserver_start_time_utc=1693547309393&var-disk_drive=__All__&var-database=DBA&var-fileiostats_table_name=dbo.file_io_stats&var-fileiostats_collection_time_utc=1693559401279&viewPanel=30
 
+d/job_activity_monitor/monitoring-live-all-servers-job-activity-monitor?orgId=1&viewPanel=2&var-server=${__data.fields.sql_instance}&var-last_outcome=Canceled
+d/job_activity_monitor/monitoring-live-all-servers-job-activity-monitor?orgId=1&viewPanel=2&var-server=${__data.fields.sql_instance}&var-status=Running
+d/job_activity_monitor/monitoring-live-all-servers-job-activity-monitor?orgId=1&viewPanel=2&var-server=${__data.fields.sql_instance}&var-failure_pct=50
 
 Data Links - WaitType
 https://www.sqlskills.com/help/waits/${__value.raw}

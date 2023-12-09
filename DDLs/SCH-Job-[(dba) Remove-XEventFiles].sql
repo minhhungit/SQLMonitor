@@ -43,7 +43,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Remove-X
 		@retry_attempts=1, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'powershell.exe -executionpolicy bypass -Noninteractive C:\SQLMonitor\xevents-remove-processed-files.ps1 -SqlInstance localhost -Database DBA', 
+		@command=N'powershell.exe -executionpolicy bypass -Noninteractive C:\SQLMonitor\xevents-remove-processed-files.ps1 -SqlInstance localhost -Database DBA -ErrorAction Stop', 
 		@flags=40
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1

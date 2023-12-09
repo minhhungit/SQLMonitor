@@ -1140,7 +1140,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -1254,8 +1254,8 @@
       {
         "current": {
           "selected": false,
-          "text": "fe80::cab1:7f0e:21bd:3ed6%14",
-          "value": "fe80::cab1:7f0e:21bd:3ed6%14"
+          "text": "192.168.1.5",
+          "value": "192.168.1.5"
         },
         "datasource": {
           "type": "mssql",
@@ -1302,8 +1302,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693488660000",
-          "value": "1693488660000"
+          "text": "1701855420000",
+          "value": "1701855420000"
         },
         "datasource": {
           "type": "mssql",
@@ -1350,8 +1350,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693491909080",
-          "value": "1693491909080"
+          "text": "1699988499467",
+          "value": "1699988499467"
         },
         "datasource": {
           "type": "mssql",
@@ -1555,7 +1555,7 @@
       },
       {
         "hide": 2,
-        "label": "BlitzIndex Table",
+        "label": "BlitzIndex_Mode0 Table",
         "name": "blitzindex_mode0_table_name",
         "query": "dbo.BlitzIndex_Mode0",
         "skipUrlSync": false,
@@ -1563,7 +1563,7 @@
       },
       {
         "hide": 2,
-        "label": "BlitzIndex Table",
+        "label": "BlitzIndex_Mode1 Table",
         "name": "blitzindex_mode1_table_name",
         "query": "dbo.BlitzIndex_Mode1",
         "skipUrlSync": false,
@@ -1571,7 +1571,7 @@
       },
       {
         "hide": 2,
-        "label": "BlitzIndex Table",
+        "label": "BlitzIndex_Mode4 Table",
         "name": "blitzindex_mode4_table_name",
         "query": "dbo.BlitzIndex_Mode4",
         "skipUrlSync": false,
@@ -1595,6 +1595,6 @@
   "timezone": "",
   "title": "t___BlitzIndex_Analysis",
   "uid": "PkaYSnOVk",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }
