@@ -809,7 +809,7 @@ order by pc.collection_time_utc desc
                 $resultPerfmonRecord += Invoke-DbaQuery -SqlInstance $conSqlInstanceAsDataDestination -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
             }
             catch {
-                $errMessage = $_.Message
+                $errMessage = $_.Exception.Message
                 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Error in retrieving details from dbo.performance_counters table of server [$SqlInstanceAsDataDestination]."
                 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "$errMessage"
             }

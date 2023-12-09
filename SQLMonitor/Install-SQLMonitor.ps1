@@ -739,8 +739,6 @@ if([String]::IsNullOrEmpty($domain)) {
     }
 }
 
-Write-Debug "Get dbo.instance_details info"
-
 # Get dbo.instance_details info
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetching info from [dbo].[instance_details].."
 $instanceDetails = @()
@@ -4799,7 +4797,18 @@ go
 # Update SQLMonitor Jobs Thresholds
 if($UpdateSQLAgentJobsThreshold) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor jobs thresholds on [$SqlInstanceToBaseline]..[sql_agent_job_thresholds] using '$UpdateSQLAgentJobsThresholdFileName'.." | Write-Host -ForegroundColor Cyan
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
+    try {
+        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
+    }
+    catch {
+        Write-Debug "Inside catch block"
+        $errMessage = $_.Exception.Message
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
+        if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure SQLAgent job [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
+        }
+        "STOP here, and fix above issue." | Write-Error
+    }
 }
 
 
