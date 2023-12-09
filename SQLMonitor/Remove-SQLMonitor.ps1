@@ -805,7 +805,14 @@ where pc.collection_time_utc >= DATEADD(minute,-20,GETUTCDATE()) and host_name =
 order by pc.collection_time_utc desc
 "@
             $resultPerfmonRecord = @()
-            $resultPerfmonRecord += Invoke-DbaQuery -SqlInstance $conSqlInstanceAsDataDestination -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
+            try {
+                $resultPerfmonRecord += Invoke-DbaQuery -SqlInstance $conSqlInstanceAsDataDestination -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
+            }
+            catch {
+                $errMessage = $_.Message
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Error in retrieving details from dbo.performance_counters table of server [$SqlInstanceAsDataDestination]."
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "$errMessage"
+            }
             if($resultPerfmonRecord.Count -eq 0) {
                 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "No Perfmon data record found for last 20 minutes for host [$HostName] on [$SqlInstanceAsDataDestination]."
             }
