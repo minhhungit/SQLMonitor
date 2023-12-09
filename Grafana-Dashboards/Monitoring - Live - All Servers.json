@@ -1624,8 +1624,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1662,8 +1661,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue",
-                          "value": null
+                          "color": "blue"
                         }
                       ]
                     }
@@ -1703,8 +1701,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-blue",
-                          "value": null
+                          "color": "super-light-blue"
                         }
                       ]
                     }
@@ -1871,8 +1868,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -1924,8 +1920,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-purple",
-                          "value": null
+                          "color": "super-light-purple"
                         }
                       ]
                     }
@@ -3370,7 +3365,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 7
           },
           "id": 856,
           "options": {
@@ -3868,7 +3863,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 14
+            "y": 8
           },
           "id": 860,
           "options": {
@@ -4806,7 +4801,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "20",
           "value": "20"
         },
@@ -4878,6 +4873,7 @@
           "text": "Yes",
           "value": "Yes"
         },
+        "description": "When yes, log space threshold won't be considered. Rather threshold are used based on server level LogSaver jobs",
         "hide": 0,
         "includeAll": false,
         "label": "Pre Validated Logs",
@@ -4906,6 +4902,7 @@
           "text": "70",
           "value": "70"
         },
+        "description": "Effective only when {Pre Validated Logs} is NO",
         "hide": 0,
         "includeAll": false,
         "label": "Log Used %",
@@ -4954,6 +4951,7 @@
           "text": "20",
           "value": "20"
         },
+        "description": "Effective only when {Pre Validated Logs} is NO",
         "hide": 0,
         "includeAll": false,
         "label": "Log Used Gb",
@@ -5247,6 +5245,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - All Servers",
   "uid": "distributed_live_dashboard_all_servers",
-  "version": 89,
+  "version": 91,
   "weekStart": ""
 }
