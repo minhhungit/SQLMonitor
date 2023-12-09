@@ -718,8 +718,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -734,7 +733,6 @@
           },
           "id": 2,
           "options": {
-            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -746,7 +744,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "10.1.0",
+          "pluginVersion": "9.2.2",
           "targets": [
             {
               "datasource": {
@@ -789,7 +787,10 @@
   "revision": 1,
   "schemaVersion": 38,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "mssql",
+    "sqlmonitor"
+  ],
   "templating": {
     "list": [
       {
@@ -861,8 +862,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1701930300940",
-          "value": "1701930300940"
+          "text": "1702105500956",
+          "value": "1702105500956"
         },
         "datasource": {
           "type": "mssql",
@@ -1453,6 +1454,6 @@
   "timezone": "",
   "title": "Monitoring - Live - All Servers - Job Activity Monitor",
   "uid": "job_activity_monitor",
-  "version": 8,
+  "version": 12,
   "weekStart": ""
 }
