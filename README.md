@@ -13,10 +13,10 @@ Navigation
     - [Jobs for SQLMonitor](#jobs-for-sqlmonitor)
     - [Download SQLMonitor](#download-sqlmonitor)
     - [Execute Wrapper Script](#execute-wrapper-script)
-    - [Below is sample code present in `Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1`](#below-is-sample-code-present-in-wrapper-sampleswrapper-installsqlmonitorps1)
+      - [Below is sample code present in `Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1`](#below-is-sample-code-present-in-wrapper-sampleswrapper-installsqlmonitorps1)
     - [Setup Grafana Dashboards](#setup-grafana-dashboards)
   - [Remove SQLMonitor](#remove-sqlmonitor)
-    - [Below is sample code present in `Wrapper-Samples/Wrapper-RemoveSQLMonitor.ps1`](#below-is-sample-code-present-in-wrapper-sampleswrapper-removesqlmonitorps1)
+      - [Below is sample code present in `Wrapper-Samples/Wrapper-RemoveSQLMonitor.ps1`](#below-is-sample-code-present-in-wrapper-sampleswrapper-removesqlmonitorps1)
   - [Support](#support)
   - [Related Links](#related-links)
 
@@ -119,10 +119,10 @@ If the local SQLMonitor repo folder already exists, simply pull the latest from 
 Create a directory named Private inside SQLMonitor, and copy the scripts of `SQLMonitor\Wrapper-Samples\` into `SQLMonitor\Private\` folder.
 Open the script `D:\Ajay-Dwivedi\GitHub-Personal\SQLMonitor\Private\Wrapper-InstallSQLMonitor.ps1`. Replace the appropriate values for parameters, and execute the script.
 
+#### Below is sample code present in `Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1`
+
 <details>
 <summary>Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1</summary>
-
-### Below is sample code present in `Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1`
 
 ```Wrapper-InstallSQLMonitor
 
@@ -311,11 +311,10 @@ Ensure that all scripts from folder `\SQLMonitor\Wrapper-Samples\` are copied in
 
 Open script `D:\Ajay-Dwivedi\GitHub-Personal\SQLMonitor\Private\Wrapper-RemoveSQLMonitor.ps1`. Replace the appropriate values for parameters, and execute the script.
 
+#### Below is sample code present in `Wrapper-Samples/Wrapper-RemoveSQLMonitor.ps1`
 
 <details>
 <summary>Wrapper-Samples/Wrapper-RemoveSQLMonitor.ps1</summary>
-
-### Below is sample code present in `Wrapper-Samples/Wrapper-RemoveSQLMonitor.ps1`
 
 ```Wrapper-RemoveSQLMonitor
 
