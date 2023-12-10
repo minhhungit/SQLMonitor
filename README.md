@@ -72,6 +72,10 @@ For both OS metrics & SQL metric, SQL Agent jobs are used as schedulers. Each jo
 
 Following are few of the SQLMonitor data collection jobs. Each of these jobs is set to `(dba) SQLMonitor` job category along with fixed naming convention of `(dba) *********`.
 
+<details>
+
+<summary> SQLAgent Jobs Created by SQLMonitor </summary>
+
 | Job Name                          | Job Category     | Schedule         | Job Type   | Location               |
 | ---------------------------------:|:----------------:|:----------------:|:----------:|:----------------------:|
 | (dba) Check-InstanceAvailability  | (dba) SQLMonitor | Every 1 minute   | PowerShell | Inventory Server       |
@@ -99,9 +103,12 @@ Following are few of the SQLMonitor data collection jobs. Each of these jobs is 
 | (dba) Run-WhoIsActive             | (dba) SQLMonitor | Every 2 minute   | TSQL       | Tsql Jobs Server       |
 
 ----
+
 `PowerShell Jobs Server` can be same SQL Instance that is being baselined, or some other server in same Cluster network, or some some other server in same network, or even Inventory Server.
 
 `Tsql Jobs Server` can be same SQL Instance that is being baselined, or some other server in same Cluster network, or some some other server in same network, or even Inventory Server.
+
+</details>
 
 ### Download SQLMonitor
 Download SQLMonitor repository on your central server from where you deploy your scripts on all other servers. Say, after closing SQLMonitor, our local repo directory is `D:\Ajay-Dwivedi\GitHub-Personal\SQLMonitor`.
@@ -285,6 +292,7 @@ Get-ChildItem C:\SQLMonitor -Recurse -File | Unblock-File -Verbose
 ```
 </details>
 
+----
 
 > [!IMPORTANT]
 > To get a better understand of SQLMonitor installation, I would recommend to watch [YouTube Playlist](https://ajaydwivedi.com/youtube/sqlmonitor) [https://ajaydwivedi.com/youtube/sqlmonitor](https://ajaydwivedi.com/youtube/sqlmonitor).
