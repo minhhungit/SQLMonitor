@@ -13,9 +13,10 @@ Navigation
     - [Jobs for SQLMonitor](#jobs-for-sqlmonitor)
     - [Download SQLMonitor](#download-sqlmonitor)
     - [Execute Wrapper Script](#execute-wrapper-script)
-  - [Below is sample code present in `Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1`](#below-is-sample-code-present-in-wrapper-sampleswrapper-installsqlmonitorps1)
+    - [Below is sample code present in `Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1`](#below-is-sample-code-present-in-wrapper-sampleswrapper-installsqlmonitorps1)
     - [Setup Grafana Dashboards](#setup-grafana-dashboards)
   - [Remove SQLMonitor](#remove-sqlmonitor)
+    - [Below is sample code present in `Wrapper-Samples/Wrapper-RemoveSQLMonitor.ps1`](#below-is-sample-code-present-in-wrapper-sampleswrapper-removesqlmonitorps1)
   - [Support](#support)
   - [Related Links](#related-links)
 
@@ -113,8 +114,11 @@ Open the script `D:\Ajay-Dwivedi\GitHub-Personal\SQLMonitor\Private\Wrapper-Inst
 
 <details>
 <summary>Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1</summary>
-## Below is sample code present in `Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1`
-```
+
+### Below is sample code present in `Wrapper-Samples/Wrapper-InstallSQLMonitor.ps1`
+
+```Wrapper-InstallSQLMonitor
+
 #$DomainCredential = Get-Credential -UserName 'Lab\SQLServices' -Message 'AD Account'
 #$saAdmin = Get-Credential -UserName 'sa' -Message 'sa'
 #$localAdmin = Get-Credential -UserName 'Administrator' -Message 'Local Admin'
@@ -181,6 +185,7 @@ $params = @{
     #XEventDirectory = 'D:\MSSQL15.MSSQLSERVER\XEvents\'
     #JobsExecutionWaitTimeoutMinutes = 15
 }
+
 
 #$preSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'sqlagentservice@gmail.com', @drop_recreate = 1"
 #$postSQL = Get-Content "D:\GitHub-Personal\SQLMonitor\DDLs\Update-SQLAgentJobsThreshold.sql"
@@ -276,71 +281,14 @@ Get-ChildItem C:\SQLMonitor -Recurse -File | Unblock-File -Verbose
 2) Performance Log Users
 3) Performance Monitor Users
 #>
+
 ```
 </details>
 
-To get a better understand of SQLMonitor installation, I would recommend to watch YouTube Playlist [https://ajaydwivedi.com/youtube/sqlmonitor](https://ajaydwivedi.com/youtube/sqlmonitor).
 
-```
-#$DomainCredential = Get-Credential -UserName 'Lab\SQLServices' -Message 'AD Account'
-#$personal = Get-Credential -UserName 'sa' -Message 'sa'
-#$localAdmin = Get-Credential -UserName 'Administrator' -Message 'Local Admin'
+> [!IMPORTANT]
+> To get a better understand of SQLMonitor installation, I would recommend to watch [YouTube Playlist](https://ajaydwivedi.com/youtube/sqlmonitor) [https://ajaydwivedi.com/youtube/sqlmonitor](https://ajaydwivedi.com/youtube/sqlmonitor).
 
-cls
-import-module dbatools
-$params = @{
-    SqlInstanceToBaseline = 'Workstation'
-    DbaDatabase = 'DBA'
-    #HostName = 'Workstation'
-    #RetentionDays = 7
-    DbaToolsFolderPath = 'F:\GitHub\dbatools'
-    RemoteSQLMonitorPath = 'C:\SQLMonitor'
-    InventoryServer = 'SQLMonitor'
-    InventoryDatabase = 'DBA'
-    DbaGroupMailId = 'some_dba_mail_id@gmail.com'
-    #SqlCredential = $personal
-    #WindowsCredential = $DomainCredential
-    #SkipSteps = @("21__CreateJobRemoveXEventFiles")
-    #StartAtStep = '1__sp_WhoIsActive'
-    #StopAtStep = '28__AlterViewsForDataDestinationInstance'
-    #DropCreatePowerShellJobs = $true
-    #DryRun = $false
-    #SkipRDPSessionSteps = $true
-    #SkipPowerShellJobs = $true
-    #SkipTsqlJobs = $true
-    #SkipMailProfileCheck = $true
-    #skipCollationCheck = $true
-    #SkipWindowsAdminAccessTest = $true
-    #SqlInstanceAsDataDestination = 'Workstation'
-    #SqlInstanceForPowershellJobs = 'Workstation'
-    #SqlInstanceForTsqlJobs = 'Workstation'
-    #ConfirmValidationOfMultiInstance = $true
-}
-D:\Ajay-Dwivedi\GitHub-Personal\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params
-
-#Copy-DbaDbMail -Source 'SomeSourceInstance' -Destination 'SomeDestinationInstance' -SourceSqlCredential $personal -DestinationSqlCredential $personal
-<#
-
-Enable-PSRemoting -Force # run on remote machine
-Set-Item WSMAN:\Localhost\Client\TrustedHosts -Value * -Force # run on local machine
-Set-Item WSMAN:\Localhost\Client\TrustedHosts -Value InventoryServerIP -Force
-#Set-NetConnectionProfile -NetworkCategory Private # Execute this only if above command fails
-
-Enter-PSSession -ComputerName 'SqlInstanceToBaseline' -Credential $localAdmin -Authentication Negotiate
-Test-WSMan 'SqlInstanceToBaseline' -Credential $localAdmin -Authentication Negotiate
-
-#>
-```
-
-Below are some key highlight of above code:
-
-`Line` 1-> Enable/use this variable when the `SqlInstanceToBaseline`  is not in same domain as inventory server (server from where these scripts are being executed). In this line, we are creating/saving credentials that could take RDP to SqlInstanceToBaseline .
-
-`Line 2`-> Enable/use this variable when the `SqlInstanceToBaseline`  is not in same domain as inventory server (server from where these scripts are being executed). In this line, we are creating/saving credentials that could execute elevated SQL Queries against `SqlInstanceToBaseline`.
-
-`Line 3`-> Enable/use this variable when the `SqlInstanceToBaseline`  is not joined to any domain. In this line, we are creating/saving credentials that could take RDP to SqlInstanceToBaseline.
-
-`Lines 7-45` → These are the parameters for function `Install-SQLMonitor`. Enable/use them based on the requirement of various behavior of function. For example, when target server belongs different domain, then SqlCredential & WindowsCredential parameters can be utilized.
 
 ### Setup Grafana Dashboards
 Download Grafana which is open source visualization tool. Install & configure same.
@@ -354,6 +302,74 @@ Similar to `Wrapper-InstallSQLMonitor`, we have `Wrapper-RemoveSQLMonitor` that 
 Ensure that all scripts from folder `\SQLMonitor\Wrapper-Samples\` are copied into `\SQLMonitor\Private\` folder.
 
 Open script `D:\Ajay-Dwivedi\GitHub-Personal\SQLMonitor\Private\Wrapper-RemoveSQLMonitor.ps1`. Replace the appropriate values for parameters, and execute the script.
+
+
+<details>
+<summary>Wrapper-Samples/Wrapper-RemoveSQLMonitor.ps1</summary>
+
+### Below is sample code present in `Wrapper-Samples/Wrapper-RemoveSQLMonitor.ps1`
+
+```Wrapper-RemoveSQLMonitor
+
+#$DomainCredential = Get-Credential -UserName 'Lab\SQLServices' -Message 'AD Account'
+#$saAdmin = Get-Credential -UserName 'sa' -Message 'sa'
+#$localAdmin = Get-Credential -UserName 'Administrator' -Message 'Local Admin'
+
+cls
+Import-Module dbatools;
+$params = @{
+    SqlInstanceToBaseline = 'Experiment'
+    #DbaDatabase = 'DBA'
+    #HostName = 'Experiment'
+    InventoryServer = 'SQLMonitor'
+    InventoryDatabase = 'DBA'
+    #RemoteSQLMonitorPath = 'C:\SQLMonitor'
+    #SqlCredential = $saAdmin
+    #WindowsCredential = $localAdmin
+    #SkipRDPSessionSteps = $true
+    #SkipSteps = @("43__RemovePerfmonFilesFromDisk")    
+    #StartAtStep = '30__DropLogin_Grafana'
+    #StopAtStep = '11__RemoveJob_RunBlitzIndex'
+    #SqlInstanceForTsqlJobs = 'Experiment\SQL2019'
+    #SqlInstanceAsDataDestination = 'Experiment\SQL2019'
+    #SqlInstanceForPowershellJobs = 'Experiment\SQL2019'
+    SkipDropTable = $true
+    #SkipRemoveJob = $true
+    #SkipDropProc = $true
+    #SkipDropView = $true
+    #ConfirmValidationOfMultiInstance = $true
+    #ActionType = "Update"
+    #OnlySteps = @("16__RemoveJob_RunBlitz","70__DropTable_Blitz")
+    #DryRun = $false
+}
+
+#$preSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'sqlagentservice@gmail.com', @drop_recreate = 1"
+#$postSQL = Get-Content "D:\GitHub-Personal\SQLMonitor\DDLs\Update-SQLAgentJobsThreshold.sql"
+#D:\GitHub\SQLMonitor\SQLMonitor\Remove-SQLMonitor.ps1 @Params #-Debug -PreQuery $preSQL -PostQuery $postSQL
+D:\GitHub\SQLMonitor\SQLMonitor\Remove-SQLMonitor.ps1 @Params
+
+
+#Get-DbaDbMailProfile -SqlInstance '192.168.56.31' -SqlCredential $personalCredential
+#Copy-DbaDbMail -Source '192.168.56.15' -Destination '192.168.56.31' -SourceSqlCredential $personalCredential -DestinationSqlCredential $personalCredential # Lab
+#New-DbaCredential -SqlInstance 'xy' -Identity $LabCredential.UserName -SecurePassword $LabCredential.Password -Force # -SqlCredential $SqlCredential -EnableException
+#New-DbaAgentProxy -SqlInstance 'xy' -Name $LabCredential.UserName -ProxyCredential $LabCredential.UserName -SubSystem PowerShell,CmdExec
+<#
+
+Enable-PSRemoting -Force # run on remote machine
+Set-Item WSMAN:\Localhost\Client\TrustedHosts -Value * -Force # run on local machine
+Set-Item WSMAN:\Localhost\Client\TrustedHosts -Value 192.168.56.15 -Force
+#Set-NetConnectionProfile -NetworkCategory Private # Execute this only if above command fails
+
+Enter-PSSession -ComputerName '192.168.56.31' -Credential $localAdmin -Authentication Negotiate
+Test-WSMan '192.168.56.31' -Credential $localAdmin -Authentication Negotiate
+
+#>
+
+
+```
+</details>
+
+
 
 ## Support
 
