@@ -61,8 +61,10 @@ Param (
                 "82__DropTable_AllServerVolatileInfo", "83__DropTable_AllServerStableInfo", "84__DropTable_DiskSpaceAllServersStaging",
                 "85__DropTable_DiskSpaceAllServers", "86__DropTable_LogSpaceConsumersAllServers", "87__DropTable_LogSpaceConsumersAllServersStaging",
                 "88__DropTable_SqlAgentJobsAllServers", "89__DropTable_SqlAgentJobsAllServersStaging", "90__DropTable_TempdbSpaceUsageAllServers",
-                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk",
-                "94__DropProxy", "95__DropCredential", "96__RemoveInstanceFromInventory")]
+                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__DropTable_AgHealthStateAllServers", "93__DropTable_AgHealthStateAllServersStaging",
+                "94__DropTable_AllServerVolatileInfoHistory", "95__DropTable_DiskSpaceAllServersStaging", "96__RemovePerfmonFilesFromDisk",
+                "97__RemoveXEventFilesFromDisk", "98__DropProxy", "99__DropCredential",
+                "100__RemoveInstanceFromInventory")]
     [String[]]$OnlySteps,
 
     [Parameter(Mandatory=$false)]
@@ -96,8 +98,10 @@ Param (
                 "82__DropTable_AllServerVolatileInfo", "83__DropTable_AllServerStableInfo", "84__DropTable_DiskSpaceAllServersStaging",
                 "85__DropTable_DiskSpaceAllServers", "86__DropTable_LogSpaceConsumersAllServers", "87__DropTable_LogSpaceConsumersAllServersStaging",
                 "88__DropTable_SqlAgentJobsAllServers", "89__DropTable_SqlAgentJobsAllServersStaging", "90__DropTable_TempdbSpaceUsageAllServers",
-                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk",
-                "94__DropProxy", "95__DropCredential", "96__RemoveInstanceFromInventory")]
+                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__DropTable_AgHealthStateAllServers", "93__DropTable_AgHealthStateAllServersStaging",
+                "94__DropTable_AllServerVolatileInfoHistory", "95__DropTable_DiskSpaceAllServersStaging", "96__RemovePerfmonFilesFromDisk",
+                "97__RemoveXEventFilesFromDisk", "98__DropProxy", "99__DropCredential",
+                "100__RemoveInstanceFromInventory")]
     [String]$StartAtStep = "1__RemoveJob_CheckSQLAgentJobs",
 
     [Parameter(Mandatory=$false)]
@@ -131,8 +135,10 @@ Param (
                 "82__DropTable_AllServerVolatileInfo", "83__DropTable_AllServerStableInfo", "84__DropTable_DiskSpaceAllServersStaging",
                 "85__DropTable_DiskSpaceAllServers", "86__DropTable_LogSpaceConsumersAllServers", "87__DropTable_LogSpaceConsumersAllServersStaging",
                 "88__DropTable_SqlAgentJobsAllServers", "89__DropTable_SqlAgentJobsAllServersStaging", "90__DropTable_TempdbSpaceUsageAllServers",
-                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk",
-                "94__DropProxy", "95__DropCredential", "96__RemoveInstanceFromInventory")]
+                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__DropTable_AgHealthStateAllServers", "93__DropTable_AgHealthStateAllServersStaging",
+                "94__DropTable_AllServerVolatileInfoHistory", "95__DropTable_DiskSpaceAllServersStaging", "96__RemovePerfmonFilesFromDisk",
+                "97__RemoveXEventFilesFromDisk", "98__DropProxy", "99__DropCredential",
+                "100__RemoveInstanceFromInventory")]
     [String[]]$SkipSteps,
 
     [Parameter(Mandatory=$false)]
@@ -166,8 +172,10 @@ Param (
                 "82__DropTable_AllServerVolatileInfo", "83__DropTable_AllServerStableInfo", "84__DropTable_DiskSpaceAllServersStaging",
                 "85__DropTable_DiskSpaceAllServers", "86__DropTable_LogSpaceConsumersAllServers", "87__DropTable_LogSpaceConsumersAllServersStaging",
                 "88__DropTable_SqlAgentJobsAllServers", "89__DropTable_SqlAgentJobsAllServersStaging", "90__DropTable_TempdbSpaceUsageAllServers",
-                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk",
-                "94__DropProxy", "95__DropCredential", "96__RemoveInstanceFromInventory")]
+                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__DropTable_AgHealthStateAllServers", "93__DropTable_AgHealthStateAllServersStaging",
+                "94__DropTable_AllServerVolatileInfoHistory", "95__DropTable_DiskSpaceAllServersStaging", "96__RemovePerfmonFilesFromDisk",
+                "97__RemoveXEventFilesFromDisk", "98__DropProxy", "99__DropCredential",
+                "100__RemoveInstanceFromInventory")]
     [String]$StopAtStep,
 
     [Parameter(Mandatory=$false)]
@@ -260,8 +268,10 @@ $AllSteps = @(  "1__RemoveJob_CheckSQLAgentJobs", "2__RemoveJob_CollectAgHealthS
                 "82__DropTable_AllServerVolatileInfo", "83__DropTable_AllServerStableInfo", "84__DropTable_DiskSpaceAllServersStaging",
                 "85__DropTable_DiskSpaceAllServers", "86__DropTable_LogSpaceConsumersAllServers", "87__DropTable_LogSpaceConsumersAllServersStaging",
                 "88__DropTable_SqlAgentJobsAllServers", "89__DropTable_SqlAgentJobsAllServersStaging", "90__DropTable_TempdbSpaceUsageAllServers",
-                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk",
-                "94__DropProxy", "95__DropCredential", "96__RemoveInstanceFromInventory"
+                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__DropTable_AgHealthStateAllServers", "93__DropTable_AgHealthStateAllServersStaging",
+                "94__DropTable_AllServerVolatileInfoHistory", "95__DropTable_DiskSpaceAllServersStaging", "96__RemovePerfmonFilesFromDisk",
+                "97__RemoveXEventFilesFromDisk", "98__DropProxy", "99__DropCredential",
+                "100__RemoveInstanceFromInventory"
                 )
 
 # TSQL Jobs
@@ -279,7 +289,7 @@ $PowerShellJobSteps = @(
                 "19__RemoveJob_UpdateSqlServerVersions", "20__RemoveJob_CheckInstanceAvailability")
 
 # RDPSessionSteps
-$RDPSessionSteps = @("92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk")
+$RDPSessionSteps = @("96__RemovePerfmonFilesFromDisk", "97__RemoveXEventFilesFromDisk")
 
 # For "Update" operation, Parameter OnlySteps is mandatory
 if ($ActionType -eq 'Update' -and $OnlySteps.Count -eq 0) {
@@ -5418,9 +5428,164 @@ else
 }
 
 
+# 92__DropTable_AgHealthStateAllServers
+$stepName = '92__DropTable_AgHealthStateAllServers'
+if($stepName -in $Steps2Execute) {
+    $objName = 'ag_health_state_all_servers'
+    $objType = 'table'
+    $objTypeTitleCase = (Get-Culture).TextInfo.ToTitleCase("$objType")
 
-# 92__RemovePerfmonFilesFromDisk
-$stepName = '92__RemovePerfmonFilesFromDisk'
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
+    if($DryRun) {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'DRY RUN:', "Find & remove $objType '$objName'.."
+    }
+    else {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO', "Find & remove $objType '$objName'.."
+    }
+        
+    $sqlRemoveObject = @"
+if exists (select * from sys.objects where is_ms_shipped= 0 and name = N'$objName')
+begin
+	$(if($DryRun){'--'})DROP TABLE [dbo].[$objName]
+    select 1 as object_exists;
+end
+else
+    select 0 as object_exists;
+"@
+    $resultRemoveObject = @()
+    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    if($resultRemoveObject.Count -gt 0) 
+    {
+        $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
+        if($result -eq 1) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "$objTypeTitleCase '$objName' found and removed."
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "$objTypeTitleCase '$objName' not found."
+        }
+    }
+}
+
+
+# 93__DropTable_AgHealthStateAllServersStaging
+$stepName = '93__DropTable_AgHealthStateAllServersStaging'
+if($stepName -in $Steps2Execute) {
+    $objName = 'ag_health_state_all_servers__staging'
+    $objType = 'table'
+    $objTypeTitleCase = (Get-Culture).TextInfo.ToTitleCase("$objType")
+
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
+    if($DryRun) {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'DRY RUN:', "Find & remove $objType '$objName'.."
+    }
+    else {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO', "Find & remove $objType '$objName'.."
+    }
+        
+    $sqlRemoveObject = @"
+if exists (select * from sys.objects where is_ms_shipped= 0 and name = N'$objName')
+begin
+	$(if($DryRun){'--'})DROP TABLE [dbo].[$objName]
+    select 1 as object_exists;
+end
+else
+    select 0 as object_exists;
+"@
+    $resultRemoveObject = @()
+    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    if($resultRemoveObject.Count -gt 0) 
+    {
+        $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
+        if($result -eq 1) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "$objTypeTitleCase '$objName' found and removed."
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "$objTypeTitleCase '$objName' not found."
+        }
+    }
+}
+
+
+# 94__DropTable_AllServerVolatileInfoHistory
+$stepName = '94__DropTable_AllServerVolatileInfoHistory'
+if($stepName -in $Steps2Execute) {
+    $objName = 'all_server_volatile_info_history'
+    $objType = 'table'
+    $objTypeTitleCase = (Get-Culture).TextInfo.ToTitleCase("$objType")
+
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
+    if($DryRun) {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'DRY RUN:', "Find & remove $objType '$objName'.."
+    }
+    else {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO', "Find & remove $objType '$objName'.."
+    }
+        
+    $sqlRemoveObject = @"
+if exists (select * from sys.objects where is_ms_shipped= 0 and name = N'$objName')
+begin
+	$(if($DryRun){'--'})DROP TABLE [dbo].[$objName]
+    select 1 as object_exists;
+end
+else
+    select 0 as object_exists;
+"@
+    $resultRemoveObject = @()
+    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    if($resultRemoveObject.Count -gt 0) 
+    {
+        $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
+        if($result -eq 1) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "$objTypeTitleCase '$objName' found and removed."
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "$objTypeTitleCase '$objName' not found."
+        }
+    }
+}
+
+
+# 95__DropTable_DiskSpaceAllServersStaging
+$stepName = '95__DropTable_DiskSpaceAllServersStaging'
+if($stepName -in $Steps2Execute) {
+    $objName = 'disk_space_all_servers__staging'
+    $objType = 'table'
+    $objTypeTitleCase = (Get-Culture).TextInfo.ToTitleCase("$objType")
+
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
+    if($DryRun) {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'DRY RUN:', "Find & remove $objType '$objName'.."
+    }
+    else {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO', "Find & remove $objType '$objName'.."
+    }
+        
+    $sqlRemoveObject = @"
+if exists (select * from sys.objects where is_ms_shipped= 0 and name = N'$objName')
+begin
+	$(if($DryRun){'--'})DROP TABLE [dbo].[$objName]
+    select 1 as object_exists;
+end
+else
+    select 0 as object_exists;
+"@
+    $resultRemoveObject = @()
+    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    if($resultRemoveObject.Count -gt 0) 
+    {
+        $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
+        if($result -eq 1) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "$objTypeTitleCase '$objName' found and removed."
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "$objTypeTitleCase '$objName' not found."
+        }
+    }
+}
+
+
+# 96__RemovePerfmonFilesFromDisk
+$stepName = '96__RemovePerfmonFilesFromDisk'
 if($stepName -in $Steps2Execute) 
 {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
@@ -5507,8 +5672,8 @@ if($stepName -in $Steps2Execute)
 
 
 
-# 93__RemoveXEventFilesFromDisk
-$stepName = '93__RemoveXEventFilesFromDisk'
+# 97__RemoveXEventFilesFromDisk
+$stepName = '97__RemoveXEventFilesFromDisk'
 if($stepName -in $Steps2Execute) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
 
@@ -5577,16 +5742,16 @@ if($stepName -in $Steps2Execute) {
 }
 
 
-# 94__DropProxy
-$stepName = '94__DropProxy'
+# 98__DropProxy
+$stepName = '98__DropProxy'
 
 
-# 95__DropCredential
-$stepName = '95__DropCredential'
+# 99__DropCredential
+$stepName = '99__DropCredential'
 
 
-# 96__RemoveInstanceFromInventory
-$stepName = '96__RemoveInstanceFromInventory'
+# 100__RemoveInstanceFromInventory
+$stepName = '100__RemoveInstanceFromInventory'
 if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $InventoryServer) -and ($ActionType -eq 'Delete') ) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
 
@@ -5680,14 +5845,24 @@ $timeTaken = New-TimeSpan -Start $startTime -End $(Get-Date)
     Name/IP of SQL Instance where SQLMonitor need to be removed. Instances should be capable of connecting from remove machine SSMS using this name/ip.
     .PARAMETER DbaDatabase
     Name of DBA database where SQLMonitor objects were created while setup.
+    .PARAMETER SqlInstanceAsDataDestination 
+    Name/IP of SQL Instance where SQLMonitor is saving OS level metrics like perfmon, OS Processes.
+    .PARAMETER SqlInstanceForTsqlJobs 
+    Name/IP of SQL Instance where SQLMonitor has created SQLAgent jobs to execute tsql scripts.
+    .PARAMETER SqlInstanceForPowershellJobs 
+    Name/IP of SQL Instance where SQLMonitor has created SQLAgent jobs to execute PowerShell scripts.
     .PARAMETER InventoryServer
     Name/IP of Inventory Server which acts are source for Grafana Dashboards.
+    .PARAMETER InventoryDatabase 
+    Name of inventory database on Inventory server
     .PARAMETER HostName
     Name of host for SqlInstanceToBaseline which has perfmon setup.
     .PARAMETER RemoteSQLMonitorPath
     SQLMonitor folder location where SQLMonitor folder was copied, and hosts perfmon generated files.
     .PARAMETER DataCollectorSetName
     Name of DBA perform data collector set created on server that was baselined. By default, its DBA.
+    .PARAMETER OnlySteps
+    List of steps that should be executed with Remove-SQLMonitor. This is mandatory for parameter ActionType = "Update".
     .PARAMETER StartAtStep
     Starts the baselining automation on this step. If no value provided, then baselining starts with 1st step.
     .PARAMETER SkipSteps
@@ -5706,15 +5881,20 @@ $timeTaken = New-TimeSpan -Start $startTime -End $(Get-Date)
     When enabled, dropped of Views is skipped.
     .PARAMETER SkipRDPSessionSteps
     When enabled, any steps that need OS level interaction is skipped. This includes removal of SQLMonitor folder on remote path, removal of Perfmon Data Collector etc.
+    .PARAMETER ActionType 
+    Default value is 'Delete'. For 'Delete' value, SQLMonitor is removed. With ActionType = 'Update' along with OnlySteps parameter, only specific list of steps can be delete leaving the SQLMonitor baselining intact.
     .PARAMETER SqlCredential
     PowerShell credential object to execute queries any SQL Servers. If no value provided, then connectivity is tried using Windows Integrated Authentication.
     .PARAMETER WindowsCredential
     PowerShell credential object that could be used to perform OS interactives tasks. If no value provided, then connectivity is tried using Windows Integrated Authentication. This is important when [SqlInstanceToBaseline] is not in same domain as current host.
-    
     .PARAMETER ConfirmValidationOfMultiInstance
     If required for confirmation from end user in case multiple SQL Instances are found on same host. At max, perfmon data can be pushed to only one SQL Instance.
     .PARAMETER DryRun
     When enabled, only messages are printed, but actual changes are NOT made.
+    .PARAMETER PreQuery
+    TSQL Query string that should be executed before starting any steps execution.
+    .PARAMETER PostQuery
+    TSQL Query string that should be executed after finishing all the steps.
 
     .EXAMPLE
 Import-Module dbatools;
@@ -5745,4 +5925,3 @@ Owner Ajay Kumar Dwivedi (ajay.dwivedi2007@gmail.com)
     https://ajaydwivedi.com/blog/sqlmonitor
     https://ajaydwivedi.com/youtube/sqlmonitor
 #>
-
