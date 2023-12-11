@@ -5,7 +5,7 @@ Param (
     [String]$Action = "AddStep",
 
     [Parameter(Mandatory=$false)]
-    [String]$StepName = "70__DropTable_Blitz",
+    [String]$StepName = "95__DropTable_DiskSpaceAllServersStaging",
     
     [Parameter(Mandatory=$false)]
     [String[]]$AllSteps = @( "1__RemoveJob_CheckSQLAgentJobs", "2__RemoveJob_CollectAgHealthState", "3__RemoveJob_CollectDiskSpace",
@@ -38,8 +38,10 @@ Param (
                 "82__DropTable_AllServerVolatileInfo", "83__DropTable_AllServerStableInfo", "84__DropTable_DiskSpaceAllServersStaging",
                 "85__DropTable_DiskSpaceAllServers", "86__DropTable_LogSpaceConsumersAllServers", "87__DropTable_LogSpaceConsumersAllServersStaging",
                 "88__DropTable_SqlAgentJobsAllServers", "89__DropTable_SqlAgentJobsAllServersStaging", "90__DropTable_TempdbSpaceUsageAllServers",
-                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__RemovePerfmonFilesFromDisk", "93__RemoveXEventFilesFromDisk",
-                "94__DropProxy", "95__DropCredential", "96__RemoveInstanceFromInventory"
+                "91__DropTable_TempdbSpaceUsageAllServersStaging", "92__DropTable_AgHealthStateAllServers", "93__DropTable_AgHealthStateAllServersStaging",
+                "94__DropTable_AllServerVolatileInfoHistory", "95__DropTable_DiskSpaceAllServersStaging", "96__RemovePerfmonFilesFromDisk",
+                "97__RemoveXEventFilesFromDisk", "98__DropProxy", "99__DropCredential",
+                "100__RemoveInstanceFromInventory"
                 ),
 
     [Parameter(Mandatory=$false)]

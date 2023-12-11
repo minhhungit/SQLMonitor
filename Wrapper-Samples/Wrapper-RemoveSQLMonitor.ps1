@@ -13,6 +13,7 @@ $params = @{
     #RemoteSQLMonitorPath = 'C:\SQLMonitor'
     #SqlCredential = $saAdmin
     #WindowsCredential = $localAdmin
+    #SkipRDPSessionSteps = $true
     #SkipSteps = @("43__RemovePerfmonFilesFromDisk")    
     #StartAtStep = '30__DropLogin_Grafana'
     #StopAtStep = '11__RemoveJob_RunBlitzIndex'
