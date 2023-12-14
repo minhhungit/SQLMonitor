@@ -7,6 +7,7 @@ declare @no_of_days tinyint --= 1;
 declare @database_name nvarchar(255) = 'StackOverflow';
 declare @program_name nvarchar(255) = 'SQLQueryStress';
 declare @login_name nvarchar(255) --= 'SQLQueryStress';
+declare @session_id int = null;
 declare @host_name nvarchar(255) --= '';
 declare @index_name nvarchar(255);
 declare @duration_threshold_minutes smallint --= 1;
@@ -23,7 +24,8 @@ set @params = N'@collection_time_start smalldatetime,
 				@host_name nvarchar(255),
 				@index_name nvarchar(255), 
 				@duration_threshold_minutes smallint,
-				@memory_threshold_mb smallint';
+				@memory_threshold_mb smallint,
+				@session_id int';
 
 if @collection_time_start is not null and @no_of_days is not null
 	throw 50000, 'Parameters @collection_time_start & @no_of_days are not compatible.', 1;
@@ -59,6 +61,7 @@ t_queries as (
 	"+(case when @program_name is null then "--" else '' end)+"and w.program_name = @program_name
 	"+(case when @login_name is null then "--" else '' end)+"and w.login_name = @login_name
 	"+(case when @host_name is null then "--" else '' end)+"and w.host_name = @host_name
+	"+(case when @session_id is null then "--" else '' end)+"and w.session_id = @session_id
 	"+(case when @table_name is null then "" else '--' end)+"/*
 	and (	w.sql_text like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
 			or w.sql_command like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
@@ -114,7 +117,8 @@ print @sql
 
 exec sp_ExecuteSql @sql, @params, 
 						@collection_time_start, @collection_time_end, @table_name, @database_name, @program_name,
-						@login_name, @host_name, @index_name, @duration_threshold_minutes, @memory_threshold_mb;
+						@login_name, @host_name, @index_name, @duration_threshold_minutes, @memory_threshold_mb,
+						@session_id;
 /*
 select top 10000 sql_text2 = convert(xml,(select sql_text for xml path(''))),*
 from dbo.xevent_metrics rc
