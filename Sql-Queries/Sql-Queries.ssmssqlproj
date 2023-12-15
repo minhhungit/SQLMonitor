@@ -109,6 +109,12 @@
           <AssociatedConnUserName />
           <FullPath>QRY-Get-Partitions-Record-Count-Metrics.sql</FullPath>
         </FileNode>
+        <FileNode Name="QRY-Get-Statistics-Details-For-Database.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>QRY-Get-Statistics-Details-For-Database.sql</FullPath>
+        </FileNode>
         <FileNode Name="QRY-INDEXING-DEATH-Method-DeepDive.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
