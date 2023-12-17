@@ -16,6 +16,10 @@ create or alter procedure dbo.usp_get_credential
 with  encryption
 as
 begin
+/*	Purpose:		This procedure helps to retrieve a credential password based on provided server & user_name
+	Modification:	2023-Dec-17 - Ajay - Bux fix where IS_SRVROLEMEMBER was incorrecting displaying other users passwords
+
+*/
 	set nocount on;
 
 	declare @_sql nvarchar(max);
