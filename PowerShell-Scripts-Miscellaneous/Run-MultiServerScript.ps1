@@ -11,10 +11,12 @@ $InventoryDatabase = 'DBA'
 $CredentialManagerDatabase = 'DBA'
 $AllServerLogin = 'sa'
 
+Set-DbatoolsConfig -FullName 'sql.connection.trustcert' -Value $true -Register
+
 # Connect to Inventory Server, and get sa credential
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for InventoryServer '$InventoryServer'.."
 $conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database $InventoryDatabase -ClientName "Get-FailedLogins.ps1" `
-                                                    -TrustServerCertificate -ErrorAction Stop -SqlCredential $personalCred
+                                                    -TrustServerCertificate -EncryptConnection -SqlCredential $personalCred -ErrorAction Stop
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetch [$AllServerLogin] password from Credential Manager [$InventoryServer].[$CredentialManagerDatabase].."
 $getCredential = @"
@@ -88,7 +90,7 @@ foreach($sql_instance in $serversFromInventory)
     "Working on [$srv].." | Write-Host -ForegroundColor Cyan
     try {
         $srvObj = Connect-DbaInstance -SqlInstance $srv -Database master -ClientName "DBA-Ajay-Dwivedi-Wrapper-InstallDbaFirstResponderKit.ps1" `
-                                                    -SqlCredential $allServerLoginCredential -TrustServerCertificate -ErrorAction Stop
+                                                    -SqlCredential $allServerLoginCredential -TrustServerCertificate -EncryptConnection -ErrorAction Stop
 
         # Deploy First Responder Kit
             #$srvObj | Install-DbaFirstResponderKit -LocalFile $FirstResponderKitZipFile -EnableException -Verbose:$false -Debug:$false | Format-Table -AutoSize

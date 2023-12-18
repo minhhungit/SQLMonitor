@@ -12,10 +12,12 @@ $CredentialManagerDatabase = 'DBA'
 $AllServerLogin = 'sa'
 $FirstResponderKitZipFile = 'C:\Users\Ajay\Downloads\SQL-Server-First-Responder-Kit-20231010.zip' # Download from releases section
 
+Set-DbatoolsConfig -FullName 'sql.connection.trustcert' -Value $true -Register
+
 # Connect to Inventory Server, and get sa credential
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for InventoryServer '$InventoryServer'.."
 $conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database $InventoryDatabase -ClientName "Get-FailedLogins.ps1" `
-                                                    -TrustServerCertificate -ErrorAction Stop -SqlCredential $personalCred
+                                                    -TrustServerCertificate -EncryptConnection -SqlCredential $personalCred -ErrorAction Stop
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetch [$AllServerLogin] password from Credential Manager [$InventoryServer].[$CredentialManagerDatabase].."
 $getCredential = @"
@@ -27,7 +29,7 @@ exec dbo.usp_get_credential
 		@password = @password output;
 select @password as [password];
 "@
-[string]$allServerLoginPassword = Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $CredentialManagerDatabase `
+[string]$allServerLoginPassword = $conInventoryServer | Invoke-DbaQuery -Database $CredentialManagerDatabase `
                             -Query $getCredential -SqlParameter @{all_server_login = $AllServerLogin} | 
                                     Select-Object -ExpandProperty password -First 1
 
@@ -45,7 +47,8 @@ and id.is_available = 1
 and id.is_alias = 0
 "@
 $serversFromInventory = @()
-$serversFromInventory += Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlGetSQLMonitorServers -ErrorAction Stop
+$serversFromInventory += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlGetSQLMonitorServers -ErrorAction Stop
+#$serversFromInventoryFiltered = $serversFromInventory | Where-Object {$_.sql_instance -in $failedServers.server}
 
 # Loop through servers list, and perform required action
 [System.Collections.ArrayList]$successServers = @()
@@ -60,7 +63,7 @@ foreach($sql_instance in $serversFromInventory)
     "Working on [$srv].." | Write-Host -ForegroundColor Cyan
     try {
         $srvObj = Connect-DbaInstance -SqlInstance $srv -Database master -ClientName "DBA-Ajay-Dwivedi-Wrapper-InstallDbaFirstResponderKit.ps1" `
-                                                    -SqlCredential $allServerLoginCredential -TrustServerCertificate -ErrorAction Stop
+                                                    -SqlCredential $allServerLoginCredential -TrustServerCertificate -EncryptConnection -ErrorAction Stop
 
         # Deploy First Responder Kit
         $srvObj | Install-DbaFirstResponderKit -LocalFile $FirstResponderKitZipFile -EnableException -Verbose:$false -Debug:$false | Format-Table -AutoSize
