@@ -204,14 +204,15 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '1.6.1'
-$sqlmonitorVersionDate = '2023-Dec-09'
+$sqlmonitorVersion = '1.6.2'
+$sqlmonitorVersionDate = '2023-Dec-18'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v1.7.0 - 2024-Mar-31
         -> Issue#19 - Control Immediate Removal of Perfmon File in Job [(dba) Collect-PerfmonData]
         -> Updated few debugging queries
         -> Updated dbo.usp_get_credential as part of bug fix
+        -> Updated BlitzIndex Analysis Dashboard variables and ID
 
     v1.6.0 - 2023-Dec-30
         -> Issue#13 - Capture sp_Blitz & Create Dashboard
