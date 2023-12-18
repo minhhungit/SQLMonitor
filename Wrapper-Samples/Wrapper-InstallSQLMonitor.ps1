@@ -112,9 +112,12 @@ if ($true) {
 
     $tagName = (Invoke-WebRequest $tags | ConvertFrom-Json)[0].name
     $releaseZip = "https://github.com/$repo/archive/refs/tags/$tagName.zip"
+    $outFile = "$($env:USERPROFILE)\Downloads\SQL-Server-First-Responder-Kit-$tagName.zip"
 
     Invoke-WebRequest $releaseZip `
-            -OutFile "$($env:USERPROFILE)\Downloads\SQL-Server-First-Responder-Kit-$tagName.zip"
+            -OutFile $outFile
+
+    "File downloaded: '$outFile'" | Write-Host -ForegroundColor Green
 }
 
 # **__ PoshRSJob - Download from Github __**
