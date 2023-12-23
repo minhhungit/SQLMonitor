@@ -2707,8 +2707,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -2911,8 +2910,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "super-light-yellow",
@@ -4936,7 +4934,7 @@
               "editorMode": "code",
               "format": "table",
               "rawQuery": true,
-              "rawSql": "declare @sql nvarchar(max);\r\ndeclare @params nvarchar(max);\r\ndeclare @sql_instance varchar(255);\r\ndeclare @crlf nchar(2) = nchar(13)+nchar(10);\r\n\r\nset @sql_instance = '$server';\r\n\r\n--set @params = N'';\r\n\r\nset quoted_identifier off;\r\nset @sql = \"/* SQLMonitor Dashboard Monitoring - Live - Distributed: TempdbSaver - tempdb_space_usage  */\r\nset nocount on;\r\nif exists ( select 1/0 from dbo.tempdb_space_consumers tsc with (nolock)\r\n            where 1=1 \r\n            and tsc.collection_time = (select top 1 tsu.collection_time from tempdb_space_usage tsu order by tsu.collection_time desc)\r\n            and (tsc.size_bytes > 0 or tsc.is_snapshot = 1)\r\n          )\r\nbegin\t\r\n    select [collection_time_utc] = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), collection_time), [usage_rank], [spid], [login_name], [program_name], [host_name], [host_process_id], [is_active_session], [open_transaction_count], [transaction_isolation_level], [size_bytes], [transaction_begin_time], [is_snapshot], [log_bytes], [log_rsvd], [action_taken] \r\n    from dbo.tempdb_space_consumers tsc \r\n    where 1=1 \r\n    and tsc.collection_time = (select top 1 tsu.collection_time from tempdb_space_usage tsu order by tsu.collection_time desc)\r\n    and (tsc.size_bytes > 0 or tsc.is_snapshot = 1)\r\nend\r\nELSE\r\n  select 'No tempdb consumers record in latest snapshot.' as [No Result]\r\n\"\r\nset quoted_identifier on;\r\n--print @sql\r\n\r\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\r\nif ($is_local = 1)\r\n  exec dbo.sp_executesql @sql, @params;\r\nelse\r\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params;",
+              "rawSql": "declare @sql nvarchar(max);\r\ndeclare @params nvarchar(max);\r\ndeclare @sql_instance varchar(255);\r\ndeclare @crlf nchar(2) = nchar(13)+nchar(10);\r\n\r\nset @sql_instance = '$server';\r\n\r\n--set @params = N'';\r\n\r\nset quoted_identifier off;\r\nset @sql = \"/* SQLMonitor Dashboard Monitoring - Live - Distributed: TempdbSaver - tempdb_space_usage  */\r\nset nocount on;\r\nif exists ( select 1/0 from dbo.tempdb_space_consumers tsc with (nolock)\r\n            where 1=1 \r\n            and tsc.collection_time = (select top 1 tsu.collection_time from tempdb_space_usage tsu order by tsu.collection_time desc)\r\n            and (tsc.size_bytes > 0 or tsc.is_snapshot = 1)\r\n          )\r\nbegin\t\r\n    select [collection_time_utc] = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), collection_time), [usage_rank], [spid], [login_name], \r\n            [program_name], [host_name], [host_process_id], [is_active_session], [open_transaction_count], [transaction_isolation_level], [size_bytes], \r\n            [transaction_begin_time] = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), transaction_begin_time), [is_snapshot], [log_bytes], [log_rsvd], [action_taken] \r\n    from dbo.tempdb_space_consumers tsc \r\n    where 1=1 \r\n    and tsc.collection_time = (select top 1 tsu.collection_time from tempdb_space_usage tsu order by tsu.collection_time desc)\r\n    and (tsc.size_bytes > 0 or tsc.is_snapshot = 1)\r\nend\r\nELSE\r\n  select 'No tempdb consumers record in latest snapshot.' as [No Result]\r\n\"\r\nset quoted_identifier on;\r\n--print @sql\r\n\r\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\r\nif ($is_local = 1)\r\n  exec dbo.sp_executesql @sql, @params;\r\nelse\r\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params;",
               "refId": "A",
               "sql": {
                 "columns": [
@@ -9746,6 +9744,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - Distributed",
   "uid": "distributed_live_dashboard",
-  "version": 79,
+  "version": 80,
   "weekStart": ""
 }

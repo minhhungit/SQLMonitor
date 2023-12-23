@@ -1896,7 +1896,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 5
           },
           "id": 852,
           "options": {
@@ -2813,8 +2813,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2851,8 +2850,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue",
-                          "value": null
+                          "color": "blue"
                         }
                       ]
                     }
@@ -2892,8 +2890,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-blue",
-                          "value": null
+                          "color": "super-light-blue"
                         }
                       ]
                     }
@@ -3055,8 +3052,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -3100,8 +3096,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -3190,8 +3185,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-purple",
-                          "value": null
+                          "color": "super-light-purple"
                         }
                       ]
                     }
@@ -3383,7 +3377,7 @@
       "type": "row"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3391,494 +3385,493 @@
         "y": 13
       },
       "id": 862,
-      "panels": [
-        {
-          "datasource": {
-            "type": "mssql",
-            "uid": "${sqlmonitor_datasource}"
+      "panels": [],
+      "title": "All Servers - Tempdb Utilization - Require ATTENTION",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "${sqlmonitor_datasource}"
+      },
+      "description": "select *\nfrom dbo.tempdb_space_consumers tsc\nwhere 1=1\nand tsc.collection_time = (select top 1 i.collection_time from dbo.tempdb_space_consumers i order by i.collection_time desc)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
-          "description": "select *\nfrom dbo.tempdb_space_consumers tsc\nwhere 1=1\nand tsc.collection_time = (select top 1 i.collection_time from dbo.tempdb_space_consumers i order by i.collection_time desc)",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "filterable": true,
-                "inspect": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "overrides": [
+            "filterable": true,
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sql_instance"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 150
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "color-background"
-                    }
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "blue",
-                          "value": null
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Server"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Disk Space for TempDb",
-                        "url": "d/disk_space?var-server=${__data.fields.sql_instance}&var-database=tempdb"
-                      }
-                    ]
-                  }
-                ]
+                "color": "green",
+                "value": null
               },
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "data_size_mb"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "mbytes"
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Data Size"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Perfmon - Data File Growth Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=115"
-                      }
-                    ]
-                  }
-                ]
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sql_instance"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
               },
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "data_used_mb"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Data Used"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "mbytes"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Perfmon - Tempdb Free Space Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=89"
-                      }
-                    ]
-                  }
-                ]
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               },
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "data_used_pct"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Data Used %"
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "color-background"
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "blue",
+                      "value": null
                     }
-                  },
-                  {
-                    "id": "unit",
-                    "value": "percent"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "green",
-                          "value": null
-                        },
-                        {
-                          "color": "yellow",
-                          "value": 70
-                        },
-                        {
-                          "color": "orange",
-                          "value": 80
-                        },
-                        {
-                          "color": "super-light-red",
-                          "value": 90
-                        },
-                        {
-                          "color": "red",
-                          "value": 95
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Perfmon - Tempdb % Free Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=89"
-                      }
-                    ]
-                  }
-                ]
+                  ]
+                }
               },
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "log_size_mb"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Log Size"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "mbytes"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Perfmon - Log Usage Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=38"
-                      }
-                    ]
-                  }
-                ]
+                "id": "displayName",
+                "value": "Server"
               },
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "log_used_mb"
-                },
-                "properties": [
+                "id": "links",
+                "value": [
                   {
-                    "id": "displayName",
-                    "value": "Log Used"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "mbytes"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Perfmon - Log Usage Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=38"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "log_used_pct"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Log Used %"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "percent"
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "color-background"
-                    }
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "green",
-                          "value": null
-                        },
-                        {
-                          "color": "#EAB839",
-                          "value": 70
-                        },
-                        {
-                          "color": "orange",
-                          "value": 80
-                        },
-                        {
-                          "color": "red",
-                          "value": 90
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Perfmon - Log Usage % Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=123"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "version_store_mb"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Version Store"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "mbytes"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Perfmon - Version Store Usage Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=90"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "version_store_pct"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Version Store %"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "percent"
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "color-background"
-                    }
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "green",
-                          "value": null
-                        },
-                        {
-                          "color": "#EAB839",
-                          "value": 70
-                        },
-                        {
-                          "color": "orange",
-                          "value": 80
-                        },
-                        {
-                          "color": "red",
-                          "value": 90
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "Perfmon - VersionStore Usage Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=90"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "collection_time_utc"
-                },
-                "properties": [
-                  {
-                    "id": "custom.hidden",
-                    "value": false
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Collection Time"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "dateTimeAsIso"
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "basic",
-                      "type": "color-background"
-                    }
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "super-light-purple",
-                          "value": null
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 160
+                    "targetBlank": true,
+                    "title": "Disk Space for TempDb",
+                    "url": "d/disk_space?var-server=${__data.fields.sql_instance}&var-database=tempdb"
                   }
                 ]
               }
             ]
           },
-          "gridPos": {
-            "h": 8,
-            "w": 24,
-            "x": 0,
-            "y": 8
-          },
-          "id": 860,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "enablePagination": true,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "data_size_mb"
             },
-            "showHeader": true
-          },
-          "pluginVersion": "10.1.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "mssql",
-                "uid": "${sqlmonitor_datasource}"
+            "properties": [
+              {
+                "id": "unit",
+                "value": "mbytes"
               },
-              "editorMode": "code",
-              "format": "table",
-              "rawQuery": true,
-              "rawSql": "declare @_data_used_pct float = ${tempdb_used_pct_threshold};\r\ndeclare @_data_used_gb float = ${tempdb_used_gb_threshold};\r\n\r\ndeclare @_sqltext nvarchar(max);\r\ndeclare @_params nvarchar(max);\r\n\r\nset @_params = '@data_used_pct float, @data_used_gb float';\r\n\r\n\r\nset @_sqltext = '\r\nselect\t[collection_time_utc] = [updated_date_utc],\r\n\t\t[sql_instance], [data_size_mb], [data_used_mb], [data_used_pct], [log_size_mb], [log_used_mb], \r\n\t\t[log_used_pct], [version_store_mb], [version_store_pct]\r\nfrom dbo.tempdb_space_usage_all_servers su\r\nwhere (su.data_used_pct > @data_used_pct\r\n\tor su.data_used_mb > (@data_used_gb*1024) -- 200 gb\r\n\t)\r\nand (su.updated_date_utc >= dateadd(minute,-60,getutcdate())\r\n  and su.collection_time_utc >= dateadd(minute,-20,getutcdate())\r\n\t)\r\n'\r\nexec sp_executesql @_sqltext, @_params, @data_used_pct = @_data_used_pct, @data_used_gb = @_data_used_gb;",
-              "refId": "A",
-              "sql": {
-                "columns": [
+              {
+                "id": "displayName",
+                "value": "Data Size"
+              },
+              {
+                "id": "links",
+                "value": [
                   {
-                    "parameters": [],
-                    "type": "function"
+                    "targetBlank": true,
+                    "title": "Perfmon - Data File Growth Trend",
+                    "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=115"
                   }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
+                ]
               }
-            }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "data_used_mb"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Data Used"
+              },
+              {
+                "id": "unit",
+                "value": "mbytes"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Perfmon - Tempdb Free Space Trend",
+                    "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=89"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "data_used_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Data Used %"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 70
+                    },
+                    {
+                      "color": "orange",
+                      "value": 80
+                    },
+                    {
+                      "color": "super-light-red",
+                      "value": 90
+                    },
+                    {
+                      "color": "red",
+                      "value": 95
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Perfmon - Tempdb % Free Trend",
+                    "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=89"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "log_size_mb"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Log Size"
+              },
+              {
+                "id": "unit",
+                "value": "mbytes"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Perfmon - Log Usage Trend",
+                    "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=38"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "log_used_mb"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Log Used"
+              },
+              {
+                "id": "unit",
+                "value": "mbytes"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Perfmon - Log Usage Trend",
+                    "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=38"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "log_used_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Log Used %"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "orange",
+                      "value": 80
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Perfmon - Log Usage % Trend",
+                    "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=123"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "version_store_mb"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Version Store"
+              },
+              {
+                "id": "unit",
+                "value": "mbytes"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Tempdb Space Consumers on Individual Server Dashboard",
+                    "url": "d/distributed_live_dashboard?var-server=${__data.fields.sql_instance}&viewPanel=190"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "version_store_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Version Store %"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "orange",
+                      "value": 80
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Perfmon - VersionStore Usage Trend",
+                    "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=90"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "collection_time_utc"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": false
+              },
+              {
+                "id": "displayName",
+                "value": "Collection Time"
+              },
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "super-light-purple",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 860,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
           ],
-          "title": "TempDb Usage",
-          "type": "table"
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "${sqlmonitor_datasource}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "declare @_data_used_pct float = ${tempdb_used_pct_threshold};\r\ndeclare @_data_used_gb float = ${tempdb_used_gb_threshold};\r\n\r\ndeclare @_sqltext nvarchar(max);\r\ndeclare @_params nvarchar(max);\r\n\r\nset @_params = '@data_used_pct float, @data_used_gb float';\r\n\r\n\r\nset @_sqltext = '\r\nselect\t[collection_time_utc] = [updated_date_utc],\r\n\t\t[sql_instance], [data_size_mb], [data_used_mb], [data_used_pct], [log_size_mb], [log_used_mb], \r\n\t\t[log_used_pct], [version_store_mb], [version_store_pct]\r\nfrom dbo.tempdb_space_usage_all_servers su\r\nwhere (su.data_used_pct > @data_used_pct\r\n\tor su.data_used_mb > (@data_used_gb*1024) -- 200 gb\r\n\t)\r\nand (su.updated_date_utc >= dateadd(minute,-60,getutcdate())\r\n  and su.collection_time_utc >= dateadd(minute,-20,getutcdate())\r\n\t)\r\n'\r\nexec sp_executesql @_sqltext, @_params, @data_used_pct = @_data_used_pct, @data_used_gb = @_data_used_gb;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
-      "title": "All Servers - Tempdb Utilization - Require ATTENTION",
-      "type": "row"
+      "title": "TempDb Usage",
+      "type": "table"
     },
     {
       "collapsed": false,
@@ -3890,7 +3883,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 22
       },
       "id": 245,
       "panels": [],
@@ -4108,7 +4101,7 @@
                   {
                     "targetBlank": true,
                     "title": "Wait Stats Dashboard",
-                    "url": "d/wait_stats?var-server=${__data.fields.srv_name}"
+                    "url": "d/wait_stats?var-server=${__data.fields.srv_name}&from=now-30m&to=now"
                   }
                 ]
               }
@@ -4521,7 +4514,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 23
       },
       "id": 842,
       "options": {
@@ -4582,7 +4575,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 35
       },
       "id": 121,
       "panels": [
@@ -4656,7 +4649,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -4709,8 +4702,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702124083624",
-          "value": "1702124083624"
+          "text": "1703221481022",
+          "value": "1703221481022"
         },
         "datasource": {
           "type": "mssql",
@@ -4780,7 +4773,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "20",
           "value": "20"
         },
@@ -4848,9 +4841,9 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": "Yes",
-          "value": "Yes"
+          "selected": false,
+          "text": "No",
+          "value": "No"
         },
         "description": "When yes, log space threshold won't be considered. Rather threshold are used based on server level LogSaver jobs",
         "hide": 0,
@@ -4860,12 +4853,12 @@
         "name": "only_validated_log_thresholds",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "Yes",
             "value": "Yes"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "No",
             "value": "No"
           }
@@ -4995,7 +4988,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "80",
           "value": "80"
         },
@@ -5080,7 +5073,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "250",
           "value": "250"
         },
@@ -5224,6 +5217,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - All Servers",
   "uid": "distributed_live_dashboard_all_servers",
-  "version": 91,
+  "version": 95,
   "weekStart": ""
 }

@@ -2617,8 +2617,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -2821,8 +2820,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "super-light-yellow",
@@ -4846,7 +4844,7 @@
               "editorMode": "code",
               "format": "table",
               "rawQuery": true,
-              "rawSql": "declare @sql nvarchar(max);\r\ndeclare @params nvarchar(max);\r\ndeclare @sql_instance varchar(255);\r\ndeclare @crlf nchar(2) = nchar(13)+nchar(10);\r\n\r\nset @sql_instance = '$server';\r\n\r\n--set @params = N'';\r\n\r\nset quoted_identifier off;\r\nset @sql = \"/* SQLMonitor Dashboard Monitoring - Live - Distributed: TempdbSaver - tempdb_space_usage  */\r\nset nocount on;\r\nif exists ( select 1/0 from dbo.tempdb_space_consumers tsc with (nolock)\r\n            where 1=1 \r\n            and tsc.collection_time = (select top 1 tsu.collection_time from tempdb_space_usage tsu order by tsu.collection_time desc)\r\n            and (tsc.size_bytes > 0 or tsc.is_snapshot = 1)\r\n          )\r\nbegin\t\r\n    select [collection_time_utc] = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), collection_time), [usage_rank], [spid], [login_name], [program_name], [host_name], [host_process_id], [is_active_session], [open_transaction_count], [transaction_isolation_level], [size_bytes], [transaction_begin_time], [is_snapshot], [log_bytes], [log_rsvd], [action_taken] \r\n    from dbo.tempdb_space_consumers tsc \r\n    where 1=1 \r\n    and tsc.collection_time = (select top 1 tsu.collection_time from tempdb_space_usage tsu order by tsu.collection_time desc)\r\n    and (tsc.size_bytes > 0 or tsc.is_snapshot = 1)\r\nend\r\nELSE\r\n  select 'No tempdb consumers record in latest snapshot.' as [No Result]\r\n\"\r\nset quoted_identifier on;\r\n--print @sql\r\n\r\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\r\nif ($is_local = 1)\r\n  exec dbo.sp_executesql @sql, @params;\r\nelse\r\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params;",
+              "rawSql": "declare @sql nvarchar(max);\r\ndeclare @params nvarchar(max);\r\ndeclare @sql_instance varchar(255);\r\ndeclare @crlf nchar(2) = nchar(13)+nchar(10);\r\n\r\nset @sql_instance = '$server';\r\n\r\n--set @params = N'';\r\n\r\nset quoted_identifier off;\r\nset @sql = \"/* SQLMonitor Dashboard Monitoring - Live - Distributed: TempdbSaver - tempdb_space_usage  */\r\nset nocount on;\r\nif exists ( select 1/0 from dbo.tempdb_space_consumers tsc with (nolock)\r\n            where 1=1 \r\n            and tsc.collection_time = (select top 1 tsu.collection_time from tempdb_space_usage tsu order by tsu.collection_time desc)\r\n            and (tsc.size_bytes > 0 or tsc.is_snapshot = 1)\r\n          )\r\nbegin\t\r\n    select [collection_time_utc] = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), collection_time), [usage_rank], [spid], [login_name], \r\n            [program_name], [host_name], [host_process_id], [is_active_session], [open_transaction_count], [transaction_isolation_level], [size_bytes], \r\n            [transaction_begin_time] = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), transaction_begin_time), [is_snapshot], [log_bytes], [log_rsvd], [action_taken] \r\n    from dbo.tempdb_space_consumers tsc \r\n    where 1=1 \r\n    and tsc.collection_time = (select top 1 tsu.collection_time from tempdb_space_usage tsu order by tsu.collection_time desc)\r\n    and (tsc.size_bytes > 0 or tsc.is_snapshot = 1)\r\nend\r\nELSE\r\n  select 'No tempdb consumers record in latest snapshot.' as [No Result]\r\n\"\r\nset quoted_identifier on;\r\n--print @sql\r\n\r\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\r\nif ($is_local = 1)\r\n  exec dbo.sp_executesql @sql, @params;\r\nelse\r\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params;",
               "refId": "A",
               "sql": {
                 "columns": [
@@ -8428,8 +8426,8 @@
       {
         "current": {
           "selected": false,
-          "text": "196.1.115.244",
-          "value": "196.1.115.244"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -8476,8 +8474,8 @@
       {
         "current": {
           "selected": false,
-          "text": "0",
-          "value": "0"
+          "text": "1",
+          "value": "1"
         },
         "datasource": {
           "type": "mssql",
@@ -8524,8 +8522,8 @@
       {
         "current": {
           "selected": false,
-          "text": "ABMUMBODBN04",
-          "value": "ABMUMBODBN04"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -8548,8 +8546,8 @@
       {
         "current": {
           "selected": false,
-          "text": "ABMUMBODBN04",
-          "value": "ABMUMBODBN04"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -8637,10 +8635,9 @@
       },
       {
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "WORKGROUP",
+          "value": "WORKGROUP"
         },
         "datasource": {
           "type": "mssql",
@@ -8664,8 +8661,8 @@
       {
         "current": {
           "selected": false,
-          "text": "196.1.115.244",
-          "value": "196.1.115.244"
+          "text": "100.64.0.1",
+          "value": "100.64.0.1"
         },
         "datasource": {
           "type": "mssql",
@@ -8689,8 +8686,8 @@
       {
         "current": {
           "selected": false,
-          "text": "ABMUMBODBN04",
-          "value": "ABMUMBODBN04"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -8713,8 +8710,8 @@
       {
         "current": {
           "selected": false,
-          "text": "15.0.4298.1",
-          "value": "15.0.4298.1"
+          "text": "15.0.4326.1",
+          "value": "15.0.4326.1"
         },
         "datasource": {
           "type": "mssql",
@@ -8737,8 +8734,8 @@
       {
         "current": {
           "selected": false,
-          "text": "ABMUMBODBN04.angelbroking.com",
-          "value": "ABMUMBODBN04.angelbroking.com"
+          "text": "WORKGROUP",
+          "value": "WORKGROUP"
         },
         "datasource": {
           "type": "mssql",
@@ -8793,8 +8790,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1694146779512",
-          "value": "1694146779512"
+          "text": "1703304730684",
+          "value": "1703304730684"
         },
         "datasource": {
           "type": "mssql",
@@ -8825,8 +8822,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1694146806714",
-          "value": "1694146806714"
+          "text": "1703304726858",
+          "value": "1703304726858"
         },
         "datasource": {
           "type": "mssql",
@@ -8857,8 +8854,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1694146838837",
-          "value": "1694146838837"
+          "text": "1703304722477",
+          "value": "1703304722477"
         },
         "datasource": {
           "type": "mssql",
@@ -8904,8 +8901,8 @@
       {
         "current": {
           "selected": false,
-          "text": "96",
-          "value": "96"
+          "text": "8",
+          "value": "8"
         },
         "datasource": {
           "type": "mssql",
@@ -8928,8 +8925,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693682286147",
-          "value": "1693682286147"
+          "text": "1702419343757",
+          "value": "1702419343757"
         },
         "datasource": {
           "type": "mssql",
@@ -8952,8 +8949,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1694146811920",
-          "value": "1694146811920"
+          "text": "1703304721327",
+          "value": "1703304721327"
         },
         "datasource": {
           "type": "mssql",
@@ -8976,8 +8973,8 @@
       {
         "current": {
           "selected": false,
-          "text": "37",
-          "value": "37"
+          "text": "14",
+          "value": "14"
         },
         "datasource": {
           "type": "mssql",
@@ -9000,8 +8997,8 @@
       {
         "current": {
           "selected": false,
-          "text": "66",
-          "value": "66"
+          "text": "2",
+          "value": "2"
         },
         "datasource": {
           "type": "mssql",
@@ -9024,8 +9021,8 @@
       {
         "current": {
           "selected": false,
-          "text": "63",
-          "value": "63"
+          "text": "86",
+          "value": "86"
         },
         "datasource": {
           "type": "mssql",
@@ -9048,8 +9045,8 @@
       {
         "current": {
           "selected": false,
-          "text": "96",
-          "value": "96"
+          "text": "92",
+          "value": "92"
         },
         "datasource": {
           "type": "mssql",
@@ -9072,8 +9069,8 @@
       {
         "current": {
           "selected": false,
-          "text": "3",
-          "value": "3"
+          "text": "7",
+          "value": "7"
         },
         "datasource": {
           "type": "mssql",
@@ -9096,8 +9093,8 @@
       {
         "current": {
           "selected": false,
-          "text": "696424",
-          "value": "696424"
+          "text": "479304",
+          "value": "479304"
         },
         "datasource": {
           "type": "mssql",
@@ -9128,8 +9125,8 @@
       {
         "current": {
           "selected": false,
-          "text": "4",
-          "value": "4"
+          "text": "6",
+          "value": "6"
         },
         "datasource": {
           "type": "mssql",
@@ -9152,8 +9149,8 @@
       {
         "current": {
           "selected": false,
-          "text": "750",
-          "value": "750"
+          "text": "864217",
+          "value": "864217"
         },
         "datasource": {
           "type": "mssql",
@@ -9176,8 +9173,8 @@
       {
         "current": {
           "selected": false,
-          "text": "536309340",
-          "value": "536309340"
+          "text": "33236984",
+          "value": "33236984"
         },
         "datasource": {
           "type": "mssql",
@@ -9200,8 +9197,8 @@
       {
         "current": {
           "selected": false,
-          "text": "43800856",
-          "value": "43800856"
+          "text": "14672140",
+          "value": "14672140"
         },
         "datasource": {
           "type": "mssql",
@@ -9248,8 +9245,8 @@
       {
         "current": {
           "selected": false,
-          "text": "472445168",
-          "value": "472445168"
+          "text": "2317400",
+          "value": "2317400"
         },
         "datasource": {
           "type": "mssql",
@@ -9272,8 +9269,8 @@
       {
         "current": {
           "selected": false,
-          "text": "100",
-          "value": "100"
+          "text": "72",
+          "value": "72"
         },
         "datasource": {
           "type": "mssql",
@@ -9320,8 +9317,8 @@
       {
         "current": {
           "selected": false,
-          "text": "68",
-          "value": "68"
+          "text": "1277",
+          "value": "1277"
         },
         "datasource": {
           "type": "mssql",
@@ -9368,8 +9365,8 @@
       {
         "current": {
           "selected": false,
-          "text": "4298",
-          "value": "4298"
+          "text": "4326",
+          "value": "4326"
         },
         "datasource": {
           "type": "mssql",
@@ -9392,8 +9389,8 @@
       {
         "current": {
           "selected": false,
-          "text": "382",
-          "value": "382"
+          "text": "30",
+          "value": "30"
         },
         "datasource": {
           "type": "mssql",
@@ -9416,8 +9413,8 @@
       {
         "current": {
           "selected": false,
-          "text": "33",
-          "value": "33"
+          "text": "7",
+          "value": "7"
         },
         "datasource": {
           "type": "mssql",
@@ -9440,8 +9437,8 @@
       {
         "current": {
           "selected": false,
-          "text": "54",
-          "value": "54"
+          "text": "1",
+          "value": "1"
         },
         "datasource": {
           "type": "mssql",
@@ -9472,8 +9469,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1694145606729",
-          "value": "1694145606729"
+          "text": "1703304018733",
+          "value": "1703304018733"
         },
         "datasource": {
           "type": "mssql",
@@ -9544,8 +9541,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1",
-          "value": "1"
+          "text": "0",
+          "value": "0"
         },
         "datasource": {
           "type": "mssql",
@@ -9568,8 +9565,8 @@
       {
         "current": {
           "selected": false,
-          "text": "AG",
-          "value": "AG"
+          "text": "Cluster",
+          "value": "Cluster"
         },
         "datasource": {
           "type": "mssql",
@@ -9634,8 +9631,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1694146803027",
-          "value": "1694146803027"
+          "text": "1703304601077",
+          "value": "1703304601077"
         },
         "datasource": {
           "type": "mssql",
@@ -9686,8 +9683,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Windows Server 2019 Standard",
-          "value": "Windows Server 2019 Standard"
+          "text": "Windows 10 Pro",
+          "value": "Windows 10 Pro"
         },
         "datasource": {
           "type": "mssql",
@@ -9710,8 +9707,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Intel(R) Xeon(R) Gold 5318Y CPU @ 2.10GHz",
-          "value": "Intel(R) Xeon(R) Gold 5318Y CPU @ 2.10GHz"
+          "text": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+          "value": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz"
         },
         "datasource": {
           "type": "mssql",
@@ -9734,8 +9731,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1694146801350",
-          "value": "1694146801350"
+          "text": "1703304600603",
+          "value": "1703304600603"
         },
         "datasource": {
           "type": "mssql",
@@ -9758,8 +9755,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1694146801366",
-          "value": "1694146801366"
+          "text": "1703304600627",
+          "value": "1703304600627"
         },
         "datasource": {
           "type": "mssql",
@@ -9797,6 +9794,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - Distributed",
   "uid": "distributed_live_dashboard",
-  "version": 79,
+  "version": 80,
   "weekStart": ""
 }
