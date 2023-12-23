@@ -204,12 +204,13 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '1.6.2'
-$sqlmonitorVersionDate = '2023-Dec-18'
+$sqlmonitorVersion = '1.6.3'
+$sqlmonitorVersionDate = '2023-Dec-23'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v1.7.0 - 2024-Mar-31
         -> Issue#19 - Control Immediate Removal of Perfmon File in Job [(dba) Collect-PerfmonData]
+        -> Issue#22 - Added Trust for Certificate & Encryption for SQL Connections
         -> Updated few debugging queries
         -> Updated dbo.usp_get_credential as part of bug fix
         -> Updated BlitzIndex Analysis Dashboard variables and ID
