@@ -1008,6 +1008,7 @@ if( (($SkipRDPSessionSteps -eq $false) -or $ConfirmSetupOfTaskSchedulerJobs -or 
     "`n"
 }
 
+Write-Verbose "Validate if IP Address has been provided for HostName"
 # Validate if IPv4 is provided instead of DNS name for HostName
 $pattern = "^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$"
 if($HostName  -match $pattern) {
@@ -1025,6 +1026,7 @@ if($HostName  -match $pattern) {
 }
 
 # Check No of SQL Services on HostName
+Write-Verbose "Check No of SQL Services on HostName"
 if( ($SkipPowerShellJobs -eq $false) -or ('21__CreateJobRemoveXEventFiles' -in $Steps2Execute) )
 {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for number of SQLServices on [$HostName].."
@@ -1074,38 +1076,18 @@ if( ($SkipPowerShellJobs -eq $false) -or ('21__CreateJobRemoveXEventFiles' -in $
 
             "STOP here, and fix above issue." | Write-Error
         }
-        # If destination is provided, then validate if perfmon is not already get collected
-        else {
-            
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Validate if Perfmon data is not being collected already on [$SqlInstanceAsDataDestination] for same host.."
-            $sqlPerfmonRecord = @"
-if OBJECT_ID('dbo.performance_counters') is not null
-begin
-	select top 1 'dbo.performance_counters' as QueryData, getutcdate() as current_time_utc, collection_time_utc, pc.host_name
-	from dbo.performance_counters pc with (nolock)
-	where pc.collection_time_utc >= DATEADD(minute,-20,GETUTCDATE()) and host_name = '$HostName'
-	order by pc.collection_time_utc desc
-end
-"@
-            $resultPerfmonRecord = @()
-            $resultPerfmonRecord += $conSqlInstanceAsDataDestination | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
-            if($resultPerfmonRecord.Count -eq 0) {
-                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "No Perfmon data record found for last 20 minutes for host [$HostName] on [$SqlInstanceAsDataDestination]."
-            }
-            else {
-                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Perfmon data records of latest 20 minutes for host [$HostName] are present on [$SqlInstanceAsDataDestination]."
-            }
-        }
     }
 }
 
 # Set $SqlInstanceAsDataDestination same as $SqlInstanceToBaseline if NULL
+Write-Verbose 'Set $SqlInstanceAsDataDestination same as $SqlInstanceToBaseline if NULL'
 $Port4SqlInstanceAsDataDestination = $null
-$SqlInstanceAsDataDestinationWithOutPort = $SqlInstanceToBaselineWithOutPort
 if([String]::IsNullOrEmpty($SqlInstanceAsDataDestination)) {
     $SqlInstanceAsDataDestination = $SqlInstanceToBaseline
     $SqlInstanceAsDataDestinationWithOutPort = $SqlInstanceToBaselineWithOutPort
 } else {
+    $SqlInstanceAsDataDestinationWithOutPort = $SqlInstanceAsDataDestination
+
     # Check if PortNo is specified
     if($SqlInstanceAsDataDestination -match "(?'SqlInstance'.+),(?'PortNo'\d+)") {
         $Port4SqlInstanceAsDataDestination = $Matches['PortNo']
@@ -1178,6 +1160,39 @@ if([String]::IsNullOrEmpty($SqlInstanceForPowershellJobs) -or ($SqlInstanceForPo
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for '$SqlInstanceForPowershellJobs'.."
     $conSqlInstanceForPowershellJobs = Connect-DbaInstance -SqlInstance $SqlInstanceForPowershellJobs -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
                                                 -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
+}
+
+
+# If destination is provided, then validate if perfmon is not already getting collected
+if ( ($sqlServicesOnHost.Count -gt 1) -and (-not [String]::IsNullOrEmpty($SqlInstanceAsDataDestination)) -and ($ConfirmValidationOfMultiInstance) ) 
+{
+    Write-Verbose 'If destination is provided, then validate if perfmon is not already getting collected'
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Validate if Perfmon data is not being collected already on [$SqlInstanceAsDataDestination] for same host.."
+    $sqlPerfmonRecord = @"
+if OBJECT_ID('dbo.performance_counters') is not null
+begin
+	select top 1 'dbo.performance_counters' as QueryData, getutcdate() as current_time_utc, collection_time_utc, pc.host_name
+	from dbo.performance_counters pc with (nolock)
+	where pc.collection_time_utc >= DATEADD(minute,-20,GETUTCDATE()) and host_name = '$HostName'
+	order by pc.collection_time_utc desc
+end
+"@
+    $resultPerfmonRecord = @()
+    try {
+        $resultPerfmonRecord += $conSqlInstanceAsDataDestination | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
+    }
+    catch {
+        $errMessage = $_.Exception.Message
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
+        "STOP here, and fix above issue." | Write-Error
+    }
+
+    if($resultPerfmonRecord.Count -eq 0) {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "No Perfmon data record found for last 20 minutes for host [$HostName] on [$SqlInstanceAsDataDestination]."
+    }
+    else {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Perfmon data records of latest 20 minutes for host [$HostName] are present on [$SqlInstanceAsDataDestination]."
+    }
 }
 
 
@@ -4738,7 +4753,7 @@ if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstance
     $dbaLinkedServer = @()
     $dbaLinkedServer += Get-DbaLinkedServer -SqlInstance $conSqlInstanceToBaseline -LinkedServer $SqlInstanceAsDataDestinationWithOutPort -EnableException
     if($dbaLinkedServer.Count -eq 0) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating linked server for [$SqlInstanceAsDataDestination] on [$SqlInstanceToBaseline].."
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating linked server named [$SqlInstanceAsDataDestination] on [$SqlInstanceToBaseline].."
         $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlLinkedServerForDataDestinationInstance -EnableException
     } else {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Linked server named [$SqlInstanceAsDataDestination] already exists on [$SqlInstanceToBaseline]." | Write-Host -ForegroundColor Red
@@ -4746,7 +4761,6 @@ if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstance
         "STOP and check above error message" | Write-Error
     }
 }
-
 
 # 43__AlterViewsForDataDestinationInstance
 $stepName = '43__AlterViewsForDataDestinationInstance'
@@ -4808,7 +4822,6 @@ if($UpdateSQLAgentJobsThreshold) {
         $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
     }
     catch {
-        Write-Debug "Inside catch block"
         $errMessage = $_.Exception.Message
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
         if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
