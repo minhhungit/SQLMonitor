@@ -52,7 +52,7 @@ $blockGetServerHealth = {
 
     Import-Module dbatools
     $conSqlInstanceWithPort = Connect-DbaInstance -SqlInstance $sqlInstanceWithPort -Database master -ClientName "check-instance-availability.ps1" -SqlCredential $Using:sqlCredential -TrustServerCertificate -EncryptConnection
-    $conSqlInstance | Invoke-DbaQueryWithPort -Database $database -Query "select [sql_instance] = '$sqlInstance', [database] = db_name();" -EnableException;
+    $conSqlInstanceWithPort | Invoke-DbaQuery -Database $database -Query "select [sql_instance] = '$sqlInstance', [database] = db_name();" -EnableException;
 }
 
 "{0} {1,-10} {2}" -f "($((Get-Date).ToString('yyyy-MM-dd HH:mm:ss')))","(INFO)","Start RSJobs with $Threads threads.." | Write-Output
