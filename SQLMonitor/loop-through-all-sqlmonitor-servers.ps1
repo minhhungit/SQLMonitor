@@ -30,11 +30,11 @@ foreach($srv in $allServersList)
 
     "Working on [$sqlInstance]" | Write-Host -ForegroundColor Cyan
     try {
-        Invoke-DbaQuery -SqlInstance $sqlInstance -Database $database -Query $query2Execute -SqlCredential $personal -EnableException
+        $sqlInstance | Invoke-DbaQuery -Database $database -Query $query2Execute -SqlCredential $personal -EnableException
         <#
         foreach($file in $files2Execute) {            
             "`tExecute file '$file'.." | Write-Host -ForegroundColor Yellow
-            Invoke-DbaQuery -SqlInstance $sqlInstance -Database $database -File $file -SqlCredential $personal -EnableException
+            $sqlInstance | Invoke-DbaQuery -Database $database -File $file -SqlCredential $personal -EnableException
         }
         #>
         

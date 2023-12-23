@@ -573,7 +573,7 @@ try {
     #if($InventoryServer -ne $SqlInstanceToBaseline) {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for InventoryServer '$InventoryServer'.."
     $conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                    -SqlCredential $SqlCredential -TrustServerCertificate -ErrorAction Stop
+                                                    -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection -ErrorAction Stop
     #} else {
         #$conInventoryServer = $conSqlInstanceToBaseline
     #}
@@ -600,7 +600,7 @@ else {
     $sqlInstanceDetails = "select * from dbo.instance_details where sql_instance = '$SqlInstanceToBaselineWithOutPort' and [host_name] = '$HostName'"
 }
 try {
-    $instanceDetails += Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlInstanceDetails
+    $instanceDetails += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlInstanceDetails
 
     if($instanceDetails.Count -eq 1) 
     {
@@ -628,7 +628,7 @@ try {
     if ($SqlInstanceToBaseline -ne $InventoryServer) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for '$SqlInstanceToBaseline'.."
         $conSqlInstanceToBaseline = Connect-DbaInstance -SqlInstance $SqlInstanceToBaseline -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                        -SqlCredential $SqlCredential -TrustServerCertificate -ErrorAction Stop
+                                                        -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection -ErrorAction Stop
     }
     else {
         $conSqlInstanceToBaseline = $conInventoryServer
@@ -680,7 +680,7 @@ where servicename like 'SQL Server (%)'
 or servicename like 'SQL Server Agent (%)'
 "@
 try {
-    $resultServerInfo = Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Query $sqlServerInfo -EnableException
+    $resultServerInfo = $conSqlInstanceToBaseline | Invoke-DbaQuery -Query $sqlServerInfo -EnableException
     $dbServiceInfo = $resultServerInfo | Where-Object {$_.service_name_str -like "SQL Server (*)"}
     $agentServiceInfo = $resultServerInfo | Where-Object {$_.service_name_str -like "SQL Server Agent (*)"}
     $resultServerInfo | Format-Table -AutoSize
@@ -755,9 +755,9 @@ else {
     $sqlInstanceDetails = "select * from dbo.instance_details where sql_instance = '$SqlInstanceToBaselineWithOutPort' and [host_name] = '$HostName'"
 }
 try {
-    $instanceDetails += Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlInstanceDetails
+    $instanceDetails += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlInstanceDetails
     if($instanceDetails.Count -eq 0) {
-        $instanceDetails += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlInstanceDetails -EnableException
+        $instanceDetails += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlInstanceDetails -EnableException
     }
 }
 catch {
@@ -1087,7 +1087,7 @@ begin
 end
 "@
             $resultPerfmonRecord = @()
-            $resultPerfmonRecord += Invoke-DbaQuery -SqlInstance $conSqlInstanceAsDataDestination -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
+            $resultPerfmonRecord += $conSqlInstanceAsDataDestination | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
             if($resultPerfmonRecord.Count -eq 0) {
                 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "No Perfmon data record found for last 20 minutes for host [$HostName] on [$SqlInstanceAsDataDestination]."
             }
@@ -1160,7 +1160,7 @@ if([String]::IsNullOrEmpty($SqlInstanceAsDataDestination) -or ($SqlInstanceAsDat
 } else {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for '$SqlInstanceAsDataDestination'.."
     $conSqlInstanceAsDataDestination = Connect-DbaInstance -SqlInstance $SqlInstanceAsDataDestination -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                -SqlCredential $SqlCredential -TrustServerCertificate
+                                                -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
 }
 
 if([String]::IsNullOrEmpty($SqlInstanceForTsqlJobs) -or ($SqlInstanceForTsqlJobs -eq $SqlInstanceToBaseline)) {
@@ -1168,7 +1168,7 @@ if([String]::IsNullOrEmpty($SqlInstanceForTsqlJobs) -or ($SqlInstanceForTsqlJobs
 } else {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for '$SqlInstanceForTsqlJobs'.."
     $conSqlInstanceForTsqlJobs = Connect-DbaInstance -SqlInstance $SqlInstanceForTsqlJobs -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                -SqlCredential $SqlCredential -TrustServerCertificate
+                                                -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
 }
 
 if([String]::IsNullOrEmpty($SqlInstanceForPowershellJobs) -or ($SqlInstanceForPowershellJobs -eq $SqlInstanceToBaseline)) {
@@ -1176,7 +1176,7 @@ if([String]::IsNullOrEmpty($SqlInstanceForPowershellJobs) -or ($SqlInstanceForPo
 } else {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for '$SqlInstanceForPowershellJobs'.."
     $conSqlInstanceForPowershellJobs = Connect-DbaInstance -SqlInstance $SqlInstanceForPowershellJobs -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                -SqlCredential $SqlCredential -TrustServerCertificate
+                                                -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
 }
 
 
@@ -1214,7 +1214,7 @@ where collation_name not in ('SQL_Latin1_General_CP1_CI_AS')
 and name in ('master','msdb','tempdb','$DbaDatabase')
 "@
     $dbCollationResult = @()
-    $dbCollationResult += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Query $sqlDbCollation -EnableException
+    $dbCollationResult += $conSqlInstanceToBaseline | Invoke-DbaQuery -Query $sqlDbCollation -EnableException
     if($dbCollationResult.Count -ne 0) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Collation of below databases is not [SQL_Latin1_General_CP1_CI_AS]." | Write-Host -ForegroundColor Red
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly rectify this collation problem, or Using SkipCollationCheck parameter." | Write-Host -ForegroundColor Red
@@ -1229,7 +1229,7 @@ if($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs)
 {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetching basic info for `$SqlInstanceForPowershellJobs => [$SqlInstanceForPowershellJobs].."
     try {
-        $jobServerServicesInfo = Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Query $sqlServerInfo -EnableException
+        $jobServerServicesInfo = $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Query $sqlServerInfo -EnableException
         $jobServerDbServiceInfo = $jobServerServicesInfo | Where-Object {$_.service_name_str -like "SQL Server (*)"}
         $jobServerAgentServiceInfo = $jobServerServicesInfo | Where-Object {$_.service_name_str -like "SQL Server Agent (*)"}
         $jobServerServicesInfo | Format-Table -AutoSize
@@ -1348,7 +1348,7 @@ if($SkipWindowsAdminAccessTest -eq $false)
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$TestWindowsAdminAccessJobFilePath = '$TestWindowsAdminAccessJobFilePath'"
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating & executing job [(dba) Test-WindowsAdminAccess] on [$SqlInstanceForPowershellJobs].."
         $sqlTestWindowsAdminAccessFilePath = [System.IO.File]::ReadAllText($TestWindowsAdminAccessJobFilePath)
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlTestWindowsAdminAccessFilePath -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlTestWindowsAdminAccessFilePath -EnableException
 
         $testWindowsAdminAccessJobHistory = @()
         $loopStartTime = Get-Date
@@ -1387,7 +1387,7 @@ if($SkipWindowsAdminAccessTest -eq $false)
         }
 
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Remove test job [(dba) Test-WindowsAdminAccess].."
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query "EXEC msdb.dbo.sp_delete_job @job_name=N'(dba) Test-WindowsAdminAccess'" -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query "EXEC msdb.dbo.sp_delete_job @job_name=N'(dba) Test-WindowsAdminAccess'" -EnableException
 
 
         $requireProxy = $(-not $hasWindowsAdminAccess)
@@ -1422,7 +1422,7 @@ JOIN msdb.dbo.sysmail_server s ON a.account_id = s.account_id
 WHERE pp.is_default = 1
 "@
     $mailProfile = @()
-    $mailProfile += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlMailProfile -EnableException
+    $mailProfile += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlMailProfile -EnableException
     if($mailProfile.Count -lt 1) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Kindly create default global mail profile." | Write-Host -ForegroundColor Red
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Kindly utilize '$mailProfileFilePath." | Write-Host -ForegroundColor Red
@@ -1452,7 +1452,7 @@ $(if($SkipDriveCheck){'--'})and physical_name not like 'C:\%'
 order by file_id;
 "@
 $resultDbaDatabasePath = @()
-$resultDbaDatabasePath += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlDbaDatabasePath -EnableException
+$resultDbaDatabasePath += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlDbaDatabasePath -EnableException
 if($resultDbaDatabasePath.Count -eq 0) {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Seems either [$DbaDatabase] does not exists, or the data/log files are present in C:\ drive. `n`t Kindly rectify this issue." | Write-Host -ForegroundColor Red
     Write-Error "Stop here. Fix above issue."
@@ -1466,7 +1466,7 @@ else {
 # Execute PreQuery
 if(-not [String]::IsNullOrEmpty($PreQuery)) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Executing PreQuery on [$SqlInstanceToBaseline].." | Write-Host -ForegroundColor Cyan
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $PreQuery -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $PreQuery -EnableException
 }
 
 
@@ -1490,14 +1490,14 @@ if($stepName -in $Steps2Execute) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$WhoIsActiveFilePath = '$WhoIsActiveFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating sp_WhoIsActive in [master] database.."
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -File $WhoIsActiveFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -File $WhoIsActiveFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Checking if sp_WhoIsActive is present in [$DbaDatabase] also.."
     $sqlCheckWhoIsActiveExistence = "select [is_existing] = case when OBJECT_ID('dbo.sp_WhoIsActive') is null then 0 else 1 end;"
-    $existsWhoIsActive = Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlCheckWhoIsActiveExistence -EnableException | Select-Object -ExpandProperty is_existing;
+    $existsWhoIsActive = $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlCheckWhoIsActiveExistence -EnableException | Select-Object -ExpandProperty is_existing;
     if($existsWhoIsActive -eq 1) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update sp_WhoIsActive definition in [$DbaDatabase] also.."
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $WhoIsActiveFilePath -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $WhoIsActiveFilePath -EnableException
     }
 }
 
@@ -1537,7 +1537,7 @@ if($stepName -in $Steps2Execute)
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$AllDatabaseObjectsFilePath = '$tempAllDatabaseObjectsFilePath'"
     try {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $tempAllDatabaseObjectsFilePath -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $tempAllDatabaseObjectsFilePath -EnableException
     }
     catch {
         $errMessage = $_
@@ -1563,56 +1563,56 @@ if($stepName -in $Steps2Execute)
         $memoryOptimizedFilePath = if($dbaDatabaseParentPath -notmatch '\\$') { "$dbaDatabaseParentPath\MemoryOptimized.ndf" } else { "$($dabaDatabaseParentPath)MemoryOptimized.ndf" }
         #$InventorySpecificObjectsFileText = $InventorySpecificObjectsFileText.Replace('E:\Data\MemoryOptimized.ndf', "$(Join-Path $dbaDatabaseParentPath 'MemoryOptimized.ndf')")
         $InventorySpecificObjectsFileText = $InventorySpecificObjectsFileText.Replace('E:\Data\MemoryOptimized.ndf', $memoryOptimizedFilePath)
-        Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $InventorySpecificObjectsFileText -EnableException
+        $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $InventorySpecificObjectsFileText -EnableException
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspCollectWaitStatsFilePath = '$UspCollectWaitStatsFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspCollectWaitStatsFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspCollectWaitStatsFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspCollectXeventMetricsFilePath = '$UspCollectXeventMetricsFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspCollectXeventMetricsFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspCollectXeventMetricsFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspCollectPrivilegedInfoFilePath = '$UspCollectPrivilegedInfoFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspCollectPrivilegedInfoFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspCollectPrivilegedInfoFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspLogSaverFilePath = '$UspLogSaverFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspLogSaverFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspLogSaverFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspTempDbSaverFilePath = '$UspTempDbSaverFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspTempDbSaverFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspTempDbSaverFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspPartitionMaintenanceFilePath = '$UspPartitionMaintenanceFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspPartitionMaintenanceFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspPartitionMaintenanceFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspPurgeTablesFilePath = '$UspPurgeTablesFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspPurgeTablesFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspPurgeTablesFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspActiveRequestsCountFilePath = '$UspActiveRequestsCountFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspActiveRequestsCountFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspActiveRequestsCountFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspWaitsPerCorePerMinuteFilePath = '$UspWaitsPerCorePerMinuteFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspWaitsPerCorePerMinuteFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspWaitsPerCorePerMinuteFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspEnablePageCompressionFilePath = '$UspEnablePageCompressionFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspEnablePageCompressionFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspEnablePageCompressionFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspRunWhoIsActiveFilePath = '$UspRunWhoIsActiveFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspRunWhoIsActiveFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspRunWhoIsActiveFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspCollectFileIOStatsFilePath = '$UspCollectFileIOStatsFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspCollectFileIOStatsFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspCollectFileIOStatsFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspCollectMemoryClerksFilePath = '$UspCollectMemoryClerksFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspCollectMemoryClerksFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspCollectMemoryClerksFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspCollectAgHealthStateFilePath = '$UspCollectAgHealthStateFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspCollectAgHealthStateFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspCollectAgHealthStateFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspCheckSQLAgentJobsFilePath = '$UspCheckSQLAgentJobsFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspCheckSQLAgentJobsFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspCheckSQLAgentJobsFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspWrapperCollectPrivilegedInfoFilePath = '$UspWrapperCollectPrivilegedInfoFilePath'"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UspWrapperCollectPrivilegedInfoFilePath -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspWrapperCollectPrivilegedInfoFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Adding entry into [$SqlInstanceToBaseline].[$DbaDatabase].[dbo].[instance_hosts].."
     $sqlAddInstanceHost = @"
@@ -1625,18 +1625,18 @@ if($stepName -in $Steps2Execute)
         end
 "@
     # Populate $SqlInstanceToBaseline
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlAddInstanceHost -EnableException | ft -AutoSize
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAddInstanceHost -EnableException | ft -AutoSize
 
     # Populate $SqlInstanceAsDataDestination
     if( ($SqlInstanceAsDataDestination -ne $SqlInstanceToBaseline) -and ($InventoryServer -ne $SqlInstanceAsDataDestination) ) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Adding entry into [$SqlInstanceAsDataDestination].[$DbaDatabase].[dbo].[instance_hosts].."
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceAsDataDestination -Database $DbaDatabase -Query $sqlAddInstanceHost -EnableException | ft -AutoSize
+        $conSqlInstanceAsDataDestination | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAddInstanceHost -EnableException | ft -AutoSize
     }
 
     # Populate $InventoryServer
     if($InventoryServer -ne $SqlInstanceToBaseline) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Adding entry into [$InventoryServer].[$InventoryDatabase].[dbo].[instance_hosts].."
-        Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlAddInstanceHost -EnableException | ft -AutoSize
+        $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlAddInstanceHost -EnableException | ft -AutoSize
     }    
 
 
@@ -1664,18 +1664,18 @@ if($stepName -in $Steps2Execute)
 "@
     
     # Populate $SqlInstanceToBaseline
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlAddInstanceHostMapping -EnableException | ft -AutoSize
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAddInstanceHostMapping -EnableException | ft -AutoSize
 
     # Populate $SqlInstanceAsDataDestination
     if( ($SqlInstanceAsDataDestination -ne $SqlInstanceToBaseline) -and ($InventoryServer -ne $SqlInstanceAsDataDestination) ) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Adding entry into [$SqlInstanceAsDataDestination].[$DbaDatabase].[dbo].[instance_details].."
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceAsDataDestination -Database $DbaDatabase -Query $sqlAddInstanceHostMapping -EnableException | ft -AutoSize
+        $conSqlInstanceAsDataDestination | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAddInstanceHostMapping -EnableException | ft -AutoSize
     }
 
     # Populate $InventoryServer
     if($InventoryServer -ne $SqlInstanceToBaseline) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Adding entry into [$InventoryServer].[$InventoryDatabase].[dbo].[instance_details].."
-        Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlAddInstanceHostMapping -EnableException | ft -AutoSize
+        $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlAddInstanceHostMapping -EnableException | ft -AutoSize
     }
 
     if($isExpressEdition -or (-not [String]::IsNullOrEmpty($RetentionDays)) ) 
@@ -1708,7 +1708,7 @@ where 1=1
 and created_date >= DATEADD(hour,-2,getdate())
 "@
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$sqlSetPurgeThreshold => `n`n`t$sqlSetPurgeThreshold"
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlSetPurgeThreshold -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlSetPurgeThreshold -EnableException
     }
 }
 
@@ -1733,7 +1733,7 @@ if( ($ForceSetupOfTaskSchedulerJobs -or $HasCustomizedTsqlJobs -or $HasCustomize
     from dbo.instance_details id
     where sql_instance = '$SqlInstanceToBaselineWithOutPort' and [host_name] = '$HostName'
 "@
-    Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlAddMoreInfo -EnableException | ft -AutoSize
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlAddMoreInfo -EnableException | ft -AutoSize
 }
 
 [System.Collections.ArrayList]$newList = $Steps2Execute
@@ -1785,13 +1785,13 @@ if( ($stepName -in $Steps2Execute) -and ($MajorVersion -ge 11) ) {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Computed XEvent files directory -> '$xEventTargetPathDirectory'.."
     if(-not (Test-Path $($xEventTargetPathDirectory))) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Create directory '$xEventTargetPathDirectory' for XEvent files.."
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query "EXEC xp_create_subdir '$xEventTargetPathDirectory'" -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query "EXEC xp_create_subdir '$xEventTargetPathDirectory'" -EnableException
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Create XEvent session named [xevent_metrics].."
     $sqlXEventSession = [System.IO.File]::ReadAllText($XEventSessionFilePath).Replace('E:\Data\xevents', "$xEventTargetPathDirectory")
     try {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlXEventSession -EnableException | Format-Table -AutoSize
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlXEventSession -EnableException | Format-Table -AutoSize
     }
     catch {
         $errMessage = $_
@@ -1799,7 +1799,7 @@ if( ($stepName -in $Steps2Execute) -and ($MajorVersion -ge 11) ) {
         if($errMessage.Exception.Message -like "The value specified for event attribute or predicate source*") {
             $sqlXEventSession = $sqlXEventSession.Replace("WHERE ( ([duration]>=5000000) OR ([result]<>('OK')) ))", "WHERE ( ([duration]>=5000000) ))")
         }
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlXEventSession -EnableException | Format-Table -AutoSize
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlXEventSession -EnableException | Format-Table -AutoSize
     }
 }
 
@@ -1849,14 +1849,14 @@ if($stepName -in $Steps2Execute) {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$WhatIsRunningFilePath = '$WhatIsRunningFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating sp_WhatIsRunning procedure in [$DbaDatabase] database.."
     if($MajorVersion -ge 11) {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $WhatIsRunningFilePath -EnableException | Format-Table -AutoSize
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $WhatIsRunningFilePath -EnableException | Format-Table -AutoSize
     }
     else {
         $sqlWhatIsRunning = [System.IO.File]::ReadAllText($WhatIsRunningFilePath)        
         $sqlWhatIsRunning = $sqlWhatIsRunning.Replace('open_transaction_count = s.open_transaction_count', "open_transaction_count = 0")
         $sqlWhatIsRunning = $sqlWhatIsRunning.Replace('s.database_id', "null")
 
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlWhatIsRunning -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlWhatIsRunning -EnableException
     }
 }
 
@@ -1868,19 +1868,19 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$GetAllServerInfoFilePath = '$GetAllServerInfoFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerInfo procedure in [$DbaDatabase] database.."
-    Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -File $GetAllServerInfoFilePath
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $GetAllServerInfoFilePath
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspWrapperGetAllServerInfoFilePath = '$UspWrapperGetAllServerInfoFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_wrapper_GetAllServerInfo procedure in [$DbaDatabase] database.."
-    Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -File $UspWrapperGetAllServerInfoFilePath
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $UspWrapperGetAllServerInfoFilePath
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$GetAllServerCollectedDataFilePath = '$GetAllServerCollectedDataFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerCollectedData procedure in [$DbaDatabase] database.."
-    Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -File $GetAllServerCollectedDataFilePath
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $GetAllServerCollectedDataFilePath
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspWrapperGetAllServerCollectedDataFilePath = '$UspWrapperGetAllServerCollectedDataFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_wrapper_GetAllServerCollectedData procedure in [$DbaDatabase] database.."
-    Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -File $UspWrapperGetAllServerCollectedDataFilePath
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $UspWrapperGetAllServerCollectedDataFilePath
 }
 
 
@@ -2184,15 +2184,15 @@ if($stepName -in $Steps2Execute)
             $tsqlSSMSValidation = "and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'"
             $sqlCreateJobCollectDiskSpace = $sqlCreateJobCollectDiskSpace.Replace($tsqlSSMSValidation, "--$tsqlSSMSValidation")
         }
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlCreateJobCollectDiskSpace -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCollectDiskSpace -EnableException
 
         if($requireProxy) {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update job [$jobNameNew] to run under proxy [$credentialName].."
             $sqlUpdateJob = "EXEC msdb.dbo.sp_update_jobstep @job_name=N'$jobNameNew', @step_id=1 ,@proxy_name=N'$credentialName';"
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlUpdateJob -EnableException
+            $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlUpdateJob -EnableException
         }
         $sqlStartJob = "EXEC msdb.dbo.sp_start_job @job_name=N'$jobNameNew';"
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlStartJob -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlStartJob -EnableException
     }
 }
 
@@ -2295,15 +2295,15 @@ if($stepName -in $Steps2Execute)
             $tsqlSSMSValidation = "and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'"
             $sqlCreateJobCollectOSProcesses = $sqlCreateJobCollectOSProcesses.Replace($tsqlSSMSValidation, "--$tsqlSSMSValidation")
         }
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlCreateJobCollectOSProcesses -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCollectOSProcesses -EnableException
 
         if($requireProxy) {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update job [$jobNameNew] to run under proxy [$credentialName].."
             $sqlUpdateJob = "EXEC msdb.dbo.sp_update_jobstep @job_name=N'$jobNameNew', @step_id=1 ,@proxy_name=N'$credentialName';"
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlUpdateJob -EnableException
+            $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlUpdateJob -EnableException
         }
         $sqlStartJob = "EXEC msdb.dbo.sp_start_job @job_name=N'$jobNameNew';"
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlStartJob -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlStartJob -EnableException
     }
 }
 
@@ -2406,15 +2406,15 @@ if($stepName -in $Steps2Execute)
             $tsqlSSMSValidation = "and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'"
             $sqlCreateJobCollectPerfmonData = $sqlCreateJobCollectPerfmonData.Replace($tsqlSSMSValidation, "--$tsqlSSMSValidation")
         }
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlCreateJobCollectPerfmonData -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCollectPerfmonData -EnableException
 
         if($requireProxy) {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update job [$jobNameNew] to run under proxy [$credentialName].."
             $sqlUpdateJob = "EXEC msdb.dbo.sp_update_jobstep @job_name=N'$jobNameNew', @step_id=1 ,@proxy_name=N'$credentialName';"
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlUpdateJob -EnableException
+            $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlUpdateJob -EnableException
         }
         $sqlStartJob = "EXEC msdb.dbo.sp_start_job @job_name=N'$jobNameNew';"
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlStartJob -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlStartJob -EnableException
     }
 }
 
@@ -2511,7 +2511,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobCollectWaitStats -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCollectWaitStats -EnableException
     }
 }
 
@@ -2607,7 +2607,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobCollectXEvents -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCollectXEvents -EnableException
     }
 }
 
@@ -2704,7 +2704,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobFileIOStats -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobFileIOStats -EnableException
     }
 }
 
@@ -2801,7 +2801,7 @@ if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlPartitionsMaintenance -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlPartitionsMaintenance -EnableException
     }
 }
 
@@ -2898,7 +2898,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlPurgeDbaMetrics -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlPurgeDbaMetrics -EnableException
     }
 }
 
@@ -3001,15 +3001,15 @@ if($stepName -in $Steps2Execute)
             $tsqlSSMSValidation = "and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'"
             $sqlCreateJobRemoveXEventFiles = $sqlCreateJobRemoveXEventFiles.Replace($tsqlSSMSValidation, "--$tsqlSSMSValidation")
         }
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlCreateJobRemoveXEventFiles -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobRemoveXEventFiles -EnableException
 
         if($requireProxy) {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update job [$jobNameNew] to run under proxy [$credentialName].."
             $sqlUpdateJob = "EXEC msdb.dbo.sp_update_jobstep @job_name=N'$jobNameNew', @step_id=1 ,@proxy_name=N'$credentialName';"
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlUpdateJob -EnableException
+            $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlUpdateJob -EnableException
         }
         $sqlStartJob = "EXEC msdb.dbo.sp_start_job @job_name=N'$jobNameNew';"
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlStartJob -EnableException
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlStartJob -EnableException
     }
 }
 
@@ -3106,7 +3106,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobRunLogSaver -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobRunLogSaver -EnableException
     }
 }
 
@@ -3203,7 +3203,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobRunTempDbSaver -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobRunTempDbSaver -EnableException
     }
 }
 
@@ -3304,7 +3304,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRunWhoIsActive -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRunWhoIsActive -EnableException
     }
 }
 
@@ -3404,7 +3404,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRunBlitzIndexJob -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRunBlitzIndexJob -EnableException
     }
 }
 
@@ -3504,7 +3504,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRunBlitzJob -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRunBlitzJob -EnableException
     }
 }
 
@@ -3606,7 +3606,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRunBlitzIndexWeeklyJob -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRunBlitzIndexWeeklyJob -EnableException
     }
 }
 
@@ -3703,7 +3703,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobCollectMemoryClerks -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCollectMemoryClerks -EnableException
     }
 }
 
@@ -3801,7 +3801,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobCollectPrivilegedInfo -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCollectPrivilegedInfo -EnableException
     }
 }
 
@@ -3898,7 +3898,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobCollectAgHealthState -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCollectAgHealthState -EnableException
     }
 }
 
@@ -3996,7 +3996,7 @@ if($stepName -in $Steps2Execute)
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlCreateJobCheckSQLAgentJobs -EnableException
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlCreateJobCheckSQLAgentJobs -EnableException
     }
 }
 
@@ -4085,15 +4085,15 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
             $tsqlSSMSValidation = "and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'"
             $sqlUpdateSqlServerVersions = $sqlUpdateSqlServerVersions.Replace($tsqlSSMSValidation, "--$tsqlSSMSValidation")
         }
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlUpdateSqlServerVersions -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlUpdateSqlServerVersions -EnableException
 
         if($requireProxy) {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update job [$jobName] to run under proxy [$credentialName].."
             $sqlUpdateJob = "EXEC msdb.dbo.sp_update_jobstep @job_name=N'$jobName', @step_id=1 ,@proxy_name=N'$credentialName';"
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlUpdateJob -EnableException
+            $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlUpdateJob -EnableException
         }
         $sqlStartJob = "EXEC msdb.dbo.sp_start_job @job_name=N'$jobName';"
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlStartJob -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlStartJob -EnableException
     }
 }
 
@@ -4184,15 +4184,15 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
             $tsqlSSMSValidation = "and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'"
             $sqlGetInstanceAvailability = $sqlGetInstanceAvailability.Replace($tsqlSSMSValidation, "--$tsqlSSMSValidation")
         }
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlGetInstanceAvailability -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlGetInstanceAvailability -EnableException
 
         if($requireProxy) {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update job [$jobName] to run under proxy [$credentialName].."
             $sqlUpdateJob = "EXEC msdb.dbo.sp_update_jobstep @job_name=N'$jobName', @step_id=1 ,@proxy_name=N'$credentialName';"
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlUpdateJob -EnableException
+            $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlUpdateJob -EnableException
         }
         $sqlStartJob = "EXEC msdb.dbo.sp_start_job @job_name=N'$jobName';"
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlStartJob -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlStartJob -EnableException
     }
 }
 
@@ -4299,7 +4299,7 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlGetAllServerInfoJobFileText -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlGetAllServerInfoJobFileText -EnableException
     }
 }
 
@@ -4406,7 +4406,7 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
     }
     else # If not express edition
     {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database msdb -Query $sqlGetAllServerCollectedDataJobFileText -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlGetAllServerCollectedDataJobFileText -EnableException
     }
 }
 
@@ -4427,7 +4427,7 @@ if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existance of table [dbo].[WhoIsActive] on [$SqlInstanceToBaseline].."
     while ($whoIsActiveExists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
     {
-        $whoIsActiveExists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+        $whoIsActiveExists += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase `
                                     -Query "if OBJECT_ID('dbo.WhoIsActive') is not null select OBJECT_ID('dbo.WhoIsActive') as WhoIsActiveObjectID" -EnableException
 
         if($whoIsActiveExists.Count -eq 0) {
@@ -4444,7 +4444,7 @@ if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
     }
     else {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[WhoIsActive] into partitioned table.."
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionWhoIsActive -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPartitionWhoIsActive -EnableException
     }
 }
 
@@ -4478,7 +4478,7 @@ if($stepName -in $Steps2Execute)
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existance of table [dbo].[BlitzIndex] on [$SqlInstanceToBaseline].."
         while ($BlitzIndexExists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
         {
-            $BlitzIndexExists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+            $BlitzIndexExists += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase `
                                         -Query "if OBJECT_ID('dbo.BlitzIndex') is not null select OBJECT_ID('dbo.BlitzIndex') as BlitzIndexObjectID" -EnableException
 
             if($BlitzIndexExists.Count -eq 0) {
@@ -4493,7 +4493,7 @@ if($stepName -in $Steps2Execute)
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex] into partitioned table.."
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndex -EnableException
+            $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPartitionBlitzIndex -EnableException
         }
     }
 
@@ -4519,7 +4519,7 @@ if($stepName -in $Steps2Execute)
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existence of table [dbo].[BlitzIndex_Mode0] on [$SqlInstanceToBaseline].."
         while ($BlitzIndexMode0Exists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
         {
-            $BlitzIndexMode0Exists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+            $BlitzIndexMode0Exists += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase `
                                         -Query "if OBJECT_ID('dbo.BlitzIndex_Mode0') is not null select OBJECT_ID('dbo.BlitzIndex_Mode0') as BlitzIndexObjectID" -EnableException
 
             if($BlitzIndexMode0Exists.Count -eq 0) {
@@ -4534,7 +4534,7 @@ if($stepName -in $Steps2Execute)
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode0] into partitioned table.."
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode0 -EnableException
+            $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode0 -EnableException
         }
     }
 
@@ -4560,7 +4560,7 @@ if($stepName -in $Steps2Execute)
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existence of table [dbo].[BlitzIndex_Mode1] on [$SqlInstanceToBaseline].."
         while ($BlitzIndexMode1Exists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
         {
-            $BlitzIndexMode1Exists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+            $BlitzIndexMode1Exists += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase `
                                         -Query "if OBJECT_ID('dbo.BlitzIndex_Mode1') is not null select OBJECT_ID('dbo.BlitzIndex_Mode1') as BlitzIndexObjectID" -EnableException
 
             if($BlitzIndexMode1Exists.Count -eq 0) {
@@ -4575,7 +4575,7 @@ if($stepName -in $Steps2Execute)
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode1] into partitioned table.."
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode1 -EnableException
+            $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode1 -EnableException
         }
     }
 
@@ -4601,7 +4601,7 @@ if($stepName -in $Steps2Execute)
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existence of table [dbo].[BlitzIndex_Mode4] on [$SqlInstanceToBaseline].."
         while ($BlitzIndexMode4Exists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
         {
-            $BlitzIndexMode4Exists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+            $BlitzIndexMode4Exists += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase `
                                         -Query "if OBJECT_ID('dbo.BlitzIndex_Mode4') is not null select OBJECT_ID('dbo.BlitzIndex_Mode4') as BlitzIndexObjectID" -EnableException
 
             if($BlitzIndexMode4Exists.Count -eq 0) {
@@ -4616,7 +4616,7 @@ if($stepName -in $Steps2Execute)
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode4] into partitioned table.."
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode4 -EnableException
+            $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPartitionBlitzIndexMode4 -EnableException
         }
     }
 }
@@ -4651,7 +4651,7 @@ if($stepName -in $Steps2Execute)
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Check for existence of table [dbo].[Blitz] on [$SqlInstanceToBaseline].."
         while ($BlitzExists.Count -eq 0 -and $( (New-TimeSpan $loopStartTime $(Get-Date)).TotalSeconds -le $loopTotalDurationThresholdSeconds ) )
         {
-            $BlitzExists += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase `
+            $BlitzExists += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase `
                                         -Query "if OBJECT_ID('dbo.Blitz') is not null select OBJECT_ID('dbo.Blitz') as BlitzIndexObjectID" -EnableException
 
             if($BlitzExists.Count -eq 0) {
@@ -4666,7 +4666,7 @@ if($stepName -in $Steps2Execute)
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[Blitz] into partitioned table.."
-            Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlPartitionBlitz -EnableException
+            $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPartitionBlitz -EnableException
         }
     }
 }
@@ -4679,7 +4679,7 @@ if( ($stepName -in $Steps2Execute) -and ($SkipPageCompression -eq $false) -and $
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Execute procedure [usp_enable_page_compression] on [$SqlInstanceToBaseline].."
     $sqlExecuteUspEnablePageCompression = "exec dbo.usp_enable_page_compression;"
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlExecuteUspEnablePageCompression -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlExecuteUspEnablePageCompression -EnableException
 }
 
 
@@ -4691,7 +4691,7 @@ if($stepName -in $Steps2Execute) {
     #"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating All Objects in [$DbaDatabase] database.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Create [grafana] login & user with permissions on objects.."
     $sqlGrafanaLogin = [System.IO.File]::ReadAllText($GrafanaLoginFilePath).Replace("[DBA]", "[$DbaDatabase]")
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlGrafanaLogin -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlGrafanaLogin -EnableException
 }
 
 
@@ -4712,7 +4712,7 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaselineWithOutPort -ne $Inve
     $dbaLinkedServer = @()
     $dbaLinkedServer += Get-DbaLinkedServer -SqlInstance $conInventoryServer -LinkedServer $SqlInstanceToBaselineWithOutPort
     if($dbaLinkedServer.Count -eq 0) {
-        Invoke-DbaQuery -SqlInstance $conInventoryServer -Database master -Query $sqlLinkedServerOnInventory -EnableException
+        $conInventoryServer | Invoke-DbaQuery -Database master -Query $sqlLinkedServerOnInventory -EnableException
     } else {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Linked server for [$SqlInstanceToBaseline] on [$InventoryServer] already exists.."
     }
@@ -4738,7 +4738,7 @@ if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstance
     $dbaLinkedServer += Get-DbaLinkedServer -SqlInstance $conSqlInstanceToBaseline -LinkedServer $SqlInstanceAsDataDestinationWithOutPort -EnableException
     if($dbaLinkedServer.Count -eq 0) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating linked server for [$SqlInstanceAsDataDestination] on [$SqlInstanceToBaseline].."
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlLinkedServerForDataDestinationInstance -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlLinkedServerForDataDestinationInstance -EnableException
     } else {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Linked server named [$SqlInstanceAsDataDestination] already exists on [$SqlInstanceToBaseline]." | Write-Host -ForegroundColor Red
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly validate if linked server is able to access data of [$SqlInstanceAsDataDestination].[$DbaDatabase] database." | Write-Host -ForegroundColor Red
@@ -4765,7 +4765,7 @@ select collection_time_utc, host_name, object, counter, value, instance from cte
 union all
 select collection_time_utc, host_name, object, counter, value, instance from cte_counters_datasource
 "@
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlAlterViewPerformanceCounters -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAlterViewPerformanceCounters -EnableException
 
 
     # Alter dbo.vw_os_task_list
@@ -4780,7 +4780,7 @@ select [collection_time_utc], [host_name], [task_name], [pid], [session_name], [
 union all
 select [collection_time_utc], [host_name], [task_name], [pid], [session_name], [memory_kb], [status], [user_name], [cpu_time], [cpu_time_seconds], [window_title] from cte_os_tasks_datasource;
 "@
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlAlterViewOsTaskList -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAlterViewOsTaskList -EnableException
 
 
     # Alter dbo.vw_disk_space
@@ -4796,7 +4796,7 @@ union all
 select collection_time_utc, host_name, disk_volume, label, capacity_mb, free_mb, block_size, filesystem from cte_disk_space_datasource
 go
 "@
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlAlterViewDiskSpace -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAlterViewDiskSpace -EnableException
 }
 
 
@@ -4804,7 +4804,7 @@ go
 if($UpdateSQLAgentJobsThreshold) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor jobs thresholds on [$SqlInstanceToBaseline]..[sql_agent_job_thresholds] using '$UpdateSQLAgentJobsThresholdFileName'.." | Write-Host -ForegroundColor Cyan
     try {
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
     }
     catch {
         Write-Debug "Inside catch block"
@@ -4821,7 +4821,7 @@ if($UpdateSQLAgentJobsThreshold) {
 # Execute PostQuery
 if(-not [String]::IsNullOrEmpty($PostQuery)) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Executing PostQuery on [$SqlInstanceToBaseline].." | Write-Host -ForegroundColor Cyan
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $PostQuery -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $PostQuery -EnableException
 }
 
 
@@ -4846,17 +4846,17 @@ and host_name = '$HostName'
 
     # Update dbo.instance_details on SqlInstanceToBaseline
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor version on [$SqlInstanceToBaseline].."
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlUpdateSQLMonitorVersion -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlUpdateSQLMonitorVersion -EnableException
 
     # Update dbo.instance_details on SqlInstanceAsDataDestination
     if($SqlInstanceAsDataDestination -ne $SqlInstanceToBaseline) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor version on [$SqlInstanceAsDataDestination].."
-        Invoke-DbaQuery -SqlInstance $conSqlInstanceAsDataDestination -Database $DbaDatabase -Query $sqlUpdateSQLMonitorVersion -EnableException
+        $conSqlInstanceAsDataDestination | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlUpdateSQLMonitorVersion -EnableException
     }
 
     # Update dbo.instance_details on InventoryServer
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor version on [$InventoryServer].."
-    Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlUpdateInventoryVersionEntry -EnableException
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlUpdateInventoryVersionEntry -EnableException
 }
 
 

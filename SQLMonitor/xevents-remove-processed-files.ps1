@@ -25,7 +25,7 @@ $ErrorActionPreference = 'Stop'
 $currentTime = Get-Date
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for '$SqlInstance'.."
-$conSqlInstance = Connect-DbaInstance -SqlInstance $SqlInstance -Database master -ClientName "xevents-remove-processed-files.ps1" -TrustServerCertificate
+$conSqlInstance = Connect-DbaInstance -SqlInstance $SqlInstance -Database master -ClientName "xevents-remove-processed-files.ps1" -TrustServerCertificate -EncryptConnection
 
 # Check if PortNo is specified
 $Port4SqlInstance = $null
@@ -36,7 +36,7 @@ if($SqlInstance -match "(?'SqlInstance'.+),(?'PortNo'\d+)") {
 }
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetch HostName.."
-$HostName = Invoke-DbaQuery -SqlInstance $conSqlInstance -Query "Select SERVERPROPERTY('ComputerNamePhysicalNetBIOS') as HostName" -EnableException | 
+$HostName = $conSqlInstance | Invoke-DbaQuery -Query "Select SERVERPROPERTY('ComputerNamePhysicalNetBIOS') as HostName" -EnableException | 
                     Select-Object -ExpandProperty HostName;
 
 
@@ -50,7 +50,7 @@ order by collection_time_utc asc;
 "@
 
 $files2Process = @()
-$files2Process += Invoke-DbaQuery -SqlInstance $conSqlInstance -Database $Database -Query $sqlFiles2Process -EnableException
+$files2Process += $conSqlInstance | Invoke-DbaQuery -Database $Database -Query $sqlFiles2Process -EnableException
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "$($files2Process.Count) files to process.."
 
 Write-Debug "Stop here"
@@ -89,7 +89,7 @@ foreach($row in $files2Process)
             Remove-Item -Path $fileOnDisk
             if ( -not (Test-Path $fileOnDisk) ) {
                 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "File removed. Proceeding to  update flag [is_removed_from_disk].."
-                Invoke-DbaQuery -SqlInstance $conSqlInstance -Database $Database -Query $sqlUpdateFileEntry -SqlParameter @{ file_path = "$file" } -EnableException
+                $conSqlInstance | Invoke-DbaQuery -Database $Database -Query $sqlUpdateFileEntry -SqlParameter @{ file_path = "$file" } -EnableException
                 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Flag updated."
             }
         }
@@ -101,7 +101,7 @@ foreach($row in $files2Process)
     else {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "File '$fileOnDisk' not present on disk."
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Proceeding to  update flag [is_removed_from_disk].."
-        Invoke-DbaQuery -SqlInstance $conSqlInstance -Database $Database -Query $sqlUpdateFileEntry -SqlParameter @{ file_path = "$file" } -EnableException
+        $conSqlInstance | Invoke-DbaQuery -Database $Database -Query $sqlUpdateFileEntry -SqlParameter @{ file_path = "$file" } -EnableException
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Flag updated."
     }
 }

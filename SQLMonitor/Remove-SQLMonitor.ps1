@@ -426,7 +426,7 @@ try {
     if($InventoryServer -ne $SqlInstanceToBaseline) {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for '$InventoryServer'.."
         $conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database master -ClientName "Wrapper-RemoveSQLMonitor.ps1" `
-                                                    -SqlCredential $SqlCredential -TrustServerCertificate
+                                                    -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
     } else {
         $conInventoryServer = $conSqlInstanceToBaseline
     }
@@ -461,7 +461,7 @@ else {
     $sqlInstanceDetails = "select * from dbo.instance_details where sql_instance = '$SqlInstanceToBaselineWithOutPort' and [host_name] = '$HostName'"
 }
 try {
-    $instanceDetails += Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlInstanceDetails
+    $instanceDetails += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlInstanceDetails
 
     if($instanceDetails.Count -eq 1) 
     {
@@ -486,10 +486,10 @@ catch {
 
 # Setup SQL Connections
 $conSqlInstanceToBaseline = Connect-DbaInstance -SqlInstance $SqlInstanceToBaseline -Database master -ClientName "Wrapper-RemoveSQLMonitor.ps1" `
-                                                -SqlCredential $SqlCredential -TrustServerCertificate
+                                                -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
 if($InventoryServer -ne $SqlInstanceToBaseline) {
     $conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                -SqlCredential $SqlCredential -TrustServerCertificate
+                                                -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
 } else {
     $conInventoryServer = $conSqlInstanceToBaseline
 }
@@ -528,7 +528,7 @@ where servicename like 'SQL Server (%)'
 or servicename like 'SQL Server Agent (%)'
 "@
 try {
-    $resultServerInfo = Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Query $sqlServerInfo -EnableException
+    $resultServerInfo = $conSqlInstanceToBaseline | Invoke-DbaQuery -Query $sqlServerInfo -EnableException
     $dbServiceInfo = $resultServerInfo | Where-Object {$_.service_name_str -like "SQL Server (*)"}
     $agentServiceInfo = $resultServerInfo | Where-Object {$_.service_name_str -like "SQL Server Agent (*)"}
     $resultServerInfo | Format-Table -AutoSize
@@ -567,9 +567,9 @@ else {
 $instanceDetailsFilePath = "$instanceDetailsFilePath.xml"
 try {
     $instanceDetails = @()
-    $instanceDetails += Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlInstanceDetails
+    $instanceDetails += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlInstanceDetails
     if($instanceDetails.Count -eq 0) {
-        $instanceDetails += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlInstanceDetails -EnableException
+        $instanceDetails += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlInstanceDetails -EnableException
     }
 
     # If Instance Details file does not exists
@@ -682,19 +682,19 @@ if([String]::IsNullOrEmpty($SqlInstanceAsDataDestination)) {
     $conSqlInstanceAsDataDestination = $conSqlInstanceToBaseline
 } else {
     $conSqlInstanceAsDataDestination = Connect-DbaInstance -SqlInstance $SqlInstanceAsDataDestination -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                -SqlCredential $SqlCredential -TrustServerCertificate
+                                                -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
 }
 if([String]::IsNullOrEmpty($SqlInstanceForTsqlJobs)) {
     $conSqlInstanceForTsqlJobs = $conSqlInstanceToBaseline
 } else {
     $conSqlInstanceForTsqlJobs = Connect-DbaInstance -SqlInstance $SqlInstanceForTsqlJobs -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                -SqlCredential $SqlCredential -TrustServerCertificate
+                                                -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
 }
 if([String]::IsNullOrEmpty($SqlInstanceForPowershellJobs)) {
     $conSqlInstanceForPowershellJobs = $conSqlInstanceToBaseline
 } else {
     $conSqlInstanceForPowershellJobs = Connect-DbaInstance -SqlInstance $SqlInstanceForPowershellJobs -Database master -ClientName "Wrapper-InstallSQLMonitor.ps1" `
-                                                -SqlCredential $SqlCredential -TrustServerCertificate
+                                                -SqlCredential $SqlCredential -TrustServerCertificate -EncryptConnection
 }
 
 
@@ -816,7 +816,7 @@ order by pc.collection_time_utc desc
 "@
             $resultPerfmonRecord = @()
             try {
-                $resultPerfmonRecord += Invoke-DbaQuery -SqlInstance $conSqlInstanceAsDataDestination -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
+                $resultPerfmonRecord += $conSqlInstanceAsDataDestination | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlPerfmonRecord -EnableException
             }
             catch {
                 $errMessage = $_.Exception.Message
@@ -840,7 +840,7 @@ if($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs)
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetching basic info for `$SqlInstanceForPowershellJobs => [$SqlInstanceForPowershellJobs].."
     try {
         $jobServerServicesInfo = @()
-        $jobServerServicesInfo += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Query $sqlServerInfo -EnableException
+        $jobServerServicesInfo += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Query $sqlServerInfo -EnableException
 
         $jobServerDbServiceInfo = $jobServerServicesInfo | Where-Object {$_.service_name_str -like "SQL Server (*)"}
         $jobServerAgentServiceInfo = $jobServerServicesInfo | Where-Object {$_.service_name_str -like "SQL Server Agent (*)"}
@@ -959,7 +959,7 @@ if($HostName  -match $pattern) {
 # Execute PreQuery
 if(-not [String]::IsNullOrEmpty($PreQuery)) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Executing PreQuery on [$SqlInstanceToBaseline].." | Write-Host -ForegroundColor Cyan
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $PreQuery -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $PreQuery -EnableException
 }
 
 
@@ -1021,7 +1021,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
     if ($resultRemoveObject.Count -gt 0) {
       $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
       if ($result -eq 1) {
@@ -1093,7 +1093,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
     if ($resultRemoveObject.Count -gt 0) {
       $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
       if ($result -eq 1) {
@@ -1166,7 +1166,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1240,7 +1240,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1314,7 +1314,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1387,7 +1387,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
     if ($resultRemoveObject.Count -gt 0) {
       $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
       if ($result -eq 1) {
@@ -1460,7 +1460,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1535,7 +1535,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1610,7 +1610,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1685,7 +1685,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1760,7 +1760,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1835,7 +1835,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1910,7 +1910,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -1985,7 +1985,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2062,7 +2062,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2137,7 +2137,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2212,7 +2212,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2287,7 +2287,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2363,7 +2363,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2438,7 +2438,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForPowershellJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2513,7 +2513,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2588,7 +2588,7 @@ else
     select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceForTsqlJobs -Database msdb -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2628,7 +2628,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2667,7 +2667,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2706,7 +2706,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2745,7 +2745,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2784,7 +2784,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2823,7 +2823,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2862,7 +2862,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2901,7 +2901,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2940,7 +2940,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -2979,7 +2979,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3018,7 +3018,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3057,7 +3057,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3096,7 +3096,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3135,7 +3135,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3174,7 +3174,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3213,7 +3213,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3252,7 +3252,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3291,7 +3291,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3330,7 +3330,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3369,7 +3369,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3408,7 +3408,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3447,7 +3447,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3501,7 +3501,7 @@ begin
 end
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $XEventFilesDirectory = $resultRemoveObject | Select-Object -ExpandProperty xe_directory;
@@ -3547,7 +3547,7 @@ if($stepName -in $Steps2Execute)
         select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conInventoryServer -Database master -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conInventoryServer | Invoke-DbaQuery -Database master -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3588,7 +3588,7 @@ if($stepName -in $Steps2Execute)
         select 0 as object_exists;
 "@
         $resultRemoveObject = @()
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlRemoveObject -EnableException
+        $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlRemoveObject -EnableException
         if($resultRemoveObject.Count -gt 0) 
         {
             $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3631,7 +3631,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3670,7 +3670,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3709,7 +3709,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3748,7 +3748,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3787,7 +3787,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3826,7 +3826,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3865,7 +3865,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3904,7 +3904,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3943,7 +3943,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -3982,7 +3982,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4021,7 +4021,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4060,7 +4060,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4099,7 +4099,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4138,7 +4138,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4177,7 +4177,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4216,7 +4216,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4255,7 +4255,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4294,7 +4294,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4333,7 +4333,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4372,7 +4372,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4411,7 +4411,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4450,7 +4450,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4507,7 +4507,7 @@ else
     select 0 as object_exists, convert(varchar,null) as table_name;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0)
     {
         $notExistingObjects = @()
@@ -4556,7 +4556,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4595,7 +4595,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4634,7 +4634,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4673,7 +4673,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4712,7 +4712,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4751,7 +4751,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4790,7 +4790,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4829,7 +4829,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4868,7 +4868,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4907,7 +4907,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4946,7 +4946,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -4985,7 +4985,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5024,7 +5024,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5063,7 +5063,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5102,7 +5102,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5141,7 +5141,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5180,7 +5180,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5219,7 +5219,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5258,7 +5258,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5297,7 +5297,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5336,7 +5336,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5375,7 +5375,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5414,7 +5414,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5453,7 +5453,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5492,7 +5492,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5531,7 +5531,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5570,7 +5570,7 @@ else
     select 0 as object_exists;
 "@
     $resultRemoveObject = @()
-    $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
+    $resultRemoveObject += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlRemoveObject -EnableException
     if($resultRemoveObject.Count -gt 0) 
     {
         $result = $resultRemoveObject | Select-Object -ExpandProperty object_exists;
@@ -5686,7 +5686,7 @@ if($stepName -in $Steps2Execute) {
     where database_id = DB_ID('$DbaDatabase') and type_desc = 'ROWS' 
     and physical_name not like 'C:\%' order by file_id;
 "@
-        $dbaDatabasePath = Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database master -Query $sqlDbaDatabasePath -EnableException | Select-Object -ExpandProperty physical_name
+        $dbaDatabasePath = $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlDbaDatabasePath -EnableException | Select-Object -ExpandProperty physical_name
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$dbaDatabasePath => '$dbaDatabasePath'.."
 
         $xEventTargetPathParentDirectory = (Split-Path (Split-Path $dbaDatabasePath -Parent))
@@ -5800,7 +5800,7 @@ end catch
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$sqlRemoveInstanceEntry => `n`n$sqlRemoveInstanceEntry`n"        
     }
     else {
-        $resultRemoveObject += Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlRemoveInstanceEntry -EnableException
+        $resultRemoveObject += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlRemoveInstanceEntry -EnableException
     }
 
     if($resultRemoveObject.Count -gt 0) 
@@ -5818,7 +5818,7 @@ end catch
 # Execute PostQuery
 if(-not [String]::IsNullOrEmpty($PostQuery)) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Executing PostQuery on [$SqlInstanceToBaseline].." | Write-Host -ForegroundColor Cyan
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceToBaseline -Database $DbaDatabase -Query $PostQuery -EnableException
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $PostQuery -EnableException
 }
 
 

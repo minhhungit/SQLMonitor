@@ -16,7 +16,7 @@ Param (
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for InventoryServer '$InventoryServer'.."
 $conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database $InventoryDatabase -ClientName "Stop-SQLMonitorJobs-On-AllServers-With-Issues.ps1" `
-                                                    -TrustServerCertificate -ErrorAction Stop -SqlCredential $SqlCredential
+                                                    -TrustServerCertificate -EncryptConnection -ErrorAction Stop -SqlCredential $SqlCredential
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetch [LinkAdmin] password from Credential Manager [$InventoryServer].[$CredentialManagerDatabase].."
 $getCredential = @"
@@ -28,7 +28,7 @@ exec dbo.usp_get_credential
 		@password = @password output;
 select @password as [password];
 "@
-[string]$linkAdminPassword = Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $CredentialManagerDatabase -Query $getCredential | 
+[string]$linkAdminPassword = $conInventoryServer | Invoke-DbaQuery -Database $CredentialManagerDatabase -Query $getCredential | 
                                     Select-Object -ExpandProperty password -First 1
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Create LinkAdmin credential from fetched password.."
@@ -75,7 +75,7 @@ set quoted_identifier off;
 exec sp_executesql @_sql, @_params, @_buffer_time_minutes = @_buffer_time_minutes;
 "@
 
-$resultGetAllStuckJobs = Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlGetAllStuckJobs -SqlCredential $linkAdminCredential;
+$resultGetAllStuckJobs = $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlGetAllStuckJobs -SqlCredential $linkAdminCredential;
 
 # Execute SQL files & SQL Query
 $failedJobs = @()
@@ -96,7 +96,7 @@ foreach($job in $resultGetAllStuckJobsFiltered)
         if($StopJob) 
         {
             "`n`t$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Stop job [$jobName] on [$sqlInstance].."
-            Invoke-DbaQuery -SqlInstance $sqlInstance -CommandType StoredProcedure -EnableException -SqlCredential $linkAdminCredential `
+            $sqlInstance | Invoke-DbaQuery -CommandType StoredProcedure -EnableException -SqlCredential $linkAdminCredential `
                             -Database msdb -Query sp_stop_job -SqlParameter @{ job_name = $jobName }
 
             Start-Sleep -Seconds 5
@@ -105,7 +105,7 @@ foreach($job in $resultGetAllStuckJobsFiltered)
         if($StartJob)
         {
             "`t$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Stop job [$jobName] on [$sqlInstance].."
-            Invoke-DbaQuery -SqlInstance $sqlInstance -CommandType StoredProcedure -EnableException -SqlCredential $linkAdminCredential `
+            $sqlInstance | Invoke-DbaQuery -CommandType StoredProcedure -EnableException -SqlCredential $linkAdminCredential `
                             -Database msdb -Query sp_start_job -SqlParameter @{ job_name = $jobName }
         }
         
