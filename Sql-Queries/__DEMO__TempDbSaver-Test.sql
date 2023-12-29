@@ -20,6 +20,8 @@ begin tran
 
 	delete top (10) percent from dbo.WhoIsActive_TempdbSaver
 
+	--delete top (10) percent from dbo.WhoIsActive_TempdbSaver
+
 	select @@TRANCOUNT
 
 -- do this later.
