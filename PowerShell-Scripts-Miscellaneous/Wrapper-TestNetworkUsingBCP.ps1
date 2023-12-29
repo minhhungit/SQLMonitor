@@ -38,6 +38,11 @@ if(-not (Test-Path $DestinationDirectory)) {
     "Kindly ensure folder '$DestinationDirectory' exists" | Write-Error
 }
 
+# Check SQL login
+if([String]::IsNullOrEmpty($SQLUser) -or [String]::IsNullOrEmpty($SQLUserPassword)) {
+    "Parameters SQLUser & SQLUserPassword are not provided. So using Trusted Authentication." | Write-Host -ForegroundColor Yellow
+}
+
 # Loop, and generate batch files
 [int]$counter = 1
 while ($counter -le $Threads) {
