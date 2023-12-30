@@ -1,5 +1,6 @@
 /*
 	Version -> v1.6.4
+	2023-12-30 - #21 - Add exception for some waits through Wait Stats table
 	-----------------
 
 	https://www.sommarskog.se/grantperm.html
