@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 22,
+  "id": 5,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -113,9 +113,10 @@
           "titleSize": 8,
           "valueSize": 18
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -202,9 +203,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -260,9 +262,10 @@
           "values": false
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -324,9 +327,10 @@
           "titleSize": 8,
           "valueSize": 18
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -407,9 +411,10 @@
           "titleSize": 8,
           "valueSize": 18
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -490,9 +495,10 @@
           "titleSize": 8,
           "valueSize": 18
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -642,7 +648,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -718,9 +724,10 @@
           "fields": "/.*/",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -789,9 +796,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -847,9 +855,10 @@
           "fields": "/.*/",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -908,9 +917,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -978,9 +988,10 @@
           "fields": "/.*/",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1035,9 +1046,10 @@
           "fields": "/.*/",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1108,9 +1120,10 @@
           "fields": "/.*/",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1206,9 +1219,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1267,9 +1281,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1328,6 +1343,8 @@
       },
       "id": 165,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -1339,7 +1356,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1403,9 +1420,10 @@
           "fields": "",
           "values": true
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1473,9 +1491,10 @@
           "fields": "/.*/",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1549,9 +1568,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1625,9 +1645,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1688,9 +1709,10 @@
         "text": {
           "valueSize": 24
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1775,9 +1797,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1855,9 +1878,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1927,9 +1951,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -1986,9 +2011,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -2048,9 +2074,10 @@
           "values": false
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -2118,9 +2145,10 @@
           "values": false
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -2203,9 +2231,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "value"
+        "textMode": "value",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -2282,9 +2311,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -2342,9 +2372,10 @@
           "values": true
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -2568,7 +2599,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "alias": "",
@@ -8226,6 +8257,7 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "Wait Stats (ms)",
@@ -8239,6 +8271,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 1,
@@ -8260,7 +8293,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               },
@@ -8272,7 +8306,7 @@
             "h": 15,
             "w": 24,
             "x": 0,
-            "y": 72
+            "y": 36
           },
           "id": 133,
           "options": {
@@ -8302,7 +8336,7 @@
               "editorMode": "code",
               "format": "time_series",
               "rawQuery": true,
-              "rawSql": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\ndeclare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\ndeclare @delta_minutes int;\n\nset @sql_instance = '$server';\nset @perfmon_host_name = '$perfmon_host_name';\nset @start_time_utc = $__timeFrom();\nset @end_time_utc = $__timeTo();\nset @delta_minutes = $cpu_delta_minutes;\nset @params = N'@perfmon_host_name varchar(255), @start_time_utc datetime2, @end_time_utc datetime2, @delta_minutes int';\n\nset quoted_identifier off;\nset @sql = \"\nset nocount on;\n\ndeclare @WaitStatsTop tinyint = 10;\ndeclare @WaitsPercentTop int = 99;\n\n;WITH [Waits] AS\n(\n\tSELECT\t[collection_time_utc], \n\t\t\t[wait_type], \n\t\t\t[WaitCategory], \n\t\t\t[Ignorable], \n\t\t\t[ElapsedSeconds], \n\t\t\t[wait_time_ms_delta], \n\t\t\t[wait_time_minutes_delta], \n\t\t\t[wait_time_minutes_per_minute], \n\t\t\t([wait_time_ms_delta] - [signal_wait_time_ms_delta]) as [resource_wait_time_ms_delta],\n\t\t\t[signal_wait_time_ms_delta], \n\t\t\t[waiting_tasks_count_delta],\n\t\t\tROW_NUMBER() OVER(PARTITION BY [collection_time_utc] ORDER BY [wait_time_ms_delta] DESC) AS [WaitsRank],\n\t\t\t(100.0 * [wait_time_ms_delta]) / (SUM ([wait_time_ms_delta]) OVER (PARTITION BY [collection_time_utc])) AS [Percentage]\n\t\t\t,(100.0 * (SUM([wait_time_ms_delta]) OVER(PARTITION BY [collection_time_utc] ORDER BY [wait_time_ms_delta] DESC, [waiting_tasks_count_delta] DESC, [wait_type]))) / (SUM ([wait_time_ms_delta]) OVER (PARTITION BY [collection_time_utc])) AS [PercentageTotal]\n\tFROM dbo.[vw_wait_stats_deltas] AS [Waits]\n\tWHERE collection_time_utc between @start_time_utc and @end_time_utc\n\tAND [wait_type] NOT IN (\n        -- These wait types are almost 100% never a problem and so they are\n        -- filtered out to avoid them skewing the results. Click on the URL\n        -- for more information.\n        N'BROKER_EVENTHANDLER', -- https://www.sqlskills.com/help/waits/BROKER_EVENTHANDLER\n        N'BROKER_RECEIVE_WAITFOR', -- https://www.sqlskills.com/help/waits/BROKER_RECEIVE_WAITFOR\n        N'BROKER_TASK_STOP', -- https://www.sqlskills.com/help/waits/BROKER_TASK_STOP\n        N'BROKER_TO_FLUSH', -- https://www.sqlskills.com/help/waits/BROKER_TO_FLUSH\n        N'BROKER_TRANSMITTER', -- https://www.sqlskills.com/help/waits/BROKER_TRANSMITTER\n        N'CHECKPOINT_QUEUE', -- https://www.sqlskills.com/help/waits/CHECKPOINT_QUEUE\n        N'CHKPT', -- https://www.sqlskills.com/help/waits/CHKPT\n        N'CLR_AUTO_EVENT', -- https://www.sqlskills.com/help/waits/CLR_AUTO_EVENT\n        N'CLR_MANUAL_EVENT', -- https://www.sqlskills.com/help/waits/CLR_MANUAL_EVENT\n        N'CLR_SEMAPHORE', -- https://www.sqlskills.com/help/waits/CLR_SEMAPHORE\n        \n        --N'CXCONSUMER', -- https://www.sqlskills.com/help/waits/CXCONSUMER\n \n        -- Maybe comment these four out if you have mirroring issues\n        N'DBMIRROR_DBM_EVENT', -- https://www.sqlskills.com/help/waits/DBMIRROR_DBM_EVENT\n        N'DBMIRROR_EVENTS_QUEUE', -- https://www.sqlskills.com/help/waits/DBMIRROR_EVENTS_QUEUE\n        N'DBMIRROR_WORKER_QUEUE', -- https://www.sqlskills.com/help/waits/DBMIRROR_WORKER_QUEUE\n        N'DBMIRRORING_CMD', -- https://www.sqlskills.com/help/waits/DBMIRRORING_CMD\n \n        N'DIRTY_PAGE_POLL', -- https://www.sqlskills.com/help/waits/DIRTY_PAGE_POLL\n        N'DISPATCHER_QUEUE_SEMAPHORE', -- https://www.sqlskills.com/help/waits/DISPATCHER_QUEUE_SEMAPHORE\n        N'EXECSYNC', -- https://www.sqlskills.com/help/waits/EXECSYNC\n        N'FSAGENT', -- https://www.sqlskills.com/help/waits/FSAGENT\n        N'FT_IFTS_SCHEDULER_IDLE_WAIT', -- https://www.sqlskills.com/help/waits/FT_IFTS_SCHEDULER_IDLE_WAIT\n        N'FT_IFTSHC_MUTEX', -- https://www.sqlskills.com/help/waits/FT_IFTSHC_MUTEX\n \n        -- Maybe comment these six out if you have AG issues\n        N'HADR_CLUSAPI_CALL', -- https://www.sqlskills.com/help/waits/HADR_CLUSAPI_CALL\n        N'HADR_FILESTREAM_IOMGR_IOCOMPLETION', -- https://www.sqlskills.com/help/waits/HADR_FILESTREAM_IOMGR_IOCOMPLETION\n        N'HADR_LOGCAPTURE_WAIT', -- https://www.sqlskills.com/help/waits/HADR_LOGCAPTURE_WAIT\n        N'HADR_NOTIFICATION_DEQUEUE', -- https://www.sqlskills.com/help/waits/HADR_NOTIFICATION_DEQUEUE\n        N'HADR_TIMER_TASK', -- https://www.sqlskills.com/help/waits/HADR_TIMER_TASK\n        N'HADR_WORK_QUEUE', -- https://www.sqlskills.com/help/waits/HADR_WORK_QUEUE\n        \n        N'KSOURCE_WAKEUP', -- https://www.sqlskills.com/help/waits/KSOURCE_WAKEUP\n        N'LAZYWRITER_SLEEP', -- https://www.sqlskills.com/help/waits/LAZYWRITER_SLEEP\n        N'LOGMGR_QUEUE', -- https://www.sqlskills.com/help/waits/LOGMGR_QUEUE\n        N'MEMORY_ALLOCATION_EXT', -- https://www.sqlskills.com/help/waits/MEMORY_ALLOCATION_EXT\n        N'ONDEMAND_TASK_QUEUE', -- https://www.sqlskills.com/help/waits/ONDEMAND_TASK_QUEUE\n        N'PARALLEL_REDO_DRAIN_WORKER', -- https://www.sqlskills.com/help/waits/PARALLEL_REDO_DRAIN_WORKER\n        N'PARALLEL_REDO_LOG_CACHE', -- https://www.sqlskills.com/help/waits/PARALLEL_REDO_LOG_CACHE\n        N'PARALLEL_REDO_TRAN_LIST', -- https://www.sqlskills.com/help/waits/PARALLEL_REDO_TRAN_LIST\n        N'PARALLEL_REDO_WORKER_SYNC', -- https://www.sqlskills.com/help/waits/PARALLEL_REDO_WORKER_SYNC\n        N'PARALLEL_REDO_WORKER_WAIT_WORK', -- https://www.sqlskills.com/help/waits/PARALLEL_REDO_WORKER_WAIT_WORK\n        N'PREEMPTIVE_XE_GETTARGETSTATE', -- https://www.sqlskills.com/help/waits/PREEMPTIVE_XE_GETTARGETSTATE\n        N'PWAIT_ALL_COMPONENTS_INITIALIZED', -- https://www.sqlskills.com/help/waits/PWAIT_ALL_COMPONENTS_INITIALIZED\n        N'PWAIT_DIRECTLOGCONSUMER_GETNEXT', -- https://www.sqlskills.com/help/waits/PWAIT_DIRECTLOGCONSUMER_GETNEXT\n        N'QDS_PERSIST_TASK_MAIN_LOOP_SLEEP', -- https://www.sqlskills.com/help/waits/QDS_PERSIST_TASK_MAIN_LOOP_SLEEP\n        N'QDS_ASYNC_QUEUE', -- https://www.sqlskills.com/help/waits/QDS_ASYNC_QUEUE\n        N'QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP',\n            -- https://www.sqlskills.com/help/waits/QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP\n        N'QDS_SHUTDOWN_QUEUE', -- https://www.sqlskills.com/help/waits/QDS_SHUTDOWN_QUEUE\n        N'REDO_THREAD_PENDING_WORK', -- https://www.sqlskills.com/help/waits/REDO_THREAD_PENDING_WORK\n        N'REQUEST_FOR_DEADLOCK_SEARCH', -- https://www.sqlskills.com/help/waits/REQUEST_FOR_DEADLOCK_SEARCH\n        N'RESOURCE_QUEUE', -- https://www.sqlskills.com/help/waits/RESOURCE_QUEUE\n        N'SERVER_IDLE_CHECK', -- https://www.sqlskills.com/help/waits/SERVER_IDLE_CHECK\n        N'SLEEP_BPOOL_FLUSH', -- https://www.sqlskills.com/help/waits/SLEEP_BPOOL_FLUSH\n        N'SLEEP_DBSTARTUP', -- https://www.sqlskills.com/help/waits/SLEEP_DBSTARTUP\n        N'SLEEP_DCOMSTARTUP', -- https://www.sqlskills.com/help/waits/SLEEP_DCOMSTARTUP\n        N'SLEEP_MASTERDBREADY', -- https://www.sqlskills.com/help/waits/SLEEP_MASTERDBREADY\n        N'SLEEP_MASTERMDREADY', -- https://www.sqlskills.com/help/waits/SLEEP_MASTERMDREADY\n        N'SLEEP_MASTERUPGRADED', -- https://www.sqlskills.com/help/waits/SLEEP_MASTERUPGRADED\n        N'SLEEP_MSDBSTARTUP', -- https://www.sqlskills.com/help/waits/SLEEP_MSDBSTARTUP\n        N'SLEEP_SYSTEMTASK', -- https://www.sqlskills.com/help/waits/SLEEP_SYSTEMTASK\n        N'SLEEP_TASK', -- https://www.sqlskills.com/help/waits/SLEEP_TASK\n        N'SLEEP_TEMPDBSTARTUP', -- https://www.sqlskills.com/help/waits/SLEEP_TEMPDBSTARTUP\n        N'SNI_HTTP_ACCEPT', -- https://www.sqlskills.com/help/waits/SNI_HTTP_ACCEPT\n        N'SOS_WORK_DISPATCHER', -- https://www.sqlskills.com/help/waits/SOS_WORK_DISPATCHER\n        N'SP_SERVER_DIAGNOSTICS_SLEEP', -- https://www.sqlskills.com/help/waits/SP_SERVER_DIAGNOSTICS_SLEEP\n        N'SQLTRACE_BUFFER_FLUSH', -- https://www.sqlskills.com/help/waits/SQLTRACE_BUFFER_FLUSH\n        N'SQLTRACE_INCREMENTAL_FLUSH_SLEEP', -- https://www.sqlskills.com/help/waits/SQLTRACE_INCREMENTAL_FLUSH_SLEEP\n        N'SQLTRACE_WAIT_ENTRIES', -- https://www.sqlskills.com/help/waits/SQLTRACE_WAIT_ENTRIES\n        N'WAIT_FOR_RESULTS', -- https://www.sqlskills.com/help/waits/WAIT_FOR_RESULTS\n        N'WAITFOR', -- https://www.sqlskills.com/help/waits/WAITFOR\n        N'WAITFOR_TASKSHUTDOWN', -- https://www.sqlskills.com/help/waits/WAITFOR_TASKSHUTDOWN\n        N'WAIT_XTP_RECOVERY', -- https://www.sqlskills.com/help/waits/WAIT_XTP_RECOVERY\n        N'WAIT_XTP_HOST_WAIT', -- https://www.sqlskills.com/help/waits/WAIT_XTP_HOST_WAIT\n        N'WAIT_XTP_OFFLINE_CKPT_NEW_LOG', -- https://www.sqlskills.com/help/waits/WAIT_XTP_OFFLINE_CKPT_NEW_LOG\n        N'WAIT_XTP_CKPT_CLOSE', -- https://www.sqlskills.com/help/waits/WAIT_XTP_CKPT_CLOSE\n        N'XE_DISPATCHER_JOIN', -- https://www.sqlskills.com/help/waits/XE_DISPATCHER_JOIN\n        N'XE_DISPATCHER_WAIT', -- https://www.sqlskills.com/help/waits/XE_DISPATCHER_WAIT\n        N'XE_TIMER_EVENT' -- https://www.sqlskills.com/help/waits/XE_TIMER_EVENT\n    )\n)\nSELECT\ttime = [collection_time_utc]\n\t\t,[metric] =  [WaitCategory]+ ' (__ '+[wait_type]+' __)'\n\t\t--,[WaitCategory]\n\t\t--,[WaitsRank]\n\t\t--,[Percentage]\n\t\t--,[Ignorable]\n\t\t--,[ElapsedSeconds]\n\t\t,[value] = [wait_time_ms_delta]\n\t\t--,[wait_time_minutes_delta]\n\t\t--,[wait_time_minutes_per_minute]\n\t\t--,[signal_wait_time_ms_delta]\n\t\t--,[waiting_tasks_count_delta]\n\t\t--,ISNULL((CAST([wait_time_ms_delta] AS DECIMAL(38,2))/NULLIF(CAST([waiting_tasks_count_delta] AS DECIMAL(38,2)),0)),0) AS [wait_time_ms_per_wait]\n\t\t--,[PercentageTotal]\nFROM [Waits] as cur\nWHERE [WaitsRank] <= @WaitStatsTop\nAND [PercentageTotal] <= @WaitsPercentTop\nORDER BY [time] ASC, [wait_time_ms_delta] DESC, [waiting_tasks_count_delta] DESC\n--OPTION(RECOMPILE);\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql , @params, @perfmon_host_name, @start_time_utc, @end_time_utc, @delta_minutes;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql , @params, @perfmon_host_name, @start_time_utc, @end_time_utc, @delta_minutes;",
+              "rawSql": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\ndeclare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\ndeclare @delta_minutes int;\n\nset @sql_instance = '$server';\nset @perfmon_host_name = '$perfmon_host_name';\nset @start_time_utc = $__timeFrom();\nset @end_time_utc = $__timeTo();\nset @delta_minutes = $cpu_delta_minutes;\nset @params = N'@perfmon_host_name varchar(255), @start_time_utc datetime2, @end_time_utc datetime2, @delta_minutes int';\n\nset quoted_identifier off;\nset @sql = \"\nset nocount on;\n\ndeclare @WaitStatsTop tinyint = 10;\ndeclare @WaitsPercentTop int = 99;\n\n;WITH [Waits] AS\n(\n\tSELECT\t[collection_time_utc], \n\t\t\t[wait_type], \n\t\t\t[WaitCategory], \n\t\t\t[Ignorable], \n\t\t\t[ElapsedSeconds], \n\t\t\t[wait_time_ms_delta], \n\t\t\t[wait_time_minutes_delta], \n\t\t\t[wait_time_minutes_per_minute], \n\t\t\t([wait_time_ms_delta] - [signal_wait_time_ms_delta]) as [resource_wait_time_ms_delta],\n\t\t\t[signal_wait_time_ms_delta], \n\t\t\t[waiting_tasks_count_delta],\n\t\t\tROW_NUMBER() OVER(PARTITION BY [collection_time_utc] ORDER BY [wait_time_ms_delta] DESC) AS [WaitsRank],\n\t\t\t(100.0 * [wait_time_ms_delta]) / (SUM ([wait_time_ms_delta]) OVER (PARTITION BY [collection_time_utc])) AS [Percentage]\n\t\t\t,(100.0 * (SUM([wait_time_ms_delta]) OVER(PARTITION BY [collection_time_utc] ORDER BY [wait_time_ms_delta] DESC, [waiting_tasks_count_delta] DESC, [wait_type]))) / (SUM ([wait_time_ms_delta]) OVER (PARTITION BY [collection_time_utc])) AS [PercentageTotal]\n\tFROM dbo.[vw_wait_stats_deltas] AS [Waits]\n\tWHERE collection_time_utc between @start_time_utc and @end_time_utc\n\tand [wait_type] NOT IN ( select wc.[WaitType] from [dbo].[BlitzFirst_WaitStats_Categories] wc where wc.IgnorableOnDashboard = 1 )\n)\nSELECT\ttime = [collection_time_utc]\n\t\t,[metric] =  [WaitCategory]+ ' (__ '+[wait_type]+' __)'\n\t\t--,[WaitCategory]\n\t\t--,[WaitsRank]\n\t\t--,[Percentage]\n\t\t--,[Ignorable]\n\t\t--,[ElapsedSeconds]\n\t\t,[value] = [wait_time_ms_delta]\n\t\t--,[wait_time_minutes_delta]\n\t\t--,[wait_time_minutes_per_minute]\n\t\t--,[signal_wait_time_ms_delta]\n\t\t--,[waiting_tasks_count_delta]\n\t\t--,ISNULL((CAST([wait_time_ms_delta] AS DECIMAL(38,2))/NULLIF(CAST([waiting_tasks_count_delta] AS DECIMAL(38,2)),0)),0) AS [wait_time_ms_per_wait]\n\t\t--,[PercentageTotal]\nFROM [Waits] as cur\nWHERE [WaitsRank] <= @WaitStatsTop\nAND [PercentageTotal] <= @WaitsPercentTop\nORDER BY [time] ASC, [wait_time_ms_delta] DESC, [waiting_tasks_count_delta] DESC\n--OPTION(RECOMPILE);\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql , @params, @perfmon_host_name, @start_time_utc, @end_time_utc, @delta_minutes;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql , @params, @perfmon_host_name, @start_time_utc, @end_time_utc, @delta_minutes;",
               "refId": "A",
               "sql": {
                 "columns": [
@@ -8396,7 +8430,6 @@
   "refresh": "1m",
   "revision": 1,
   "schemaVersion": 38,
-  "style": "dark",
   "tags": [
     "mssql",
     "sqlmonitor"
@@ -8406,8 +8439,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SqlServer",
-          "value": "ygPVA4snk"
+          "text": "SQLMonitor",
+          "value": "a28aeb06-bb6e-4c74-81af-65de433776c8"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -8426,8 +8459,8 @@
       {
         "current": {
           "selected": false,
-          "text": "21L-LTPABL-1187",
-          "value": "21L-LTPABL-1187"
+          "text": "SQLMonitor",
+          "value": "SQLMonitor"
         },
         "datasource": {
           "type": "mssql",
@@ -8522,8 +8555,8 @@
       {
         "current": {
           "selected": false,
-          "text": "21L-LTPABL-1187",
-          "value": "21L-LTPABL-1187"
+          "text": "SQLMONITOR",
+          "value": "SQLMONITOR"
         },
         "datasource": {
           "type": "mssql",
@@ -8546,8 +8579,8 @@
       {
         "current": {
           "selected": false,
-          "text": "21L-LTPABL-1187",
-          "value": "21L-LTPABL-1187"
+          "text": "SQLMONITOR",
+          "value": "SQLMONITOR"
         },
         "datasource": {
           "type": "mssql",
@@ -8636,8 +8669,8 @@
       {
         "current": {
           "selected": false,
-          "text": "WORKGROUP",
-          "value": "WORKGROUP"
+          "text": "LAB",
+          "value": "LAB"
         },
         "datasource": {
           "type": "mssql",
@@ -8661,8 +8694,8 @@
       {
         "current": {
           "selected": false,
-          "text": "100.64.0.1",
-          "value": "100.64.0.1"
+          "text": "::1",
+          "value": "::1"
         },
         "datasource": {
           "type": "mssql",
@@ -8686,8 +8719,8 @@
       {
         "current": {
           "selected": false,
-          "text": "21L-LTPABL-1187",
-          "value": "21L-LTPABL-1187"
+          "text": "SQLMONITOR",
+          "value": "SQLMONITOR"
         },
         "datasource": {
           "type": "mssql",
@@ -8710,8 +8743,8 @@
       {
         "current": {
           "selected": false,
-          "text": "15.0.4326.1",
-          "value": "15.0.4326.1"
+          "text": "15.0.2104.1",
+          "value": "15.0.2104.1"
         },
         "datasource": {
           "type": "mssql",
@@ -8734,8 +8767,8 @@
       {
         "current": {
           "selected": false,
-          "text": "WORKGROUP",
-          "value": "WORKGROUP"
+          "text": "",
+          "value": ""
         },
         "datasource": {
           "type": "mssql",
@@ -8790,8 +8823,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703304730684",
-          "value": "1703304730684"
+          "text": "1703945015636",
+          "value": "1703945015636"
         },
         "datasource": {
           "type": "mssql",
@@ -8822,8 +8855,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703304726858",
-          "value": "1703304726858"
+          "text": "1703945046887",
+          "value": "1703945046887"
         },
         "datasource": {
           "type": "mssql",
@@ -8854,8 +8887,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703304722477",
-          "value": "1703304722477"
+          "text": "1703945161353",
+          "value": "1703945161353"
         },
         "datasource": {
           "type": "mssql",
@@ -8878,8 +8911,8 @@
       {
         "current": {
           "selected": false,
-          "text": "5",
-          "value": "5"
+          "text": "2",
+          "value": "2"
         },
         "datasource": {
           "type": "mssql",
@@ -8901,8 +8934,8 @@
       {
         "current": {
           "selected": false,
-          "text": "8",
-          "value": "8"
+          "text": "4",
+          "value": "4"
         },
         "datasource": {
           "type": "mssql",
@@ -8925,8 +8958,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702419343757",
-          "value": "1702419343757"
+          "text": "1703938277903",
+          "value": "1703938277903"
         },
         "datasource": {
           "type": "mssql",
@@ -8949,8 +8982,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703304721327",
-          "value": "1703304721327"
+          "text": "1703945188013",
+          "value": "1703945188013"
         },
         "datasource": {
           "type": "mssql",
@@ -8973,8 +9006,8 @@
       {
         "current": {
           "selected": false,
-          "text": "14",
-          "value": "14"
+          "text": "29",
+          "value": "29"
         },
         "datasource": {
           "type": "mssql",
@@ -8997,8 +9030,8 @@
       {
         "current": {
           "selected": false,
-          "text": "2",
-          "value": "2"
+          "text": "6",
+          "value": "6"
         },
         "datasource": {
           "type": "mssql",
@@ -9021,8 +9054,8 @@
       {
         "current": {
           "selected": false,
-          "text": "86",
-          "value": "86"
+          "text": "71",
+          "value": "71"
         },
         "datasource": {
           "type": "mssql",
@@ -9045,8 +9078,8 @@
       {
         "current": {
           "selected": false,
-          "text": "92",
-          "value": "92"
+          "text": "75",
+          "value": "75"
         },
         "datasource": {
           "type": "mssql",
@@ -9069,8 +9102,8 @@
       {
         "current": {
           "selected": false,
-          "text": "7",
-          "value": "7"
+          "text": "24",
+          "value": "24"
         },
         "datasource": {
           "type": "mssql",
@@ -9093,8 +9126,8 @@
       {
         "current": {
           "selected": false,
-          "text": "479304",
-          "value": "479304"
+          "text": "780720",
+          "value": "780720"
         },
         "datasource": {
           "type": "mssql",
@@ -9125,8 +9158,8 @@
       {
         "current": {
           "selected": false,
-          "text": "6",
-          "value": "6"
+          "text": "0",
+          "value": "0"
         },
         "datasource": {
           "type": "mssql",
@@ -9149,8 +9182,8 @@
       {
         "current": {
           "selected": false,
-          "text": "864217",
-          "value": "864217"
+          "text": "",
+          "value": ""
         },
         "datasource": {
           "type": "mssql",
@@ -9173,8 +9206,8 @@
       {
         "current": {
           "selected": false,
-          "text": "33236984",
-          "value": "33236984"
+          "text": "8388068",
+          "value": "8388068"
         },
         "datasource": {
           "type": "mssql",
@@ -9197,8 +9230,8 @@
       {
         "current": {
           "selected": false,
-          "text": "14672140",
-          "value": "14672140"
+          "text": "734540",
+          "value": "734540"
         },
         "datasource": {
           "type": "mssql",
@@ -9221,8 +9254,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1",
-          "value": "1"
+          "text": "0",
+          "value": "0"
         },
         "datasource": {
           "type": "mssql",
@@ -9245,8 +9278,8 @@
       {
         "current": {
           "selected": false,
-          "text": "2317400",
-          "value": "2317400"
+          "text": "671356",
+          "value": "671356"
         },
         "datasource": {
           "type": "mssql",
@@ -9269,8 +9302,8 @@
       {
         "current": {
           "selected": false,
-          "text": "72",
-          "value": "72"
+          "text": "100",
+          "value": "100"
         },
         "datasource": {
           "type": "mssql",
@@ -9293,8 +9326,8 @@
       {
         "current": {
           "selected": false,
-          "text": "0",
-          "value": "0"
+          "text": "13",
+          "value": "13"
         },
         "datasource": {
           "type": "mssql",
@@ -9317,8 +9350,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1277",
-          "value": "1277"
+          "text": "6",
+          "value": "6"
         },
         "datasource": {
           "type": "mssql",
@@ -9365,8 +9398,8 @@
       {
         "current": {
           "selected": false,
-          "text": "4326",
-          "value": "4326"
+          "text": "2104",
+          "value": "2104"
         },
         "datasource": {
           "type": "mssql",
@@ -9389,8 +9422,8 @@
       {
         "current": {
           "selected": false,
-          "text": "30",
-          "value": "30"
+          "text": "31",
+          "value": "31"
         },
         "datasource": {
           "type": "mssql",
@@ -9413,8 +9446,8 @@
       {
         "current": {
           "selected": false,
-          "text": "7",
-          "value": "7"
+          "text": "11",
+          "value": "11"
         },
         "datasource": {
           "type": "mssql",
@@ -9437,8 +9470,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1",
-          "value": "1"
+          "text": "14",
+          "value": "14"
         },
         "datasource": {
           "type": "mssql",
@@ -9469,8 +9502,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703304018733",
-          "value": "1703304018733"
+          "text": "1703944803899",
+          "value": "1703944803899"
         },
         "datasource": {
           "type": "mssql",
@@ -9631,8 +9664,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703304601077",
-          "value": "1703304601077"
+          "text": "1703945100950",
+          "value": "1703945100950"
         },
         "datasource": {
           "type": "mssql",
@@ -9654,7 +9687,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Running",
           "value": "Running"
         },
@@ -9683,8 +9716,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Windows 10 Pro",
-          "value": "Windows 10 Pro"
+          "text": "",
+          "value": ""
         },
         "datasource": {
           "type": "mssql",
@@ -9707,8 +9740,8 @@
       {
         "current": {
           "selected": false,
-          "text": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
-          "value": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz"
+          "text": "",
+          "value": ""
         },
         "datasource": {
           "type": "mssql",
@@ -9731,8 +9764,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703304600603",
-          "value": "1703304600603"
+          "text": "1703945100794",
+          "value": "1703945100794"
         },
         "datasource": {
           "type": "mssql",
@@ -9755,8 +9788,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703304600627",
-          "value": "1703304600627"
+          "text": "1703945100825",
+          "value": "1703945100825"
         },
         "datasource": {
           "type": "mssql",
@@ -9779,7 +9812,7 @@
     ]
   },
   "time": {
-    "from": "now-2h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -9794,6 +9827,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - Distributed",
   "uid": "distributed_live_dashboard",
-  "version": 80,
+  "version": 3,
   "weekStart": ""
 }
