@@ -561,8 +561,8 @@ WITH RowDates as (
 SELECT	w.collection_time_utc, w.wait_type, 
 		COALESCE(wc.WaitCategory, 'Other') AS WaitCategory, 
 		COALESCE(wc.Ignorable,0) AS Ignorable,
-		COALESCE(wc.IgnorableOnPerCoreMetric,0) AS IgnorableOnPerCoreMetric,
-		COALESCE(wc.IgnorableOnDashboard,0) AS IgnorableOnDashboard
+		COALESCE(wc.IgnorableOnPerCoreMetric,wc.Ignorable,0) AS IgnorableOnPerCoreMetric,
+		COALESCE(wc.IgnorableOnDashboard,wc.Ignorable,0) AS IgnorableOnDashboard
 		,DATEDIFF(ss, wPrior.collection_time_utc, w.collection_time_utc) AS ElapsedSeconds
 		,(w.wait_time_ms - wPrior.wait_time_ms) AS wait_time_ms_delta
 		,(w.wait_time_ms - wPrior.wait_time_ms) / 60000.0 AS wait_time_minutes_delta
