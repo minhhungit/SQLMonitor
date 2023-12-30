@@ -26,6 +26,7 @@ BEGIN
 		Version:		1.2.1
 		Modifications:	2022-11-26 - Initial Draft
 						2023-08-29 - Fix Divide by Zero Error
+						2023-12-30 - Add exception for some waits through Wait Stats table
 
 		declare @waits_seconds__per_core_per_minute bigint;
 		exec usp_waits_per_core_per_minute @waits_seconds__per_core_per_minute = @waits_seconds__per_core_per_minute output;

@@ -204,11 +204,12 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '1.6.3'
-$sqlmonitorVersionDate = '2023-Dec-23'
+$sqlmonitorVersion = '1.6.4'
+$sqlmonitorVersionDate = '2023-Dec-31'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v1.7.0 - 2024-Mar-31
+        -> Issue#21 - Add Parameters to Skip Particular Wait Type in usp_waits_per_core_per_minute
         -> Issue#19 - Control Immediate Removal of Perfmon File in Job [(dba) Collect-PerfmonData]
         -> Issue#22 - Added Trust for Certificate & Encryption for SQL Connections
         -> Updated few debugging queries
