@@ -68,14 +68,14 @@ BEGIN
 		select sum(wait_time_ms)/1000 as wait_time_s
 		from dbo.wait_stats s1
 		where s1.collection_time_utc = @collect_time_utc_snap1
-		and [wait_type] NOT IN ( select wc.[WaitType] from [dbo].[BlitzFirst_WaitStats_Categories] wc where wc.IgnorableOnPerCoreMetric = 1 )
+		and [wait_type] NOT IN ( select wc.[WaitType] from [dbo].[BlitzFirst_WaitStats_Categories] wc where coalesce(wc.IgnorableOnPerCoreMetric,wc.Ignorable,0) = 1 )
 		AND [waiting_tasks_count] > 0
 	)
 	,wait_snap2 as (
 		select sum(wait_time_ms)/1000 as wait_time_s
 		from dbo.wait_stats s2
 		where s2.collection_time_utc = @collect_time_utc_snap2
-		and [wait_type] NOT IN ( select wc.[WaitType] from [dbo].[BlitzFirst_WaitStats_Categories] wc where wc.IgnorableOnPerCoreMetric = 1 )
+		and [wait_type] NOT IN ( select wc.[WaitType] from [dbo].[BlitzFirst_WaitStats_Categories] wc where coalesce(wc.IgnorableOnPerCoreMetric,wc.Ignorable,0) = 1 )
 		AND [waiting_tasks_count] > 0
 	)
 	select @waits_seconds__per_core_per_minute = CEILING(
