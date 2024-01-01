@@ -385,11 +385,11 @@ go
 CREATE TABLE dbo.tempdb_space_usage_all_servers
 (	
 	[sql_instance] [varchar](255) NOT NULL,
-	[data_size_mb] varchar(100) not null,
-	[data_used_mb] varchar(100) not null, 
+	[data_size_mb] decimal(20,2) not null,
+	[data_used_mb] decimal(20,2) not null, 
 	[data_used_pct] decimal(5,2) not null, 
-	[log_size_mb] varchar(100) not null,
-	[log_used_mb] varchar(100) null,
+	[log_size_mb] decimal(20,2) not null,
+	[log_used_mb] decimal(20,2) null,
 	[log_used_pct] decimal(5,2) null,
 	[version_store_mb] decimal(20,2) null,
 	[version_store_pct] decimal(20,2) null,
@@ -404,11 +404,11 @@ go
 CREATE TABLE dbo.tempdb_space_usage_all_servers__staging
 (	
 	[sql_instance] [varchar](255) NOT NULL,
-	[data_size_mb] varchar(100) not null,
-	[data_used_mb] varchar(100) not null, 
+	[data_size_mb] decimal(20,2) not null,
+	[data_used_mb] decimal(20,2) not null, 
 	[data_used_pct] decimal(5,2) not null, 
-	[log_size_mb] varchar(100) not null,
-	[log_used_mb] varchar(100) null,
+	[log_size_mb] decimal(20,2) not null,
+	[log_used_mb] decimal(20,2) null,
 	[log_used_pct] decimal(5,2) null,
 	[version_store_mb] decimal(20,2) null,
 	[version_store_pct] decimal(20,2) null,

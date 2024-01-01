@@ -27,6 +27,18 @@
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
         </ConnectionNode>
+        <ConnectionNode Name="10.253.33.160:E84947">
+          <Created>2024-01-01T07:54:35.2904747+05:30</Created>
+          <Type>SQL</Type>
+          <Server>10.253.33.160</Server>
+          <UserName>E84947</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB />
+          <LoginTimeout>30</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
+        </ConnectionNode>
         <ConnectionNode Name="localhost:21L-LTPABL-1187\Ajay">
           <Created>2023-10-09T13:26:06.1703448+05:30</Created>
           <Type>SQL</Type>
