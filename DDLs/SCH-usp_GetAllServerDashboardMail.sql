@@ -1009,13 +1009,13 @@ BEGIN
 						+N'</head>'
 						+N'<body>'
 						+N'<h1><a href="'+@dashboard_link+'" target="_blank">'+@_title+' - '+convert(varchar,@_collection_time,120)+'</a></h1>'
-						+N'<p>'+@_html_core_health+'</p>'
-						+N'<p>'+@_html_tempdb_health+'</p>'
-						+N'<p>'+@_html_log_space_health+'</p>'
-						+N'<p>'+@_html_ag_health+'</p>'
-						+N'<p>'+@_html_disk_health+'</p>'
-						+N'<p>'+@_html_offline_servers+'</p>'
-						+N'<p>'+@_html_sqlmonitor_jobs+'</p>'						
+						+(case when @collect_core_health_metrics = 1 then N'<p>'+@_html_core_health+'</p>' else '' end)
+						+(case when @collect_tempdb_health = 1 then N'<p>'+@_html_tempdb_health+'</p>' else '' end)
+						+(case when @collect_log_space = 1 then N'<p>'+@_html_log_space_health+'</p>' else '' end)
+						+(case when @collect_ag_latency = 1 then N'<p>'+@_html_ag_health+'</p>' else '' end)
+						+(case when @collect_disk_space = 1 then N'<p>'+@_html_disk_health+'</p>' else '' end)
+						+(case when @collect_offline_servers = 1 then N'<p>'+@_html_offline_servers+'</p>' else '' end)
+						+(case when @collect_sqlmonitor_jobs = 1 then N'<p>'+@_html_sqlmonitor_jobs+'</p>' else '' end)
 						+N'<br><br><br><p>Regards,<br>Job ['+@job_name+']</p>'
 						+N'</body>';	
 
@@ -1038,6 +1038,8 @@ GO
 
 if APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
 	EXEC dbo.usp_GetAllServerDashboardMail 
-			@recipients = 'ajay.1dwivedi@angelbroking.com;', 
+			@recipients = 'ajay.dwivedi2007@gmail.com;', 
+			@collect_offline_servers = 0, @collect_sqlmonitor_jobs = 0,
 			@only_threshold_validated = 1, @send_mail = 1, @verbose = 0
+
 go
