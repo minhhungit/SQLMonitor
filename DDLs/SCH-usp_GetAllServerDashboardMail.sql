@@ -42,6 +42,13 @@ ALTER PROCEDURE dbo.usp_GetAllServerDashboardMail
 	@disk_threshold_gb decimal(20,2) = 250,
 	@large_disk_threshold_pct decimal(20,2) = 95,
 	@buffer_time_minutes int = 30,
+	@collect_core_health_metrics bit = 1,
+	@collect_tempdb_health bit = 1,
+	@collect_log_space bit = 1,
+	@collect_ag_latency bit = 1,
+	@collect_disk_space bit = 1,
+	@collect_offline_servers bit = 1,
+	@collect_sqlmonitor_jobs bit = 1,
 	@verbose tinyint = 0 /* 0 - no messages, 1 - debug messages, 2 = debug messages + table results */
 )
 AS 
@@ -169,7 +176,7 @@ BEGIN
 		print @_line;
 	end
 
-	if('Core Health Metrics' = 'Core Health Metrics')
+	if(@collect_core_health_metrics = 1) -- 'Core Health Metrics'
 	begin
 		if @verbose > 0
 		begin
@@ -320,7 +327,7 @@ BEGIN
 		end
 	end -- 'Core Health Metrics'
 
-	if('Tempdb Health' = 'Tempdb Health')
+	if(@collect_tempdb_health = 1) -- 'Tempdb Health'
 	begin
 		if @verbose > 0
 		begin
@@ -438,7 +445,7 @@ BEGIN
 		end
 	end -- 'Tempdb Health'
 
-	if('Log Space' = 'Log Space')
+	if(@collect_log_space = 1) -- 'Log Space'
 	begin
 		if @verbose > 0
 		begin
@@ -551,7 +558,7 @@ BEGIN
 		end
 	end -- 'Log Space'
 
-	if('Ag Latency' = 'Ag Latency')
+	if(@collect_ag_latency = 1) -- 'Ag Latency'
 	begin
 		if @verbose > 0
 		begin
@@ -683,7 +690,7 @@ BEGIN
 		end
 	end -- 'Ag Latency'
 
-	if('Disk Space' = 'Disk Space')
+	if(@collect_disk_space = 1) -- 'Disk Space'
 	begin
 		if @verbose > 0
 		begin
@@ -788,7 +795,7 @@ BEGIN
 		end
 	end -- 'Disk Space'
 
-	if('Offline Servers' = 'Offline Servers')
+	if(@collect_offline_servers = 1) -- 'Offline Servers'
 	begin
 		if @verbose > 0
 		begin
@@ -873,7 +880,7 @@ BEGIN
 		end
 	end -- 'Offline Servers'
 
-	if('SQLMonitor Jobs' = 'SQLMonitor Jobs')
+	if(@collect_sqlmonitor_jobs = 1) -- 'SQLMonitor Jobs'
 	begin
 		if @verbose > 0
 		begin
@@ -1031,7 +1038,6 @@ GO
 
 if APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
 	EXEC dbo.usp_GetAllServerDashboardMail 
-			@recipients = 'ajay.dwivedi2007@gmail.com;', 
-			@only_threshold_validated = 0, @log_used_gb = 100,
-			@send_mail = 1, @verbose = 2
+			@recipients = 'ajay.1dwivedi@angelbroking.com;', 
+			@only_threshold_validated = 1, @send_mail = 1, @verbose = 0
 go
