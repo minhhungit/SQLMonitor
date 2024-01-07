@@ -205,6 +205,12 @@
           <AssociatedConnUserName />
           <FullPath>SCH-Change-Table-Partition-Scheme.sql</FullPath>
         </FileNode>
+        <FileNode Name="SCH-Remove-ResourceConsumption.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-Remove-ResourceConsumption.sql</FullPath>
+        </FileNode>
         <FileNode Name="SQLMonitor-Upgrade.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
