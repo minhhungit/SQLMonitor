@@ -32,8 +32,9 @@ AS
 BEGIN
 
 	/*
-		Version:		1.6.0
-		Date:			2023-10-17 - Add Latency Dashboard for AG
+		Version:		1.6.5
+		Date:			2024-01-08 - Backup History on Dashboard
+						2023-10-17 - Add Latency Dashboard for AG
 						2023-07-27 - Add truncate table feature
 						2023-08-13 - Add dbo.disk_space_all_servers
 
@@ -50,7 +51,7 @@ BEGIN
 	SET LOCK_TIMEOUT 60000; -- 60 seconds
 
 	IF @result_to_table NOT IN ('dbo.sql_agent_jobs_all_servers','dbo.disk_space_all_servers','dbo.log_space_consumers_all_servers',
-								'dbo.tempdb_space_usage_all_servers','dbo.ag_health_state_all_servers')
+								'dbo.tempdb_space_usage_all_servers','dbo.ag_health_state_all_servers','dbo.backups_all_servers')
 		THROW 50001, '''result_to_table'' Parameter value is invalid.', 1;		
 
 	DECLARE @_tbl_servers table (srv_name varchar(125));
@@ -390,6 +391,164 @@ END
 			end catch
 		end
 
+		-- dbo.backups_all_servers
+		if @_linked_server_failed = 0 and @result_to_table = 'dbo.backups_all_servers'
+		begin
+			set @_sql =  N'
+--SET QUOTED_IDENTIFIER ON;
+SET NOCOUNT ON;
+-- https://www.mssqltips.com/sqlservertip/3209/understanding-sql-server-log-sequence-numbers-for-backups/
+/*
+1) Diff.DatabaseBackupLSN = Full.CheckpointLSN
+2) Full.LastLSN <= TLog.FirstLSN
+3) Diff.LastLSN <= TLog.FirstLSN
+*/
+
+;with t_full_diff_backups as (
+	SELECT top 1 with ties 
+			bs.database_name,
+			backup_type = CASE	WHEN bs.type = ''D''
+								AND bs.is_copy_only = 0 THEN ''Full Database''
+								WHEN bs.type = ''D''
+								AND bs.is_copy_only = 1 THEN ''Full Copy-Only Database''
+								WHEN bs.type = ''I'' THEN ''Differential database backup''
+								WHEN bs.type = ''L'' THEN ''Transaction Log''
+								WHEN bs.type = ''F'' THEN ''File or filegroup''
+								WHEN bs.type = ''G'' THEN ''Differential file''
+								WHEN bs.type = ''P'' THEN ''Partial''
+								WHEN bs.type = ''Q'' THEN ''Differential partial''
+							END + '' Backup'',
+			backup_start_date = bs.Backup_Start_Date,
+			backup_finish_date = bs.Backup_Finish_Date,
+			latest_backup_location = bf.physical_device_name,
+			backup_size_mb = CONVERT(decimal(20, 2), bs.backup_size/1024.0/1024.0),
+			compressed_backup_size_mb = CONVERT(decimal(20, 2), bs.compressed_backup_size/1024.0/1024.0),
+			bs.first_lsn,
+			bs.last_lsn,
+			bs.checkpoint_lsn,
+			bs.database_backup_lsn, -- For tlog and differential backups, this is the checkpoint_lsn of the FULL backup it is based on.
+			bs.database_creation_date,
+			backup_software = bms.software_name,
+			bs.recovery_model,
+			bs.compatibility_level,
+			device_type = CASE bf.device_type
+								WHEN 2 THEN ''Disk''
+								WHEN 5 THEN ''Tape''
+								WHEN 7 THEN ''Virtual device''
+								WHEN 9 THEN ''Azure Storage''
+								WHEN 105 THEN ''A permanent backup device''
+								ELSE ''Other Device''
+						END,
+			bs.description
+	FROM msdb.dbo.backupset bs
+	LEFT OUTER JOIN msdb.dbo.backupmediafamily bf ON bs.[media_set_id] = bf.[media_set_id]
+	INNER JOIN msdb.dbo.backupmediaset bms ON bs.[media_set_id] = bms.[media_set_id]
+	WHERE 1 = 1
+	AND bs.is_copy_only = 0
+	AND bs.type <> ''L''
+	ORDER BY ROW_NUMBER()OVER(PARTITION BY bs.database_name, bs.type ORDER BY bs.backup_start_date DESC)
+)
+,t_latest_lsn as (
+	SELECT fdb.database_name, last_lsn = max(fdb.last_lsn) 
+	FROM t_full_diff_backups fdb 
+	group by fdb.database_name
+)
+,t_log_backups as (
+	SELECT	bs.database_name,
+			backup_type = CASE	WHEN bs.type = ''D''
+								AND bs.is_copy_only = 0 THEN ''Full Database''
+								WHEN bs.type = ''D''
+								AND bs.is_copy_only = 1 THEN ''Full Copy-Only Database''
+								WHEN bs.type = ''I'' THEN ''Differential database backup''
+								WHEN bs.type = ''L'' THEN ''Transaction Log''
+								WHEN bs.type = ''F'' THEN ''File or filegroup''
+								WHEN bs.type = ''G'' THEN ''Differential file''
+								WHEN bs.type = ''P'' THEN ''Partial''
+								WHEN bs.type = ''Q'' THEN ''Differential partial''
+							END + '' Backup'',
+			backup_start_date = bs.Backup_Start_Date,
+			backup_finish_date = bs.Backup_Finish_Date,
+			latest_backup_location = bf.physical_device_name,
+			backup_size_mb = CONVERT(decimal(20, 2), bs.backup_size/1024.0/1024.0),
+			compressed_backup_size_mb = CONVERT(decimal(20, 2), bs.compressed_backup_size/1024.0/1024.0),
+			bs.first_lsn,
+			bs.last_lsn,
+			bs.checkpoint_lsn,
+			bs.database_backup_lsn, -- For tlog and differential backups, this is the checkpoint_lsn of the FULL backup it is based on.
+			bs.database_creation_date,
+			backup_software = bms.software_name,
+			bs.recovery_model,
+			bs.compatibility_level,
+			device_type = CASE bf.device_type
+								WHEN 2 THEN ''Disk''
+								WHEN 5 THEN ''Tape''
+								WHEN 7 THEN ''Virtual device''
+								WHEN 9 THEN ''Azure Storage''
+								WHEN 105 THEN ''A permanent backup device''
+								ELSE ''Other Device''
+						END,
+			bs.description
+	FROM msdb.dbo.backupset bs
+	LEFT OUTER JOIN msdb.dbo.backupmediafamily bf ON bs.[media_set_id] = bf.[media_set_id]
+	INNER JOIN msdb.dbo.backupmediaset bms ON bs.[media_set_id] = bms.[media_set_id]
+	INNER JOIN t_latest_lsn fdb
+		ON fdb.database_name = bs.database_name
+		AND bs.first_lsn >= fdb.last_lsn
+	WHERE 1 = 1
+	AND bs.is_copy_only = 0
+	AND bs.type = ''L''
+)
+,t_all_latest_backups as (
+	select	lb.database_name, lb.backup_type,
+			lb.backup_start_date, lb.backup_finish_date,
+			lb.latest_backup_location, lb.backup_size_mb, lb.compressed_backup_size_mb, 
+			lb.first_lsn, lb.last_lsn, lb.checkpoint_lsn, lb.database_backup_lsn, 
+			lb.database_creation_date, lb.backup_software, lb.recovery_model, lb.compatibility_level,
+			lb.device_type, lb.description
+	from t_log_backups lb
+	union all
+	SELECT fdb.database_name, fdb.backup_type,
+			fdb.backup_start_date, fdb.backup_finish_date,
+			fdb.latest_backup_location, fdb.backup_size_mb, fdb.compressed_backup_size_mb, 
+			fdb.first_lsn, fdb.last_lsn, fdb.checkpoint_lsn, fdb.database_backup_lsn, 
+			fdb.database_creation_date, fdb.backup_software, fdb.recovery_model, fdb.compatibility_level,
+			fdb.device_type, fdb.description
+	FROM t_full_diff_backups fdb
+)
+select	[sql_instance] = '''+@_srv_name+''',
+		b.database_name, b.backup_type, 
+		[log_backups_count] = count(*) over (partition by b.database_name),
+		b.backup_start_date, b.backup_finish_date,
+		b.latest_backup_location, b.backup_size_mb, b.compressed_backup_size_mb, 
+		b.first_lsn, b.last_lsn, b.checkpoint_lsn, b.database_backup_lsn, 
+		b.database_creation_date, b.backup_software, b.recovery_model, b.compatibility_level,
+		b.device_type, b.description
+from t_all_latest_backups b
+order by [database_name], [backup_start_date];';
+
+			-- Decorate for remote query if LinkedServer
+			if @_isLocalHost = 0
+				set @_sql = 'select * from openquery(' + QUOTENAME(@_srv_name) + ', "'+ @_sql + '")';
+			if @verbose >= 1
+				print @_crlf+@_sql+@_crlf;
+		
+			begin try
+				insert into [dbo].[backups_all_servers__staging]
+				(	[sql_instance], [database_name], [backup_type], [log_backups_count], [backup_start_date], [backup_finish_date], [latest_backup_location], [backup_size_mb], [compressed_backup_size_mb], [first_lsn], [last_lsn], [checkpoint_lsn], [database_backup_lsn], [database_creation_date], [backup_software], [recovery_model], [compatibility_level], [device_type], [description]
+				)
+				exec (@_sql);
+			end try
+			begin catch
+				-- print @_sql;
+				print char(10)+char(13)+'Error occurred while executing below query on '+quotename(@_srv_name)+char(10)+'     '+@_sql;
+				print  '	ErrorNumber => '+convert(varchar,ERROR_NUMBER());
+				print  '	ErrorSeverity => '+convert(varchar,ERROR_SEVERITY());
+				print  '	ErrorState => '+convert(varchar,ERROR_STATE());
+				--print  '	ErrorProcedure => '+ERROR_PROCEDURE();
+				print  '	ErrorLine => '+convert(varchar,ERROR_LINE());
+				print  '	ErrorMessage => '+ERROR_MESSAGE();
+			end catch
+		end
 
 		-- All the logic should be within the Cursor Loop block
 		FETCH NEXT FROM cur_servers INTO @_srv_name;

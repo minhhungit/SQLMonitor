@@ -90,6 +90,15 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ag_he
 	DROP TABLE [dbo].[ag_health_state_all_servers__staging]
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[backups_all_servers]') AND type in (N'U'))
+	DROP TABLE [dbo].[backups_all_servers]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[backups_all_servers__staging]') AND type in (N'U'))
+	DROP TABLE [dbo].[backups_all_servers__staging]
+GO
+
+
 CREATE TABLE [dbo].[all_server_stable_info]
 (
 	[srv_name] [varchar](125) NOT NULL,
@@ -575,3 +584,60 @@ go
 if not exists (select * from sys.columns c where c.object_id = OBJECT_ID('dbo.instance_details') and c.name = 'is_linked_server_working')
     alter table dbo.instance_details add [is_linked_server_working] bit NOT NULL default 1;
 go
+
+CREATE TABLE [dbo].[backups_all_servers]
+(
+	[sql_instance] [varchar](255) not null,
+	[database_name] [varchar](128) NULL,
+	[backup_type] [varchar](35) NULL,
+	[log_backups_count] [int] NULL,
+	[backup_start_date] [datetime] NULL,
+	[backup_finish_date] [datetime] NULL,
+	[latest_backup_location] [varchar](260) NULL,
+	[backup_size_mb] [decimal](20, 2) NULL,
+	[compressed_backup_size_mb] [decimal](20, 2) NULL,
+	[first_lsn] [numeric](25, 0) NULL,
+	[last_lsn] [numeric](25, 0) NULL,
+	[checkpoint_lsn] [numeric](25, 0) NULL,
+	[database_backup_lsn] [numeric](25, 0) NULL,
+	[database_creation_date] [datetime] NULL,
+	[backup_software] [varchar](128) NULL,
+	[recovery_model] [varchar](60) NULL,
+	[compatibility_level] [tinyint] NULL,
+	[device_type] [varchar](25) NOT NULL,
+	[description] [varchar](255) NULL,
+
+	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_backups_all_servers] clustered ([sql_instance], [database_name], [backup_start_date])
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[backups_all_servers__staging]
+(
+	[sql_instance] [varchar](255) not null,
+	[database_name] [varchar](128) NULL,
+	[backup_type] [varchar](35) NULL,
+	[log_backups_count] [int] NULL,
+	[backup_start_date] [datetime] NULL,
+	[backup_finish_date] [datetime] NULL,
+	[latest_backup_location] [varchar](260) NULL,
+	[backup_size_mb] [decimal](20, 2) NULL,
+	[compressed_backup_size_mb] [decimal](20, 2) NULL,
+	[first_lsn] [numeric](25, 0) NULL,
+	[last_lsn] [numeric](25, 0) NULL,
+	[checkpoint_lsn] [numeric](25, 0) NULL,
+	[database_backup_lsn] [numeric](25, 0) NULL,
+	[database_creation_date] [datetime] NULL,
+	[backup_software] [varchar](128) NULL,
+	[recovery_model] [varchar](60) NULL,
+	[compatibility_level] [tinyint] NULL,
+	[device_type] [varchar](25) NOT NULL,
+	[description] [varchar](255) NULL,
+
+	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_backups_all_servers__staging] clustered ([sql_instance], [database_name], [backup_start_date])
+) ON [PRIMARY]
+GO
+
