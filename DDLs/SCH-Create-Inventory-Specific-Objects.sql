@@ -591,8 +591,8 @@ CREATE TABLE [dbo].[backups_all_servers]
 	[database_name] [varchar](128) NULL,
 	[backup_type] [varchar](35) NULL,
 	[log_backups_count] [int] NULL,
-	[backup_start_date] [datetime] NULL,
-	[backup_finish_date] [datetime] NULL,
+	[backup_start_date_utc] [datetime] NULL,
+	[backup_finish_date_utc] [datetime] NULL,
 	[latest_backup_location] [varchar](260) NULL,
 	[backup_size_mb] [decimal](20, 2) NULL,
 	[compressed_backup_size_mb] [decimal](20, 2) NULL,
@@ -600,7 +600,7 @@ CREATE TABLE [dbo].[backups_all_servers]
 	[last_lsn] [numeric](25, 0) NULL,
 	[checkpoint_lsn] [numeric](25, 0) NULL,
 	[database_backup_lsn] [numeric](25, 0) NULL,
-	[database_creation_date] [datetime] NULL,
+	[database_creation_date_utc] [datetime] NULL,
 	[backup_software] [varchar](128) NULL,
 	[recovery_model] [varchar](60) NULL,
 	[compatibility_level] [tinyint] NULL,
@@ -609,7 +609,7 @@ CREATE TABLE [dbo].[backups_all_servers]
 
 	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
 
-	index [CI_backups_all_servers] clustered ([sql_instance], [database_name], [backup_start_date])
+	index [CI_backups_all_servers] clustered ([sql_instance], [database_name], [backup_start_date_utc])
 ) ON [PRIMARY]
 GO
 
@@ -619,8 +619,8 @@ CREATE TABLE [dbo].[backups_all_servers__staging]
 	[database_name] [varchar](128) NULL,
 	[backup_type] [varchar](35) NULL,
 	[log_backups_count] [int] NULL,
-	[backup_start_date] [datetime] NULL,
-	[backup_finish_date] [datetime] NULL,
+	[backup_start_date_utc] [datetime] NULL,
+	[backup_finish_date_utc] [datetime] NULL,
 	[latest_backup_location] [varchar](260) NULL,
 	[backup_size_mb] [decimal](20, 2) NULL,
 	[compressed_backup_size_mb] [decimal](20, 2) NULL,
@@ -628,7 +628,7 @@ CREATE TABLE [dbo].[backups_all_servers__staging]
 	[last_lsn] [numeric](25, 0) NULL,
 	[checkpoint_lsn] [numeric](25, 0) NULL,
 	[database_backup_lsn] [numeric](25, 0) NULL,
-	[database_creation_date] [datetime] NULL,
+	[database_creation_date_utc] [datetime] NULL,
 	[backup_software] [varchar](128) NULL,
 	[recovery_model] [varchar](60) NULL,
 	[compatibility_level] [tinyint] NULL,
@@ -637,7 +637,7 @@ CREATE TABLE [dbo].[backups_all_servers__staging]
 
 	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
 
-	index [CI_backups_all_servers__staging] clustered ([sql_instance], [database_name], [backup_start_date])
+	index [CI_backups_all_servers__staging] clustered ([sql_instance], [database_name], [backup_start_date_utc])
 ) ON [PRIMARY]
 GO
 

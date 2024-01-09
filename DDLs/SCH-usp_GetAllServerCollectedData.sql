@@ -408,18 +408,18 @@ SET NOCOUNT ON;
 	SELECT top 1 with ties 
 			bs.database_name,
 			backup_type = CASE	WHEN bs.type = ''D''
-								AND bs.is_copy_only = 0 THEN ''Full Database''
+								AND bs.is_copy_only = 0 THEN ''Full Database Backup''
 								WHEN bs.type = ''D''
-								AND bs.is_copy_only = 1 THEN ''Full Copy-Only Database''
-								WHEN bs.type = ''I'' THEN ''Differential database backup''
-								WHEN bs.type = ''L'' THEN ''Transaction Log''
-								WHEN bs.type = ''F'' THEN ''File or filegroup''
-								WHEN bs.type = ''G'' THEN ''Differential file''
-								WHEN bs.type = ''P'' THEN ''Partial''
-								WHEN bs.type = ''Q'' THEN ''Differential partial''
-							END + '' Backup'',
-			backup_start_date = bs.Backup_Start_Date,
-			backup_finish_date = bs.Backup_Finish_Date,
+								AND bs.is_copy_only = 1 THEN ''Full Copy-Only Database Backup''
+								WHEN bs.type = ''I'' THEN ''Differential database Backup''
+								WHEN bs.type = ''L'' THEN ''Transaction Log Backup''
+								WHEN bs.type = ''F'' THEN ''File or filegroup Backup''
+								WHEN bs.type = ''G'' THEN ''Differential file Backup''
+								WHEN bs.type = ''P'' THEN ''Partial Backup''
+								WHEN bs.type = ''Q'' THEN ''Differential partial Backup''
+							END,
+			backup_start_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Start_Date),
+			backup_finish_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Finish_Date),
 			latest_backup_location = bf.physical_device_name,
 			backup_size_mb = CONVERT(decimal(20, 2), bs.backup_size/1024.0/1024.0),
 			compressed_backup_size_mb = CONVERT(decimal(20, 2), bs.compressed_backup_size/1024.0/1024.0),
@@ -427,7 +427,7 @@ SET NOCOUNT ON;
 			bs.last_lsn,
 			bs.checkpoint_lsn,
 			bs.database_backup_lsn, -- For tlog and differential backups, this is the checkpoint_lsn of the FULL backup it is based on.
-			bs.database_creation_date,
+			database_creation_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.database_creation_date),
 			backup_software = bms.software_name,
 			bs.recovery_model,
 			bs.compatibility_level,
@@ -456,18 +456,18 @@ SET NOCOUNT ON;
 ,t_log_backups as (
 	SELECT	bs.database_name,
 			backup_type = CASE	WHEN bs.type = ''D''
-								AND bs.is_copy_only = 0 THEN ''Full Database''
+								AND bs.is_copy_only = 0 THEN ''Full Database Backup''
 								WHEN bs.type = ''D''
-								AND bs.is_copy_only = 1 THEN ''Full Copy-Only Database''
-								WHEN bs.type = ''I'' THEN ''Differential database backup''
-								WHEN bs.type = ''L'' THEN ''Transaction Log''
-								WHEN bs.type = ''F'' THEN ''File or filegroup''
-								WHEN bs.type = ''G'' THEN ''Differential file''
-								WHEN bs.type = ''P'' THEN ''Partial''
-								WHEN bs.type = ''Q'' THEN ''Differential partial''
-							END + '' Backup'',
-			backup_start_date = bs.Backup_Start_Date,
-			backup_finish_date = bs.Backup_Finish_Date,
+								AND bs.is_copy_only = 1 THEN ''Full Copy-Only Database Backup''
+								WHEN bs.type = ''I'' THEN ''Differential database Backup''
+								WHEN bs.type = ''L'' THEN ''Transaction Log Backup''
+								WHEN bs.type = ''F'' THEN ''File or filegroup Backup''
+								WHEN bs.type = ''G'' THEN ''Differential file Backup''
+								WHEN bs.type = ''P'' THEN ''Partial Backup''
+								WHEN bs.type = ''Q'' THEN ''Differential partial Backup''
+							END,
+			backup_start_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Start_Date),
+			backup_finish_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Finish_Date),
 			latest_backup_location = bf.physical_device_name,
 			backup_size_mb = CONVERT(decimal(20, 2), bs.backup_size/1024.0/1024.0),
 			compressed_backup_size_mb = CONVERT(decimal(20, 2), bs.compressed_backup_size/1024.0/1024.0),
@@ -475,7 +475,7 @@ SET NOCOUNT ON;
 			bs.last_lsn,
 			bs.checkpoint_lsn,
 			bs.database_backup_lsn, -- For tlog and differential backups, this is the checkpoint_lsn of the FULL backup it is based on.
-			bs.database_creation_date,
+			database_creation_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.database_creation_date),
 			backup_software = bms.software_name,
 			bs.recovery_model,
 			bs.compatibility_level,
@@ -500,31 +500,31 @@ SET NOCOUNT ON;
 )
 ,t_all_latest_backups as (
 	select	lb.database_name, lb.backup_type,
-			lb.backup_start_date, lb.backup_finish_date,
+			lb.backup_start_date_utc, lb.backup_finish_date_utc,
 			lb.latest_backup_location, lb.backup_size_mb, lb.compressed_backup_size_mb, 
 			lb.first_lsn, lb.last_lsn, lb.checkpoint_lsn, lb.database_backup_lsn, 
-			lb.database_creation_date, lb.backup_software, lb.recovery_model, lb.compatibility_level,
+			lb.database_creation_date_utc, lb.backup_software, lb.recovery_model, lb.compatibility_level,
 			lb.device_type, lb.description
 	from t_log_backups lb
 	union all
 	SELECT fdb.database_name, fdb.backup_type,
-			fdb.backup_start_date, fdb.backup_finish_date,
+			fdb.backup_start_date_utc, fdb.backup_finish_date_utc,
 			fdb.latest_backup_location, fdb.backup_size_mb, fdb.compressed_backup_size_mb, 
 			fdb.first_lsn, fdb.last_lsn, fdb.checkpoint_lsn, fdb.database_backup_lsn, 
-			fdb.database_creation_date, fdb.backup_software, fdb.recovery_model, fdb.compatibility_level,
+			fdb.database_creation_date_utc, fdb.backup_software, fdb.recovery_model, fdb.compatibility_level,
 			fdb.device_type, fdb.description
 	FROM t_full_diff_backups fdb
 )
 select	[sql_instance] = '''+@_srv_name+''',
 		b.database_name, b.backup_type, 
 		[log_backups_count] = count(*) over (partition by b.database_name),
-		b.backup_start_date, b.backup_finish_date,
+		b.backup_start_date_utc, b.backup_finish_date_utc,
 		b.latest_backup_location, b.backup_size_mb, b.compressed_backup_size_mb, 
 		b.first_lsn, b.last_lsn, b.checkpoint_lsn, b.database_backup_lsn, 
-		b.database_creation_date, b.backup_software, b.recovery_model, b.compatibility_level,
+		b.database_creation_date_utc, b.backup_software, b.recovery_model, b.compatibility_level,
 		b.device_type, b.description
 from t_all_latest_backups b
-order by [database_name], [backup_start_date];';
+order by [database_name], [backup_start_date_utc];';
 
 			-- Decorate for remote query if LinkedServer
 			if @_isLocalHost = 0
@@ -534,7 +534,7 @@ order by [database_name], [backup_start_date];';
 		
 			begin try
 				insert into [dbo].[backups_all_servers__staging]
-				(	[sql_instance], [database_name], [backup_type], [log_backups_count], [backup_start_date], [backup_finish_date], [latest_backup_location], [backup_size_mb], [compressed_backup_size_mb], [first_lsn], [last_lsn], [checkpoint_lsn], [database_backup_lsn], [database_creation_date], [backup_software], [recovery_model], [compatibility_level], [device_type], [description]
+				(	[sql_instance], [database_name], [backup_type], [log_backups_count], [backup_start_date_utc], [backup_finish_date_utc], [latest_backup_location], [backup_size_mb], [compressed_backup_size_mb], [first_lsn], [last_lsn], [checkpoint_lsn], [database_backup_lsn], [database_creation_date_utc], [backup_software], [recovery_model], [compatibility_level], [device_type], [description]
 				)
 				exec (@_sql);
 			end try
