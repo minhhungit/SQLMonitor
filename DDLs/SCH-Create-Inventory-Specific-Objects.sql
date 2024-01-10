@@ -588,8 +588,8 @@ go
 CREATE TABLE [dbo].[backups_all_servers]
 (
 	[sql_instance] [varchar](255) not null,
-	[database_name] [varchar](128) NULL,
-	[backup_type] [varchar](35) NULL,
+	[database_name] [varchar](128) not null,
+	[backup_type] [varchar](35) null,
 	[log_backups_count] [int] NULL,
 	[backup_start_date_utc] [datetime] NULL,
 	[backup_finish_date_utc] [datetime] NULL,
@@ -604,7 +604,7 @@ CREATE TABLE [dbo].[backups_all_servers]
 	[backup_software] [varchar](128) NULL,
 	[recovery_model] [varchar](60) NULL,
 	[compatibility_level] [tinyint] NULL,
-	[device_type] [varchar](25) NOT NULL,
+	[device_type] [varchar](25) NULL,
 	[description] [varchar](255) NULL,
 
 	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
@@ -616,7 +616,7 @@ GO
 CREATE TABLE [dbo].[backups_all_servers__staging]
 (
 	[sql_instance] [varchar](255) not null,
-	[database_name] [varchar](128) NULL,
+	[database_name] [varchar](128) not null,
 	[backup_type] [varchar](35) NULL,
 	[log_backups_count] [int] NULL,
 	[backup_start_date_utc] [datetime] NULL,
@@ -632,7 +632,7 @@ CREATE TABLE [dbo].[backups_all_servers__staging]
 	[backup_software] [varchar](128) NULL,
 	[recovery_model] [varchar](60) NULL,
 	[compatibility_level] [tinyint] NULL,
-	[device_type] [varchar](25) NOT NULL,
+	[device_type] [varchar](25) NULL,
 	[description] [varchar](255) NULL,
 
 	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),

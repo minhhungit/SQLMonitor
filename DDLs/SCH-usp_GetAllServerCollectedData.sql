@@ -516,14 +516,18 @@ SET NOCOUNT ON;
 	FROM t_full_diff_backups fdb
 )
 select	[sql_instance] = '''+@_srv_name+''',
-		b.database_name, b.backup_type, 
+		[database_name] = coalesce(b.database_name,d.name), b.backup_type, 
 		[log_backups_count] = count(*) over (partition by b.database_name),
 		b.backup_start_date_utc, b.backup_finish_date_utc,
 		b.latest_backup_location, b.backup_size_mb, b.compressed_backup_size_mb, 
 		b.first_lsn, b.last_lsn, b.checkpoint_lsn, b.database_backup_lsn, 
 		b.database_creation_date_utc, b.backup_software, b.recovery_model, b.compatibility_level,
 		b.device_type, b.description
-from t_all_latest_backups b
+from sys.databases d
+full outer join
+	t_all_latest_backups b
+	on d.name = b.database_name
+where d.name not in (''tempdb'')
 order by [database_name], [backup_start_date_utc];';
 
 			-- Decorate for remote query if LinkedServer
