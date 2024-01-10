@@ -420,7 +420,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 1
+            "y": 9
           },
           "id": 219,
           "options": {
@@ -817,7 +817,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 2
+            "y": 10
           },
           "id": 850,
           "options": {
@@ -1166,6 +1166,519 @@
         "w": 24,
         "x": 0,
         "y": 9
+      },
+      "id": 870,
+      "panels": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "${DS_SQLSERVER}"
+          },
+          "description": "select * from dbo.backups_all_servers",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sql_instance"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Server"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "purple"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "database_name"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Database"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "super-light-purple"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "log_backups_count"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Total Log Backups"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "database_creation_date_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Db Created Date"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "recovery_model"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Recovery Model"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "dark-blue"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_backup_time_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full Bkp Time"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_backup_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full Bkp Size"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_compressed_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full Compressed"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_backup_time_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff Bkp Time"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_backup_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff Bkp Size"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_compressed_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff Compressed"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_backup_time_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog Bkp Time"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_backup_file"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full File"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_backup_file"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff File"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_backup_file"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog File"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_latency_days"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full Delay"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "d"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "orange",
+                          "value": 8
+                        },
+                        {
+                          "color": "red",
+                          "value": 15
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_latency_hours"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff Delay"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "h"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 24
+                        },
+                        {
+                          "color": "orange",
+                          "value": 32
+                        },
+                        {
+                          "color": "red",
+                          "value": 48
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_latency_minutes"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog Delay"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "m"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 30
+                        },
+                        {
+                          "color": "orange",
+                          "value": 120
+                        },
+                        {
+                          "color": "red",
+                          "value": 360
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_backup_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog Bkp Size"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_compressed_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog Compressed"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 19,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 869,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "10.1.0",
+          "targets": [
+            {
+              "alias": "",
+              "datasource": {
+                "type": "mssql",
+                "uid": "${DS_SQLSERVER}"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "hide": false,
+              "rawQuery": true,
+              "rawSql": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\n--declare @sql_instance varchar(255);\n--declare @backup_type varchar(2000);\n--declare @backup_description varchar(2000);\n--declare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\n--declare @delta_minutes int;\n--declare @disk_drive varchar(255) = '$disk_drive';\n--declare @database varchar(255) = '$database';\n--declare @filter_for_latency varchar(50) = '$filter_for_latency';\ndeclare @full_threshold_days int = $full_threshold_days;\ndeclare @diff_threshold_hours int = $diff_threshold_hours;\ndeclare @tlog_threshold_minutes int = $tlog_threshold_minutes;\n\n--set @database = case when ltrim(rtrim(@database)) = '__All__' then null else @database end;\n--set @disk_drive = case when ltrim(rtrim(@disk_drive)) = '__All__' then null else @disk_drive end;\n\n--set @perfmon_host_name = '$perfmon_host_name';\nset @start_time_utc = $__timeFrom();\nset @end_time_utc = $__timeTo();\n--set @delta_minutes = $cpu_delta_minutes;\n\n--set @backup_type = '${backup_type:csv}';\n--set @backup_description = case when ltrim(rtrim('$backup_description')) = '' then null else ltrim(rtrim('$backup_description')) end;\n\nset @params = N'@start_time_utc datetime2, @end_time_utc datetime2, \n\t\t\t\t\t\t\t\t@full_threshold_days int, @diff_threshold_hours int, @tlog_threshold_minutes int';\n\nset quoted_identifier off;\nset @sql = \"/* SQLMonitor - Dashboard [$__dashboard] */\nset nocount on;\n\n;with t_backups as (\n\t\tselect [collection_time_utc], [sql_instance], [database_name], [backup_type], [log_backups_count], [backup_start_date_utc], [backup_finish_date_utc], [latest_backup_location], [backup_size_mb], [compressed_backup_size_mb], [first_lsn], [last_lsn], [checkpoint_lsn], [database_backup_lsn], [database_creation_date_utc], [backup_software], [recovery_model], [compatibility_level], [device_type], [description]\n\t\tfrom dbo.backups_all_servers bas\n)\n,t_pivot as (\n\t\tselect\t[sql_instance], [database_name]\n\t\t\t\t,[recovery_model] = max([recovery_model])\n\t\t\t\t,[full_backup_time_utc] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[backup_finish_date_utc] else null end)\n\t\t\t\t,[full_backup_size_mb] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[backup_size_mb] else null end)\n\t\t\t\t,[full_compressed_size_mb] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[compressed_backup_size_mb] else null end)\n\t\t\t\t,[diff_backup_time_utc] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[backup_finish_date_utc] else null end)\n\t\t\t\t,[diff_backup_size_mb] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[backup_size_mb] else null end)\n\t\t\t\t,[diff_compressed_size_mb] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[compressed_backup_size_mb] else null end)\n\t\t\t\t,[tlog_backup_time_utc] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[backup_finish_date_utc] else null end)\n\t\t\t\t,[tlog_backup_size_mb] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[backup_size_mb] else null end)\n\t\t\t\t,[tlog_compressed_size_mb] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[compressed_backup_size_mb] else null end)\n\t\t\t\t,[log_backups_count] = max([log_backups_count])\n\t\t\t\t,[database_creation_date_utc] = max([database_creation_date_utc])\n\t\t\t\t,[full_backup_file] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[latest_backup_location] else null end)\n\t\t\t\t,[diff_backup_file] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[latest_backup_location] else null end)\n\t\t\t\t,[tlog_backup_file] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[latest_backup_location] else null end)\n\t\tfrom t_backups bkp\n\t\twhere 1=1\n\t\tgroup by [sql_instance], [database_name]\n)\n,t_latency as (\n\t\t\tselect \t[sql_instance], [database_name], [recovery_model], \t\t\t\t\n\t\t\t\t\t\t\t[full_latency_days] = case when [full_backup_time_utc] is null then @full_threshold_days * 10\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\telse datediff(day,[full_backup_time_utc],getutcdate())\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tend,\t\t\t\t\t\t\n\t\t\t\t\t\t\t[diff_latency_hours] = case when [diff_backup_time_utc] is null \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tthen\tcase when (datediff(day,[full_backup_time_utc],getutcdate()) > @full_threshold_days) and (@full_threshold_days >= 7)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tthen @full_threshold_days * 24\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\telse null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tend\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\telse datediff(hour,[diff_backup_time_utc],getutcdate())\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tend,\n\t\t\t\t\t\t\t[tlog_latency_minutes] = case when recovery_model = 'SIMPLE' then null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\twhen recovery_model <> 'SIMPLE'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tthen\tcase when [tlog_backup_time_utc] is null then @full_threshold_days * 1440\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t when [tlog_backup_time_utc] is not null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t then datediff(minute,[tlog_backup_time_utc],getutcdate())\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t else null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t end\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\telse null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tend,\n\t\t\t\t\t\t\t[full_backup_time_utc], [diff_backup_time_utc], [tlog_backup_time_utc], \n\t\t\t\t\t\t\t[full_backup_size_mb], [full_compressed_size_mb], [diff_backup_size_mb], [diff_compressed_size_mb], [tlog_backup_size_mb],\n\t\t\t\t\t\t\t[tlog_compressed_size_mb], [log_backups_count],\n\t\t\t\t\t\t\t[database_creation_date_utc], [full_backup_file], [diff_backup_file], [tlog_backup_file]\n\t\t\tfrom t_pivot as bkp\n\t\t\twhere 1=1\n)\nselect [sql_instance], [database_name], [recovery_model], \t\t\t\t\n\t\t\t\t\t\t\t[full_latency_days], [diff_latency_hours], [tlog_latency_minutes],\n\t\t\t\t\t\t\t[full_backup_time_utc], [diff_backup_time_utc], [tlog_backup_time_utc], \n\t\t\t\t\t\t\t[full_backup_size_mb], [full_compressed_size_mb], [diff_backup_size_mb], [diff_compressed_size_mb], \n\t\t\t\t\t\t\t[tlog_backup_size_mb], [tlog_compressed_size_mb], [log_backups_count], [database_creation_date_utc], \n\t\t\t\t\t\t\t[full_backup_file], [diff_backup_file], [tlog_backup_file]\nfrom t_latency as l\nwhere 1=1\nAND (\t\t(full_latency_days is null or full_latency_days >= @full_threshold_days)\n\t\tOR \t(diff_latency_hours is not null and diff_latency_hours >= @diff_threshold_hours)\n\t\tOR\t(tlog_latency_minutes is not null and tlog_latency_minutes >= @tlog_threshold_minutes)\n\t\t)\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nexec dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @full_threshold_days, @diff_threshold_hours, \n\t\t\t\t\t\t\t\t\t\t\t\t@tlog_threshold_minutes;",
+              "refId": "Query-Db-File-Stats-Since-Startup",
+              "sql": {
+                "columns": [
+                  {
+                    "parameters": [],
+                    "type": "function"
+                  }
+                ],
+                "groupBy": [
+                  {
+                    "property": {
+                      "type": "string"
+                    },
+                    "type": "groupBy"
+                  }
+                ],
+                "limit": 50
+              }
+            }
+          ],
+          "title": "All Servers - Backup History - Require ATTENTION",
+          "transformations": [],
+          "type": "table"
+        }
+      ],
+      "title": "All Servers - Backup History - Require ATTENTION",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
       },
       "id": 866,
       "panels": [
@@ -1538,7 +2051,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 12
           },
           "id": 864,
           "options": {
@@ -1597,7 +2110,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 11
       },
       "id": 854,
       "panels": [
@@ -1933,7 +2446,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 5
+            "y": 13
           },
           "id": 852,
           "options": {
@@ -1993,7 +2506,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 12
       },
       "id": 868,
       "panels": [
@@ -2791,7 +3304,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 6
+            "y": 14
           },
           "id": 867,
           "options": {
@@ -2852,7 +3365,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "id": 858,
       "panels": [
@@ -3388,7 +3901,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 15
           },
           "id": 856,
           "options": {
@@ -3448,7 +3961,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 862,
       "panels": [
@@ -3880,7 +4393,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 8
+            "y": 16
           },
           "id": 860,
           "options": {
@@ -3944,7 +4457,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 15
       },
       "id": 245,
       "panels": [],
@@ -4575,7 +5088,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 16
       },
       "id": 842,
       "options": {
@@ -4636,7 +5149,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 28
       },
       "id": 121,
       "panels": [
@@ -4646,7 +5159,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 50
           },
           "id": 119,
           "links": [],
@@ -4684,7 +5197,9 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "All Servers",
+    "Alerts"
   ],
   "templating": {
     "list": [
@@ -4818,7 +5333,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "20",
           "value": "20"
         },
@@ -4886,7 +5401,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "No",
           "value": "No"
         },
@@ -5033,7 +5548,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "80",
           "value": "80"
         },
@@ -5118,7 +5633,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "250",
           "value": "250"
         },
@@ -5243,6 +5758,177 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Full Threshold (Days)",
+        "multi": false,
+        "name": "full_threshold_days",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "7",
+            "value": "7"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "30",
+            "value": "30"
+          },
+          {
+            "selected": false,
+            "text": "90",
+            "value": "90"
+          },
+          {
+            "selected": false,
+            "text": "366",
+            "value": "366"
+          }
+        ],
+        "query": "1,3,7,10,15,30,90,366",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "4",
+          "value": "4"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Diff Threshold (Hrs)",
+        "multi": false,
+        "name": "diff_threshold_hours",
+        "options": [
+          {
+            "selected": true,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "12",
+            "value": "12"
+          },
+          {
+            "selected": false,
+            "text": "24",
+            "value": "24"
+          },
+          {
+            "selected": false,
+            "text": "32",
+            "value": "32"
+          },
+          {
+            "selected": false,
+            "text": "48",
+            "value": "48"
+          }
+        ],
+        "query": "4,8,12,24,32,48",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "5",
+          "value": "5"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "TLog Threshold (Min)",
+        "multi": false,
+        "name": "tlog_threshold_minutes",
+        "options": [
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "20",
+            "value": "20"
+          },
+          {
+            "selected": false,
+            "text": "30",
+            "value": "30"
+          },
+          {
+            "selected": false,
+            "text": "60",
+            "value": "60"
+          },
+          {
+            "selected": false,
+            "text": "90",
+            "value": "90"
+          },
+          {
+            "selected": false,
+            "text": "120",
+            "value": "120"
+          },
+          {
+            "selected": false,
+            "text": "240",
+            "value": "240"
+          },
+          {
+            "selected": false,
+            "text": "360",
+            "value": "360"
+          }
+        ],
+        "query": "5,10,15,20,30,60,90,120,240,360",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -5262,6 +5948,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - All Servers",
   "uid": "distributed_live_dashboard_all_servers",
-  "version": 97,
+  "version": 108,
   "weekStart": ""
 }
