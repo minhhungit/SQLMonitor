@@ -395,7 +395,6 @@ END
 		if @_linked_server_failed = 0 and @result_to_table = 'dbo.backups_all_servers'
 		begin
 			set @_sql =  N'
---SET QUOTED_IDENTIFIER ON;
 SET NOCOUNT ON;
 -- https://www.mssqltips.com/sqlservertip/3209/understanding-sql-server-log-sequence-numbers-for-backups/
 /*
@@ -404,49 +403,44 @@ SET NOCOUNT ON;
 3) Diff.LastLSN <= TLog.FirstLSN
 */
 
-;with t_full_diff_backups as (
-	SELECT top 1 with ties 
-			bs.database_name,
-			backup_type = CASE	WHEN bs.type = ''D''
-								AND bs.is_copy_only = 0 THEN ''Full Database Backup''
-								WHEN bs.type = ''D''
-								AND bs.is_copy_only = 1 THEN ''Full Copy-Only Database Backup''
+;with t_combined_backups as (
+	SELECT top 1 with ties bs.database_name,
+			backup_type = CASE	WHEN bs.type = ''D'' AND bs.is_copy_only = 0 THEN ''Full Database Backup''
+								WHEN bs.type = ''D'' AND bs.is_copy_only = 1 THEN ''Full Copy-Only Database Backup''
 								WHEN bs.type = ''I'' THEN ''Differential database Backup''
 								WHEN bs.type = ''L'' THEN ''Transaction Log Backup''
-								WHEN bs.type = ''F'' THEN ''File or filegroup Backup''
-								WHEN bs.type = ''G'' THEN ''Differential file Backup''
-								WHEN bs.type = ''P'' THEN ''Partial Backup''
-								WHEN bs.type = ''Q'' THEN ''Differential partial Backup''
 							END,
 			backup_start_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Start_Date),
 			backup_finish_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Finish_Date),
 			latest_backup_location = bf.physical_device_name,
 			backup_size_mb = CONVERT(decimal(20, 2), bs.backup_size/1024.0/1024.0),
 			compressed_backup_size_mb = CONVERT(decimal(20, 2), bs.compressed_backup_size/1024.0/1024.0),
-			bs.first_lsn,
-			bs.last_lsn,
-			bs.checkpoint_lsn,
+			bs.first_lsn, bs.last_lsn, bs.checkpoint_lsn,
 			bs.database_backup_lsn, -- For tlog and differential backups, this is the checkpoint_lsn of the FULL backup it is based on.
 			database_creation_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.database_creation_date),
-			backup_software = bms.software_name,
-			bs.recovery_model,
-			bs.compatibility_level,
-			device_type = CASE bf.device_type
-								WHEN 2 THEN ''Disk''
-								WHEN 5 THEN ''Tape''
-								WHEN 7 THEN ''Virtual device''
-								WHEN 9 THEN ''Azure Storage''
-								WHEN 105 THEN ''A permanent backup device''
-								ELSE ''Other Device''
-						END,
+			backup_software = bms.software_name, bs.recovery_model, bs.compatibility_level,
+			device_type = CASE bf.device_type WHEN 2 THEN ''Disk'' WHEN 5 THEN ''Tape'' WHEN 7 THEN ''Virtual device'' WHEN 9 THEN ''Azure Storage'' WHEN 105 THEN ''A permanent backup device'' ELSE ''Other Device'' END,
 			bs.description
 	FROM msdb.dbo.backupset bs
 	LEFT OUTER JOIN msdb.dbo.backupmediafamily bf ON bs.[media_set_id] = bf.[media_set_id]
 	INNER JOIN msdb.dbo.backupmediaset bms ON bs.[media_set_id] = bms.[media_set_id]
 	WHERE 1 = 1
 	AND bs.is_copy_only = 0
-	AND bs.type <> ''L''
+	AND bs.type IN (''D'',''I'')
 	ORDER BY ROW_NUMBER()OVER(PARTITION BY bs.database_name, bs.type ORDER BY bs.backup_start_date DESC)
+)
+, t_full_backups as (
+	select cb.* from t_combined_backups cb where cb.backup_type = ''Full Database Backup''
+)
+, t_diff_backups as (
+	select cb.* from t_combined_backups cb join t_full_backups fb on fb.database_name = cb.database_name
+	where cb.backup_type = ''Differential database Backup''
+	and fb.checkpoint_lsn = cb.database_backup_lsn
+)
+,t_full_diff_backups as (
+	select * from t_full_backups fb
+	union all
+	select * from t_diff_backups db
 )
 ,t_latest_lsn as (
 	SELECT fdb.database_name, last_lsn = max(fdb.last_lsn) 
