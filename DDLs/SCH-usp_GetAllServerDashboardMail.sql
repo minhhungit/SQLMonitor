@@ -19,7 +19,7 @@ ALTER PROCEDURE dbo.usp_GetAllServerDashboardMail
 	@recipients varchar(500) = 'some_dba_mail_id@gmail.com', /* Folks who receive the failure mail */
 	@mail_subject varchar(500) = 'Monitoring - Live - All Servers', /* Subject of Failure Mail */
 	@job_name varchar(255) = '(dba) Get-AllServerDashboardMail',
-	@dashboard_link varchar(200) = 'https://ajaydwivedi.ddns.net:3000/d/distributed_live_dashboard_all_servers',
+	@dashboard_link varchar(200) = 'https://ajaydwivedi.ddns.net:3000/d/',
 	@os_cpu_threshold decimal(20,2) = 70,
 	@sql_cpu_threshold decimal(20,2) = 65,
 	@blocked_counts_threshold int = 1,
@@ -42,6 +42,9 @@ ALTER PROCEDURE dbo.usp_GetAllServerDashboardMail
 	@disk_threshold_gb decimal(20,2) = 250,
 	@large_disk_threshold_pct decimal(20,2) = 95,
 	@buffer_time_minutes int = 30,
+	@full_threshold_days int = 8,
+	@diff_threshold_hours int = 26,
+	@tlog_threshold_minutes int = 240,
 	@collect_core_health_metrics bit = 1,
 	@collect_tempdb_health bit = 1,
 	@collect_log_space bit = 1,
@@ -49,13 +52,15 @@ ALTER PROCEDURE dbo.usp_GetAllServerDashboardMail
 	@collect_disk_space bit = 1,
 	@collect_offline_servers bit = 1,
 	@collect_sqlmonitor_jobs bit = 1,
+	@collect_backup_history bit = 1,
 	@verbose tinyint = 0 /* 0 - no messages, 1 - debug messages, 2 = debug messages + table results */
 )
 AS 
 BEGIN
 	/*
-		Version:		0.0.0
-		Update:			2022-12-31 - #24 - Daily Mailer containing similar content of 'Monitoring - Live - All Servers' dashboard
+		Version:		1.6.5
+		Update:			2024-01-11 - #7 - Adding Backup Issues in mailer
+						2023-12-31 - #24 - Daily Mailer containing similar content of 'Monitoring - Live - All Servers' dashboard
 
 		EXEC dbo.usp_GetAllServerDashboardMail @recipients = 'ajay.dwivedi2007@gmail.com', @verbose = 2
 	*/
@@ -66,6 +71,11 @@ BEGIN
 	/* Derived Parameters */
 	IF (@recipients IS NULL OR @recipients = 'some_dba_mail_id@gmail.com') AND @verbose = 0
 		raiserror ('@recipients is mandatory parameter', 20, -1) with log;
+
+	IF @dashboard_link is null
+		set @dashboard_link = 'https://ajaydwivedi.ddns.net:3000/d/';
+	IF right(@dashboard_link ,3) <> '/d/'
+		raiserror ('@dashboard_link should be ending with ''/d/''. For example, https://ajaydwivedi.ddns.net:3000/d/', 20, -1) with log;
 
 	-- Local Variables
 	DECLARE @_sql nvarchar(MAX);
@@ -81,9 +91,21 @@ BEGIN
 	declare @_html_disk_health nvarchar(MAX); -- 'Disk Space'
 	declare @_html_offline_servers nvarchar(MAX); -- 'Offline Servers'
 	declare @_html_sqlmonitor_jobs nvarchar(max); -- 'SQLMonitor Jobs'
+	declare @_html_backup_history nvarchar(max); -- 'Backup History'
 	declare @_table_headline nvarchar(500);
 	declare @_table_header nvarchar(max);
 	declare @_table_data nvarchar(max);	
+	declare @_url_all_servers_dashboard varchar(4000) = @dashboard_link+'distributed_live_dashboard_all_servers';
+
+	declare @_url_core_health_panel varchar(4000) = @_url_all_servers_dashboard+'?viewPanel=842';
+	declare @_url_tempdb_health_panel varchar(4000) = @_url_all_servers_dashboard+'?viewPanel=860';
+	declare @_url_log_space_health_panel varchar(4000) = @_url_all_servers_dashboard+'?viewPanel=856';
+	declare @_url_ag_health_panel varchar(4000) = @_url_all_servers_dashboard+'?viewPanel=867';
+	declare @_url_disk_health_panel varchar(4000) = @_url_all_servers_dashboard+'?viewPanel=852';
+	declare @_url_offline_servers_panel varchar(4000) = @_url_all_servers_dashboard+'?viewPanel=844';
+	declare @_url_sqlmonitor_jobs_panel varchar(4000) = @_url_all_servers_dashboard+'?viewPanel=864';
+	declare @_url_backup_history_panel varchar(4000) = @_url_all_servers_dashboard+'?viewPanel=869';
+
 	declare @_line nvarchar(500);
 	declare @_tab nchar(2) = nchar(9);
 	declare @_crlf nchar(2) = nchar(13);
@@ -120,7 +142,8 @@ BEGIN
 			table-layout: fixed;
 		}
 		thead {
-			width: calc( 100% - 1em )
+			/* width: calc( 100% - 1em ) */
+			width: calc( 100% )
 		}
 
 		.bg_desert {
@@ -186,7 +209,7 @@ BEGIN
 			print @_tab+@_line;
 		end
 
-		set @_table_headline = N'<h3>All Servers - Health Metrics - Require ATTENTION</h3>';
+		set @_table_headline = N'<h3><a href="'+@_url_core_health_panel+'" target="_blank">All Servers - Health Metrics - Require ATTENTION</a></h3>';
 		set @_table_header = N'<tr><th>Server</th> <th>OS CPU %</th> <th>SQL CPU %</th>'
 						+N'<th>Blocked Over '+convert(varchar,@blocked_duration_max_seconds_threshold)+' seconds</th>'
 						+N'<th>Longest Blocking</th> <th>Available Memory</th> <th>OS Memory State</th>'
@@ -337,7 +360,7 @@ BEGIN
 			print @_tab+@_line;
 		end
 
-		set @_table_headline = N'<h3>All Servers - Tempdb Utilization - Require ATTENTION</h3>';
+		set @_table_headline = N'<h3><a href="'+@_url_tempdb_health_panel+'" target="_blank">All Servers - Tempdb Utilization - Require ATTENTION</a></h3>';
 		set @_table_header = N'<tr><th>Collection Time</th> <th>Server</th> <th>Data Size</th>'
 						+N'<th>Data Used</th> <th>Data Used %</th> <th>Log Size</th> <th>Log Used</th> <th>Log Used %</th>'
 						+N'<th>Version Store</th> <th>Version Store %</th>';
@@ -455,7 +478,7 @@ BEGIN
 			print @_tab+@_line;
 		end
 
-		set @_table_headline = N'<h3>All Servers - Log Space Utilization - Require ATTENTION</h3>';
+		set @_table_headline = N'<h3><a href="'+@_url_log_space_health_panel+'" target="_blank">All Servers - Log Space Utilization - Require ATTENTION</a></h3>';
 		set @_table_header = N'<tr><th>Collection Time</th> <th>Server</th> <th>Database</th>'
 						+N'<th>Recovery Model</th> <th>Log Reuse Wait Desc</th>'
 						+N'<th>Log Size</th> <th>Autogrowth</th> <th>Log Used</th> <th>Log Used %</th>'
@@ -568,7 +591,7 @@ BEGIN
 			print @_tab+@_line;
 		end
 
-		set @_table_headline = N'<h3>All Servers - AlwaysOn Latency - Require ATTENTION</h3>';
+		set @_table_headline = N'<h3><a href="'+@_url_ag_health_panel+'" target="_blank">All Servers - AlwaysOn Latency - Require ATTENTION</a></h3>';
 		set @_table_header = N'<tr><th>Server</th> <th>Database</th> <th>Is Primary</th>'
 						+N'<th>Listener</th> <th>Is Local</th> <th>Sync State</th> <th>Sync Health</th>'
 						+N'<th>Latency</th> <th>Log Send Queue</th> <th>Redo Queue</th>'
@@ -617,7 +640,7 @@ BEGIN
 					+'<td class="bg_key">'+sql_instance+'</td>'
 					+'<td class="bg_key">'+replica_database+'</td>'
 					+'<td>'+convert(varchar,is_primary_replica)+'</td>'
-					+'<td>'+ag_listener+'</td>'
+					+'<td>'+isnull(ag_listener,'')+'</td>'
 					+'<td>'+convert(varchar,is_local)+'</td>'
 					+'<td class="'+(case synchronization_state_desc
 									when 'SYNCHRONIZED' then 'bg_green'
@@ -626,13 +649,13 @@ BEGIN
 									when 'REVERTING' then 'bg_yellow_dark'
 									when 'INITIALIZING' then 'bg_yellow_light'
 									else 'bg_none'
-									end)+'">'+synchronization_state_desc+'</td>'
+									end)+'">'+isnull(synchronization_state_desc,'')+'</td>'
 					+'<td class="'+(case synchronization_health_desc
 									when 'HEALTHY' then 'bg_green'
 									when 'NOT_HEALTHY' then 'bg_red'
 									when 'PARTIALLY_HEALTHY' then 'bg_orange'
 									else 'bg_none'
-									end)+'">'+synchronization_health_desc+'</td>'
+									end)+'">'+isnull(synchronization_health_desc,'')+'</td>'
 					+'<td class="'+(case when latency_seconds >= 1800 then 'bg_red'
 									when latency_seconds >= 600 then 'bg_orange'
 									when latency_seconds >= 300 then 'bg_yellow_dark'
@@ -643,7 +666,7 @@ BEGIN
 							when latency_seconds < 3600 then convert(varchar,floor(latency_seconds/60))+' min'
 							when latency_seconds < 86400 then convert(varchar,floor(latency_seconds/3600))+' hrs'
 							when latency_seconds >= 86400 then convert(varchar,floor(latency_seconds/86400))+' days'
-							else '' end),0)+'</td>'
+							else '' end),' ')+'</td>'
 					+'<td class="'+(case when log_send_queue_size > 100000000 then 'bg_red'
 									when log_send_queue_size > 10000000 then 'bg_orange'
 									when log_send_queue_size > 1000000 then 'bg_yellow'
@@ -653,7 +676,7 @@ BEGIN
 								when log_send_queue_size < 1024*1024 then convert(varchar,log_send_queue_size/1024)+' mb'
 								when log_send_queue_size < 1024*1024*1024 then convert(varchar,floor(log_send_queue_size/(1024*1024)))+' gb'
 								when log_send_queue_size >= 1024*1024*1024 then convert(varchar,floor(log_send_queue_size/(1024*1024*1024)))+' tb'
-								else '' end),0)+'</td>'
+								else '' end),' ')+'</td>'
 					+'<td class="'+(case when redo_queue_size > 100000000 then 'bg_red'
 									when redo_queue_size > 10000000 then 'bg_orange'
 									when redo_queue_size > 1000000 then 'bg_yellow'
@@ -663,7 +686,7 @@ BEGIN
 								when redo_queue_size < 1024*1024 then convert(varchar,redo_queue_size/1024)+' mb'
 								when redo_queue_size < 1024*1024*1024 then convert(varchar,floor(redo_queue_size/(1024*1024)))+' gb'
 								when redo_queue_size >= 1024*1024*1024 then convert(varchar,floor(redo_queue_size/(1024*1024*1024)))+' tb'
-								else '' end),0)+'</td>'
+								else '' end),' ')+'</td>'
 					+'<td>'+convert(varchar,is_suspended)+'</td>'
 					+'</tr>' as [table_row]
 			from tsu
@@ -700,7 +723,7 @@ BEGIN
 			print @_tab+@_line;
 		end
 
-		set @_table_headline = N'<h3>All Servers - Disk Utilization - Require ATTENTION</h3>';
+		set @_table_headline = N'<h3><a href="'+@_url_disk_health_panel+'" target="_blank">All Servers - Disk Utilization - Require ATTENTION</a></h3>';
 		set @_table_header = N'<tr><th>Server</th> <th>Host</th> <th>Disk</th> <th>Capacity</th>'
 						+N'<th>Free Space</th> <th>Status</th> <th>Used %</th>';
 		set @_table_data = NULL;
@@ -805,7 +828,7 @@ BEGIN
 			print @_tab+@_line;
 		end
 
-		set @_table_headline = N'<h3>CRITICAL - SQLInstance - OFFLINE/Linked Server Issue</h3>';
+		set @_table_headline = N'<h3><a href="'+@_url_offline_servers_panel+'" target="_blank">CRITICAL - SQLInstance - OFFLINE/Linked Server Issue</a></h3>';
 		set @_table_header = N'<tr><th>Server</th> <th>Host</th> <th>Is Available</th>'
 						+N'<th>Linked Server OK?</th> <th>Server (Tsql) Jobs</th>'
 						+N'<th>Server (PS) Jobs</th> <th>Data Server</th>'
@@ -890,7 +913,7 @@ BEGIN
 			print @_tab+@_line;
 		end
 
-		set @_table_headline = N'<h3>All Servers - SQLMonitor Jobs - Require ATTENTION</h3>';
+		set @_table_headline = N'<h3><a href="'+@_url_sqlmonitor_jobs_panel+'" target="_blank">All Servers - SQLMonitor Jobs - Require ATTENTION</a></h3>';
 		set @_table_header = N'<tr><th>Collection Time</th> <th>Server</th> <th>Job Name</th>'
 						+N'<th>Execution Delay</th> <th>Last Run</th> <th>Last Duration</th>'
 						+N'<th>Last Outcome</th> <th>Success Clocktime</th>'
@@ -1000,6 +1023,229 @@ BEGIN
 		end
 	end -- 'SQLMonitor Jobs'
 
+	if(@collect_backup_history = 1) -- 'Backup History'
+	begin
+		if @verbose > 0
+		begin
+			print @_line;
+			print @_line;
+			print 'Set @_html_backup_history variable..';
+			print @_tab+@_line;
+		end
+
+		set @_table_headline = N'<h3><a href="'+@_url_backup_history_panel+'" target="_blank">All Servers - Backup History - Require ATTENTION</a></h3>';
+		set @_table_header = N'<th>Server</th> <th>Database</th> <th>Recovery Model</th>'
+						+N'<th>Full Delay</th> <th>Diff Delay</th> <th>TLog Delay</th>'
+						+N'<th>Full Bkp Time</th> <th>Diff Bkp Time</th> <th>TLog Bkp Time</th>'
+						+N'<th>Db Created Date</th>';
+		set @_table_data = NULL;
+
+		if not exists (select * from dbo.backups_all_servers)
+			raiserror ('Data does not exist in dbo.backups_all_servers', 17, -1) with log;
+
+		if @verbose > 1
+		begin
+			;with t_backups as (
+				select [collection_time_utc], [sql_instance], [database_name], [backup_type], [log_backups_count], [backup_start_date_utc], [backup_finish_date_utc], [latest_backup_location], [backup_size_mb], [compressed_backup_size_mb], [first_lsn], [last_lsn], [checkpoint_lsn], [database_backup_lsn], [database_creation_date_utc], [backup_software], [recovery_model], [compatibility_level], [device_type], [description]
+				from dbo.backups_all_servers bas
+			)
+			,t_pivot as (
+				select	[sql_instance], [database_name]
+						,[recovery_model] = max([recovery_model])
+						,[full_backup_time_utc] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[backup_finish_date_utc] else null end)
+						,[full_backup_size_mb] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[backup_size_mb] else null end)
+						,[full_compressed_size_mb] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[compressed_backup_size_mb] else null end)
+						,[diff_backup_time_utc] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[backup_finish_date_utc] else null end)
+						,[diff_backup_size_mb] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[backup_size_mb] else null end)
+						,[diff_compressed_size_mb] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[compressed_backup_size_mb] else null end)
+						,[tlog_backup_time_utc] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[backup_finish_date_utc] else null end)
+						,[tlog_backup_size_mb] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[backup_size_mb] else null end)
+						,[tlog_compressed_size_mb] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[compressed_backup_size_mb] else null end)
+						,[log_backups_count] = max([log_backups_count])
+						,[database_creation_date_utc] = max([database_creation_date_utc])
+						,[full_backup_file] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[latest_backup_location] else null end)
+						,[diff_backup_file] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[latest_backup_location] else null end)
+						,[tlog_backup_file] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[latest_backup_location] else null end)
+				from t_backups bkp
+				where 1=1
+				group by [sql_instance], [database_name]
+			)
+			,t_latency as (
+				select 	[sql_instance], [database_name], [recovery_model], 				
+						[full_latency_days] = case when [full_backup_time_utc] is null then @full_threshold_days * 10
+																			else datediff(day,[full_backup_time_utc],getutcdate())
+																			end,						
+						[diff_latency_hours] = case when [diff_backup_time_utc] is null 
+																				then	case when (datediff(day,[full_backup_time_utc],getutcdate()) > @full_threshold_days) and (@full_threshold_days >= 7)
+																										then @full_threshold_days * 24
+																										when (datediff(day,[full_backup_time_utc],getutcdate())*24) > @diff_threshold_hours
+																										then ( (datediff(day,[full_backup_time_utc],getutcdate())-1) * 24 )
+																										else null
+																										end
+																			else datediff(hour,[diff_backup_time_utc],getutcdate())
+																			end,
+						[tlog_latency_minutes] = case when recovery_model = 'SIMPLE' then null
+																			when recovery_model <> 'SIMPLE'
+																			then	case when [tlog_backup_time_utc] is null then @full_threshold_days * 1440
+																									when [tlog_backup_time_utc] is not null
+																									then datediff(minute,[tlog_backup_time_utc],getutcdate())
+																									else null
+																									end
+																			else null
+																			end,
+						[full_backup_time_utc], [diff_backup_time_utc], [tlog_backup_time_utc], 
+						[full_backup_size_mb], [full_compressed_size_mb], [diff_backup_size_mb], [diff_compressed_size_mb], [tlog_backup_size_mb],
+						[tlog_compressed_size_mb], [log_backups_count],
+						[database_creation_date_utc], [full_backup_file], [diff_backup_file], [tlog_backup_file]
+				from t_pivot as bkp
+				where 1=1
+			)
+			,t_cte as (
+				select [sql_instance], [database_name], [recovery_model], 				
+						[full_latency_days], [diff_latency_hours], [tlog_latency_minutes],
+						[full_backup_time_utc], [diff_backup_time_utc], [tlog_backup_time_utc], 
+						[full_backup_size_mb], [full_compressed_size_mb], [diff_backup_size_mb], [diff_compressed_size_mb], 
+						[tlog_backup_size_mb], [tlog_compressed_size_mb], [log_backups_count], [database_creation_date_utc], 
+						[full_backup_file], [diff_backup_file], [tlog_backup_file]
+				from t_latency as l
+				where 1=1
+				AND (		(full_latency_days is null or full_latency_days >= @full_threshold_days)
+						OR 	(diff_latency_hours is not null and diff_latency_hours >= @diff_threshold_hours)
+						OR	(tlog_latency_minutes is not null and tlog_latency_minutes >= @tlog_threshold_minutes)
+						)
+			)
+			select [RunningQuery], t_cte.*
+			from t_cte
+			full outer join (select [RunningQuery] = 'Backup History') rq
+				on 1=1;
+		end
+
+		;with t_backups as (
+			select [collection_time_utc], [sql_instance], [database_name], [backup_type], [log_backups_count], [backup_start_date_utc], [backup_finish_date_utc], [latest_backup_location], [backup_size_mb], [compressed_backup_size_mb], [first_lsn], [last_lsn], [checkpoint_lsn], [database_backup_lsn], [database_creation_date_utc], [backup_software], [recovery_model], [compatibility_level], [device_type], [description]
+			from dbo.backups_all_servers bas
+		)
+		,t_pivot as (
+			select	[sql_instance], [database_name]
+					,[recovery_model] = max([recovery_model])
+					,[full_backup_time_utc] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[backup_finish_date_utc] else null end)
+					,[full_backup_size_mb] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[backup_size_mb] else null end)
+					,[full_compressed_size_mb] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[compressed_backup_size_mb] else null end)
+					,[diff_backup_time_utc] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[backup_finish_date_utc] else null end)
+					,[diff_backup_size_mb] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[backup_size_mb] else null end)
+					,[diff_compressed_size_mb] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[compressed_backup_size_mb] else null end)
+					,[tlog_backup_time_utc] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[backup_finish_date_utc] else null end)
+					,[tlog_backup_size_mb] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[backup_size_mb] else null end)
+					,[tlog_compressed_size_mb] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[compressed_backup_size_mb] else null end)
+					,[log_backups_count] = max([log_backups_count])
+					,[database_creation_date_utc] = max([database_creation_date_utc])
+					,[full_backup_file] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[latest_backup_location] else null end)
+					,[diff_backup_file] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[latest_backup_location] else null end)
+					,[tlog_backup_file] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[latest_backup_location] else null end)
+			from t_backups bkp
+			where 1=1
+			group by [sql_instance], [database_name]
+		)
+		,t_latency as (
+			select 	[sql_instance], [database_name], [recovery_model], 				
+					[full_latency_days] = case when [full_backup_time_utc] is null then @full_threshold_days * 10
+																		else datediff(day,[full_backup_time_utc],getutcdate())
+																		end,						
+					[diff_latency_hours] = case when [diff_backup_time_utc] is null 
+																			then	case when (datediff(day,[full_backup_time_utc],getutcdate()) > @full_threshold_days) and (@full_threshold_days >= 7)
+																									then @full_threshold_days * 24
+																									when (datediff(day,[full_backup_time_utc],getutcdate())*24) > @diff_threshold_hours
+																									then ( (datediff(day,[full_backup_time_utc],getutcdate())-1) * 24 )
+																									else null
+																									end
+																		else datediff(hour,[diff_backup_time_utc],getutcdate())
+																		end,
+					[tlog_latency_minutes] = case when recovery_model = 'SIMPLE' then null
+																		when recovery_model <> 'SIMPLE'
+																		then	case when [tlog_backup_time_utc] is null then @full_threshold_days * 1440
+																								when [tlog_backup_time_utc] is not null
+																								then datediff(minute,[tlog_backup_time_utc],getutcdate())
+																								else null
+																								end
+																		else null
+																		end,
+					[full_backup_time_utc], [diff_backup_time_utc], [tlog_backup_time_utc], 
+					[full_backup_size_mb], [full_compressed_size_mb], [diff_backup_size_mb], [diff_compressed_size_mb], [tlog_backup_size_mb],
+					[tlog_compressed_size_mb], [log_backups_count],
+					[database_creation_date_utc], [full_backup_file], [diff_backup_file], [tlog_backup_file]
+			from t_pivot as bkp
+			where 1=1
+		)
+		,t_issues as (
+			select [sql_instance], [database_name], [recovery_model], 				
+					[full_latency_days], [diff_latency_hours], [tlog_latency_minutes],
+					[full_backup_time_utc], [diff_backup_time_utc], [tlog_backup_time_utc], 
+					[full_backup_size_mb], [full_compressed_size_mb], [diff_backup_size_mb], [diff_compressed_size_mb], 
+					[tlog_backup_size_mb], [tlog_compressed_size_mb], [log_backups_count], [database_creation_date_utc], 
+					[full_backup_file], [diff_backup_file], [tlog_backup_file]
+			from t_latency as l
+			where 1=1
+			AND (		(full_latency_days is null or full_latency_days >= @full_threshold_days)
+					OR 	(diff_latency_hours is not null and diff_latency_hours >= @diff_threshold_hours)
+					OR	(tlog_latency_minutes is not null and tlog_latency_minutes >= @tlog_threshold_minutes)
+					)
+		)
+		,t_cte as (
+			select	'<tr>'
+					--+'<td class="bg_metric_neutral">'+convert(varchar,DATEADD(mi, DATEDIFF(mi, GETUTCDATE(), GETDATE()), CollectionTimeUTC),120)+'</td>'
+					+'<td class="bg_key">'+sql_instance+'</td>'
+					+'<td class="bg_key">'+[database_name]+'</td>'
+					+'<td class="bg_key">'+isnull(recovery_model,'')+'</td>'
+					+'<td class="'+(case when full_latency_days >= (@full_threshold_days*2) then 'bg_red'
+									when full_latency_days >= (@full_threshold_days+2) then 'bg_orange'
+									when full_latency_days >= (@full_threshold_days) then 'bg_yellow'
+									else 'bg_none'
+									end)+'">'+isnull(convert(varchar,full_latency_days),'')+' days'+'</td>'
+					+'<td class="'+(case when diff_latency_hours >= (@diff_threshold_hours*2) then 'bg_red'
+									when diff_latency_hours >= (@diff_threshold_hours+2) then 'bg_orange'
+									when diff_latency_hours >= (@diff_threshold_hours) then 'bg_yellow'
+									else 'bg_none'
+									end)+'">'
+						+isnull((case when diff_latency_hours < 24 then convert(varchar,floor(diff_latency_hours))+' hrs'
+									when diff_latency_hours >= 24 then convert(varchar,convert(numeric(20,2),diff_latency_hours/24))+' days'
+									else convert(varchar,diff_latency_hours) end),'')+'</td>'
+					+'<td class="'+(case when tlog_latency_minutes >= (@tlog_threshold_minutes*2) then 'bg_red'
+									when tlog_latency_minutes >= (@tlog_threshold_minutes+2) then 'bg_orange'
+									when tlog_latency_minutes >= (@tlog_threshold_minutes) then 'bg_yellow'
+									else 'bg_none'
+									end)+'">'
+						+isnull((case when tlog_latency_minutes < 60 then convert(varchar,floor(tlog_latency_minutes))+' min'
+									when tlog_latency_minutes < 60*24 then convert(varchar,convert(numeric(20,2),tlog_latency_minutes/60))+' hrs'
+									when tlog_latency_minutes >= 60*24 then convert(varchar,convert(numeric(20,2),tlog_latency_minutes/(60*24)))+' days'
+									else convert(varchar,tlog_latency_minutes) end),'')+'</td>'
+					+'<td>'+isnull(convert(varchar,DATEADD(mi, DATEDIFF(mi, GETUTCDATE(), GETDATE()), full_backup_time_utc),120),'')+'</td>'
+					+'<td>'+isnull(convert(varchar,DATEADD(mi, DATEDIFF(mi, GETUTCDATE(), GETDATE()), diff_backup_time_utc),120),'')+'</td>'
+					+'<td>'+isnull(convert(varchar,DATEADD(mi, DATEDIFF(mi, GETUTCDATE(), GETDATE()), tlog_backup_time_utc),120),'')+'</td>'
+					+'<td>'+isnull(convert(varchar,DATEADD(mi, DATEDIFF(mi, GETUTCDATE(), GETDATE()), database_creation_date_utc),120),'')+'</td>'
+					+'</tr>' as [table_row]
+			from t_issues bi
+			where 1=1
+		)
+		--select * from t_cte;
+		select @_table_data = coalesce(@_table_data+' '+[table_row],[table_row])
+		from t_cte;
+
+		set @_html_backup_history = '<hr><br>'+@_table_headline+'<div class="tableContainerDiv"><table border="1">'
+						+'<caption>dbo.backups_all_servers || @full_threshold_days:'+convert(varchar,@full_threshold_days)
+							+' || @diff_threshold_hours:'+convert(varchar,@diff_threshold_hours)
+							+' || @tlog_threshold_minutes:'+convert(varchar,@tlog_threshold_minutes)
+						+'</caption>'
+						+'<thead>'+@_table_header+'</thead><tbody>'+isnull(@_table_data,'')+'</tbody></table></div>';
+
+		if @verbose > 0
+		begin
+			print @_tab+'@_table_header => '+@_crlf+@_table_header;
+			print @_tab+@_line;
+			print @_tab+'@_table_data => '+@_crlf+ISNULL(@_table_data,'');
+			print @_tab+@_line;
+			print @_tab+'@_html_backup_history => '+@_crlf+ISNULL(@_html_backup_history,'');
+		end
+	end -- 'Backup History'
+
 	set @mail_subject = @mail_subject+' - '+convert(varchar,@_collection_time,120);
 
 	set @_mail_body_html = '<html>'
@@ -1008,7 +1254,7 @@ BEGIN
 						+@_style_css
 						+N'</head>'
 						+N'<body>'
-						+N'<h1><a href="'+@dashboard_link+'" target="_blank">'+@_title+' - '+convert(varchar,@_collection_time,120)+'</a></h1>'
+						+N'<h1><a href="'+@_url_all_servers_dashboard+'" target="_blank">'+@_title+' - '+convert(varchar,@_collection_time,120)+'</a></h1>'
 						+(case when @collect_core_health_metrics = 1 then N'<p>'+@_html_core_health+'</p>' else '' end)
 						+(case when @collect_tempdb_health = 1 then N'<p>'+@_html_tempdb_health+'</p>' else '' end)
 						+(case when @collect_log_space = 1 then N'<p>'+@_html_log_space_health+'</p>' else '' end)
@@ -1016,6 +1262,7 @@ BEGIN
 						+(case when @collect_disk_space = 1 then N'<p>'+@_html_disk_health+'</p>' else '' end)
 						+(case when @collect_offline_servers = 1 then N'<p>'+@_html_offline_servers+'</p>' else '' end)
 						+(case when @collect_sqlmonitor_jobs = 1 then N'<p>'+@_html_sqlmonitor_jobs+'</p>' else '' end)
+						+(case when @collect_backup_history = 1 then N'<p>'+@_html_backup_history+'</p>' else '' end)
 						+N'<br><br><br><p>Regards,<br>Job ['+@job_name+']</p>'
 						+N'</body>';	
 
@@ -1038,8 +1285,9 @@ GO
 
 if APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
 	EXEC dbo.usp_GetAllServerDashboardMail 
-			@recipients = 'ajay.dwivedi2007@gmail.com;', 
-			@collect_offline_servers = 0, @collect_sqlmonitor_jobs = 0,
-			@only_threshold_validated = 1, @send_mail = 1, @verbose = 0
-
+			@recipients = 'ajay.dwivedi2007@gmail.com;',
+			@dashboard_link = 'https://ajaydwivedi.ddns.net:3000/d/',
+			@collect_offline_servers = 1, @collect_sqlmonitor_jobs = 1,
+			@collect_disk_space = 1,
+			@only_threshold_validated = 1, @send_mail = 1, @verbose = 2
 go
