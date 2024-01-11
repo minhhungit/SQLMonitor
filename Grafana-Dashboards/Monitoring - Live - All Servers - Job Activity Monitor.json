@@ -820,7 +820,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "Job Activity Monitor"
   ],
   "templating": {
     "list": [
@@ -1465,6 +1466,6 @@
   "timezone": "",
   "title": "Monitoring - Live - All Servers - Job Activity Monitor",
   "uid": "job_activity_monitor",
-  "version": 12,
+  "version": 13,
   "weekStart": ""
 }

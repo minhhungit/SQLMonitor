@@ -28,7 +28,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.4.7"
+      "version": "10.1.0"
     },
     {
       "type": "datasource",
@@ -2314,7 +2314,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "sp_WhoIsActive"
   ],
   "templating": {
     "list": [
@@ -2322,7 +2323,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -2865,6 +2866,6 @@
   "timezone": "browser",
   "title": "WhoIsActive - SQL Server Queries - Workload",
   "uid": "WhoIsActive",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }

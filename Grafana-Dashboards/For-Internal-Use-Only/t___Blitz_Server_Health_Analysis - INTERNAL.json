@@ -63,8 +63,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -604,8 +603,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -965,8 +963,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -1326,8 +1323,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -2020,7 +2016,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "sp_Blitz"
   ],
   "templating": {
     "list": [
@@ -2142,8 +2139,8 @@
       {
         "current": {
           "selected": false,
-          "text": "fe80::cab1:7f0e:21bd:3ed6%14",
-          "value": "fe80::cab1:7f0e:21bd:3ed6%14"
+          "text": "100.64.0.1",
+          "value": "100.64.0.1"
         },
         "datasource": {
           "type": "mssql",
@@ -2190,8 +2187,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1701855465423",
-          "value": "1701855465423"
+          "text": "1704472228593",
+          "value": "1704472228593"
         },
         "datasource": {
           "type": "mssql",
@@ -2238,8 +2235,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1699988499467",
-          "value": "1699988499467"
+          "text": "1704298182597",
+          "value": "1704298182597"
         },
         "datasource": {
           "type": "mssql",
@@ -2515,6 +2512,6 @@
   "timezone": "",
   "title": "t___Blitz_Server_Health_Analysis",
   "uid": "t___Blitz_Server_Health_Analysis",
-  "version": 15,
+  "version": 16,
   "weekStart": ""
 }

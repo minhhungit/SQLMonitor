@@ -1194,7 +1194,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "",
           "value": ""
         },
@@ -1214,7 +1214,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "No Choice",
           "value": "No Choice"
         },
@@ -1247,7 +1247,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "8",
           "value": "8"
         },
@@ -1315,7 +1315,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "26",
           "value": "26"
         },
@@ -1378,7 +1378,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "60",
           "value": "60"
         },
@@ -1451,7 +1451,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "Full Database"
           ],
@@ -1466,7 +1466,7 @@
         "name": "backup_type",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "All",
             "value": "$__all"
           },
@@ -1537,6 +1537,6 @@
   "timezone": "",
   "title": "t___Backup_History",
   "uid": "backup_history",
-  "version": 56,
+  "version": 57,
   "weekStart": ""
 }

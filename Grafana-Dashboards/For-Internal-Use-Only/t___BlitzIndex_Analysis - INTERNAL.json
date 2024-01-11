@@ -1143,7 +1143,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "sp_BlitzIndex"
   ],
   "templating": {
     "list": [
@@ -1265,8 +1266,8 @@
       {
         "current": {
           "selected": false,
-          "text": "fe80::cab1:7f0e:21bd:3ed6%14",
-          "value": "fe80::cab1:7f0e:21bd:3ed6%14"
+          "text": "100.64.0.1",
+          "value": "100.64.0.1"
         },
         "datasource": {
           "type": "mssql",
@@ -1313,8 +1314,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702819800000",
-          "value": "1702819800000"
+          "text": "1704893400000",
+          "value": "1704893400000"
         },
         "datasource": {
           "type": "mssql",
@@ -1361,8 +1362,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702419343757",
-          "value": "1702419343757"
+          "text": "1704298182597",
+          "value": "1704298182597"
         },
         "datasource": {
           "type": "mssql",
@@ -1591,8 +1592,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702650600000",
-          "value": "1702650600000"
+          "text": "1704465000000",
+          "value": "1704465000000"
         },
         "datasource": {
           "type": "mssql",
@@ -1615,8 +1616,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702650600000",
-          "value": "1702650600000"
+          "text": "1704465000000",
+          "value": "1704465000000"
         },
         "datasource": {
           "type": "mssql",
@@ -1639,8 +1640,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702650660000",
-          "value": "1702650660000"
+          "text": "1704465000000",
+          "value": "1704465000000"
         },
         "datasource": {
           "type": "mssql",
@@ -1678,6 +1679,6 @@
   "timezone": "",
   "title": "t___BlitzIndex_Analysis",
   "uid": "t___BlitzIndex_Analysis",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

@@ -1141,7 +1141,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "Disk Space"
   ],
   "templating": {
     "list": [
@@ -1149,7 +1150,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -1367,8 +1368,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693494016610",
-          "value": "1693494016610"
+          "text": "1704945625471",
+          "value": "1704945625471"
         },
         "datasource": {
           "type": "mssql",
@@ -1415,8 +1416,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693491909080",
-          "value": "1693491909080"
+          "text": "1704298182597",
+          "value": "1704298182597"
         },
         "datasource": {
           "type": "mssql",
@@ -1495,8 +1496,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693494600989",
-          "value": "1693494600989"
+          "text": "1704945601595",
+          "value": "1704945601595"
         },
         "datasource": {
           "type": "mssql",
@@ -1536,6 +1537,6 @@
   "timezone": "",
   "title": "t___Disk Space",
   "uid": "disk_space",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }

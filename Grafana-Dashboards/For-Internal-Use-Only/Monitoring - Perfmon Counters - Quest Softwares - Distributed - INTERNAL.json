@@ -6492,7 +6492,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -6519,8 +6519,8 @@
       {
         "current": {
           "selected": false,
-          "text": "fe80::cab1:7f0e:21bd:3ed6%14",
-          "value": "fe80::cab1:7f0e:21bd:3ed6%14"
+          "text": "100.64.0.1",
+          "value": "100.64.0.1"
         },
         "datasource": {
           "type": "mssql",
@@ -6647,8 +6647,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693493933948",
-          "value": "1693493933948"
+          "text": "1704945491348",
+          "value": "1704945491348"
         },
         "datasource": {
           "type": "mssql",

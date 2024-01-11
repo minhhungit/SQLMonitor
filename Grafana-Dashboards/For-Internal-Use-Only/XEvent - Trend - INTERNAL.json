@@ -480,7 +480,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "XEvents"
   ],
   "templating": {
     "list": [
@@ -488,7 +489,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -603,8 +604,8 @@
       {
         "current": {
           "selected": false,
-          "text": "100.64.0.1",
-          "value": "100.64.0.1"
+          "text": "fe80::92e0:20cc:952c:1b57%9",
+          "value": "fe80::92e0:20cc:952c:1b57%9"
         },
         "datasource": {
           "type": "mssql",
@@ -700,8 +701,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693494638307",
-          "value": "1693494638307"
+          "text": "1704945644033",
+          "value": "1704945644033"
         },
         "datasource": {
           "type": "mssql",
@@ -861,6 +862,6 @@
   "timezone": "browser",
   "title": "XEvent - Trend",
   "uid": "XEvents-Trends",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }

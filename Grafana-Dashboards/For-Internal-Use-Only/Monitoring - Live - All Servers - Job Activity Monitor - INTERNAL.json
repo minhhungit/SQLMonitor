@@ -789,7 +789,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "Job Activity Monitor"
   ],
   "templating": {
     "list": [
@@ -862,8 +863,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702105500956",
-          "value": "1702105500956"
+          "text": "1704944100560",
+          "value": "1704944100560"
         },
         "datasource": {
           "type": "mssql",
@@ -1454,6 +1455,6 @@
   "timezone": "",
   "title": "Monitoring - Live - All Servers - Job Activity Monitor",
   "uid": "job_activity_monitor",
-  "version": 12,
+  "version": 13,
   "weekStart": ""
 }

@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 5,
+  "id": 22,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -116,7 +116,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -206,7 +206,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -265,7 +265,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -330,7 +330,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -414,7 +414,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -498,7 +498,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -648,7 +648,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -727,7 +727,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -799,7 +799,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -858,7 +858,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -920,7 +920,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -991,7 +991,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1049,7 +1049,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1123,7 +1123,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1222,7 +1222,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1284,7 +1284,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1356,7 +1356,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1423,7 +1423,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1494,7 +1494,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1571,7 +1571,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1648,7 +1648,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1712,7 +1712,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1800,7 +1800,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1881,7 +1881,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -1954,7 +1954,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -2014,7 +2014,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -2077,7 +2077,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -2148,7 +2148,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -2234,7 +2234,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -2314,7 +2314,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -2375,7 +2375,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -2599,7 +2599,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -8293,8 +8293,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -8430,17 +8429,19 @@
   "refresh": "1m",
   "revision": 1,
   "schemaVersion": 38,
+  "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "Core Metrics"
   ],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "SQLMonitor",
-          "value": "a28aeb06-bb6e-4c74-81af-65de433776c8"
+          "text": "SqlServer",
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -8459,8 +8460,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLMonitor",
-          "value": "SQLMonitor"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -8555,8 +8556,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLMONITOR",
-          "value": "SQLMONITOR"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -8579,8 +8580,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLMONITOR",
-          "value": "SQLMONITOR"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -8669,8 +8670,8 @@
       {
         "current": {
           "selected": false,
-          "text": "LAB",
-          "value": "LAB"
+          "text": "WORKGROUP",
+          "value": "WORKGROUP"
         },
         "datasource": {
           "type": "mssql",
@@ -8694,8 +8695,8 @@
       {
         "current": {
           "selected": false,
-          "text": "::1",
-          "value": "::1"
+          "text": "fe80::92e0:20cc:952c:1b57%9",
+          "value": "fe80::92e0:20cc:952c:1b57%9"
         },
         "datasource": {
           "type": "mssql",
@@ -8719,8 +8720,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLMONITOR",
-          "value": "SQLMONITOR"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -8743,8 +8744,8 @@
       {
         "current": {
           "selected": false,
-          "text": "15.0.2104.1",
-          "value": "15.0.2104.1"
+          "text": "15.0.4326.1",
+          "value": "15.0.4326.1"
         },
         "datasource": {
           "type": "mssql",
@@ -8767,8 +8768,8 @@
       {
         "current": {
           "selected": false,
-          "text": "",
-          "value": ""
+          "text": "WORKGROUP",
+          "value": "WORKGROUP"
         },
         "datasource": {
           "type": "mssql",
@@ -8823,8 +8824,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703945015636",
-          "value": "1703945015636"
+          "text": "1704944453744",
+          "value": "1704944453744"
         },
         "datasource": {
           "type": "mssql",
@@ -8855,8 +8856,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703945046887",
-          "value": "1703945046887"
+          "text": "1704944409562",
+          "value": "1704944409562"
         },
         "datasource": {
           "type": "mssql",
@@ -8887,8 +8888,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703945161353",
-          "value": "1703945161353"
+          "text": "1704944524633",
+          "value": "1704944524633"
         },
         "datasource": {
           "type": "mssql",
@@ -8934,8 +8935,8 @@
       {
         "current": {
           "selected": false,
-          "text": "4",
-          "value": "4"
+          "text": "8",
+          "value": "8"
         },
         "datasource": {
           "type": "mssql",
@@ -8958,8 +8959,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703938277903",
-          "value": "1703938277903"
+          "text": "1704298182597",
+          "value": "1704298182597"
         },
         "datasource": {
           "type": "mssql",
@@ -8982,8 +8983,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703945188013",
-          "value": "1703945188013"
+          "text": "1704944528863",
+          "value": "1704944528863"
         },
         "datasource": {
           "type": "mssql",
@@ -9006,8 +9007,8 @@
       {
         "current": {
           "selected": false,
-          "text": "29",
-          "value": "29"
+          "text": "19",
+          "value": "19"
         },
         "datasource": {
           "type": "mssql",
@@ -9030,8 +9031,8 @@
       {
         "current": {
           "selected": false,
-          "text": "6",
-          "value": "6"
+          "text": "7",
+          "value": "7"
         },
         "datasource": {
           "type": "mssql",
@@ -9054,8 +9055,8 @@
       {
         "current": {
           "selected": false,
-          "text": "71",
-          "value": "71"
+          "text": "81",
+          "value": "81"
         },
         "datasource": {
           "type": "mssql",
@@ -9078,8 +9079,8 @@
       {
         "current": {
           "selected": false,
-          "text": "75",
-          "value": "75"
+          "text": "97",
+          "value": "97"
         },
         "datasource": {
           "type": "mssql",
@@ -9102,8 +9103,8 @@
       {
         "current": {
           "selected": false,
-          "text": "24",
-          "value": "24"
+          "text": "2",
+          "value": "2"
         },
         "datasource": {
           "type": "mssql",
@@ -9126,8 +9127,8 @@
       {
         "current": {
           "selected": false,
-          "text": "780720",
-          "value": "780720"
+          "text": "432920",
+          "value": "432920"
         },
         "datasource": {
           "type": "mssql",
@@ -9158,8 +9159,8 @@
       {
         "current": {
           "selected": false,
-          "text": "0",
-          "value": "0"
+          "text": "6",
+          "value": "6"
         },
         "datasource": {
           "type": "mssql",
@@ -9182,8 +9183,8 @@
       {
         "current": {
           "selected": false,
-          "text": "",
-          "value": ""
+          "text": "601625",
+          "value": "601625"
         },
         "datasource": {
           "type": "mssql",
@@ -9206,8 +9207,8 @@
       {
         "current": {
           "selected": false,
-          "text": "8388068",
-          "value": "8388068"
+          "text": "33236984",
+          "value": "33236984"
         },
         "datasource": {
           "type": "mssql",
@@ -9230,8 +9231,8 @@
       {
         "current": {
           "selected": false,
-          "text": "734540",
-          "value": "734540"
+          "text": "4540084",
+          "value": "4540084"
         },
         "datasource": {
           "type": "mssql",
@@ -9254,8 +9255,8 @@
       {
         "current": {
           "selected": false,
-          "text": "0",
-          "value": "0"
+          "text": "1",
+          "value": "1"
         },
         "datasource": {
           "type": "mssql",
@@ -9278,8 +9279,8 @@
       {
         "current": {
           "selected": false,
-          "text": "671356",
-          "value": "671356"
+          "text": "11665948",
+          "value": "11665948"
         },
         "datasource": {
           "type": "mssql",
@@ -9302,8 +9303,8 @@
       {
         "current": {
           "selected": false,
-          "text": "100",
-          "value": "100"
+          "text": "79",
+          "value": "79"
         },
         "datasource": {
           "type": "mssql",
@@ -9326,8 +9327,8 @@
       {
         "current": {
           "selected": false,
-          "text": "13",
-          "value": "13"
+          "text": "0",
+          "value": "0"
         },
         "datasource": {
           "type": "mssql",
@@ -9350,8 +9351,8 @@
       {
         "current": {
           "selected": false,
-          "text": "6",
-          "value": "6"
+          "text": "52820",
+          "value": "52820"
         },
         "datasource": {
           "type": "mssql",
@@ -9398,8 +9399,8 @@
       {
         "current": {
           "selected": false,
-          "text": "2104",
-          "value": "2104"
+          "text": "4326",
+          "value": "4326"
         },
         "datasource": {
           "type": "mssql",
@@ -9422,8 +9423,8 @@
       {
         "current": {
           "selected": false,
-          "text": "31",
-          "value": "31"
+          "text": "70",
+          "value": "70"
         },
         "datasource": {
           "type": "mssql",
@@ -9470,8 +9471,8 @@
       {
         "current": {
           "selected": false,
-          "text": "14",
-          "value": "14"
+          "text": "3",
+          "value": "3"
         },
         "datasource": {
           "type": "mssql",
@@ -9502,8 +9503,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703944803899",
-          "value": "1703944803899"
+          "text": "1704943816639",
+          "value": "1704943816639"
         },
         "datasource": {
           "type": "mssql",
@@ -9664,8 +9665,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703945100950",
-          "value": "1703945100950"
+          "text": "1704944402752",
+          "value": "1704944402752"
         },
         "datasource": {
           "type": "mssql",
@@ -9716,8 +9717,8 @@
       {
         "current": {
           "selected": false,
-          "text": "",
-          "value": ""
+          "text": "Windows 10 Pro",
+          "value": "Windows 10 Pro"
         },
         "datasource": {
           "type": "mssql",
@@ -9740,8 +9741,8 @@
       {
         "current": {
           "selected": false,
-          "text": "",
-          "value": ""
+          "text": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+          "value": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz"
         },
         "datasource": {
           "type": "mssql",
@@ -9764,8 +9765,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703945100794",
-          "value": "1703945100794"
+          "text": "1704944401610",
+          "value": "1704944401610"
         },
         "datasource": {
           "type": "mssql",
@@ -9788,8 +9789,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703945100825",
-          "value": "1703945100825"
+          "text": "1704944401391",
+          "value": "1704944401391"
         },
         "datasource": {
           "type": "mssql",
@@ -9827,6 +9828,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - Distributed",
   "uid": "distributed_live_dashboard",
-  "version": 3,
+  "version": 82,
   "weekStart": ""
 }

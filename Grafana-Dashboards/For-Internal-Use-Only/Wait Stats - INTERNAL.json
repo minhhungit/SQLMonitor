@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 13,
+  "id": 24,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -289,7 +289,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -361,8 +361,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -686,8 +685,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -1015,8 +1013,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -1114,17 +1111,19 @@
   "refresh": "5m",
   "revision": 1,
   "schemaVersion": 38,
+  "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "Wait Stats"
   ],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "SQLMonitor",
-          "value": "a28aeb06-bb6e-4c74-81af-65de433776c8"
+          "text": "SqlServer",
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -1142,8 +1141,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLMonitor",
-          "value": "SQLMonitor"
+          "text": "21L-LTPABL-1187",
+          "value": "21L-LTPABL-1187"
         },
         "datasource": {
           "type": "mssql",
@@ -1238,8 +1237,8 @@
       {
         "current": {
           "selected": false,
-          "text": "::1",
-          "value": "::1"
+          "text": "100.64.0.1",
+          "value": "100.64.0.1"
         },
         "datasource": {
           "type": "mssql",
@@ -1262,8 +1261,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLMONITOR.Lab.com",
-          "value": "SQLMONITOR.Lab.com"
+          "text": "WORKGROUP",
+          "value": "WORKGROUP"
         },
         "datasource": {
           "type": "mssql",
@@ -1286,8 +1285,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703944200663",
-          "value": "1703944200663"
+          "text": "1704945001042",
+          "value": "1704945001042"
         },
         "datasource": {
           "type": "mssql",
@@ -1310,8 +1309,8 @@
       {
         "current": {
           "selected": false,
-          "text": "4",
-          "value": "4"
+          "text": "8",
+          "value": "8"
         },
         "datasource": {
           "type": "mssql",
@@ -1334,8 +1333,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1703938277903",
-          "value": "1703938277903"
+          "text": "1704298182597",
+          "value": "1704298182597"
         },
         "datasource": {
           "type": "mssql",
@@ -1376,6 +1375,6 @@
   "timezone": "",
   "title": "Wait Stats",
   "uid": "wait_stats",
-  "version": 3,
+  "version": 7,
   "weekStart": ""
 }

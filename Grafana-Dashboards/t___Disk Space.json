@@ -29,7 +29,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.4.7"
+      "version": "10.1.0"
     },
     {
       "type": "datasource",
@@ -1192,7 +1192,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "Disk Space"
   ],
   "templating": {
     "list": [
@@ -1200,7 +1201,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -1555,6 +1556,6 @@
   "timezone": "",
   "title": "t___Disk Space",
   "uid": "disk_space",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }

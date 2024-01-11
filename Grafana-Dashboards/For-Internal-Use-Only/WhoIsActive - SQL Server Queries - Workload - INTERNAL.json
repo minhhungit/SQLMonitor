@@ -2270,7 +2270,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "sp_WhoIsActive"
   ],
   "templating": {
     "list": [
@@ -2278,7 +2279,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -2512,8 +2513,8 @@
       {
         "current": {
           "selected": false,
-          "text": "fe80::cab1:7f0e:21bd:3ed6%14",
-          "value": "fe80::cab1:7f0e:21bd:3ed6%14"
+          "text": "100.64.0.1",
+          "value": "100.64.0.1"
         },
         "datasource": {
           "type": "mssql",
@@ -2585,8 +2586,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693494653660",
-          "value": "1693494653660"
+          "text": "1704945533165",
+          "value": "1704945533165"
         },
         "datasource": {
           "type": "mssql",
@@ -2617,8 +2618,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693494603120",
-          "value": "1693494603120"
+          "text": "1704945607043",
+          "value": "1704945607043"
         },
         "datasource": {
           "type": "mssql",
@@ -2849,6 +2850,6 @@
   "timezone": "browser",
   "title": "WhoIsActive - SQL Server Queries - Workload",
   "uid": "WhoIsActive",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }

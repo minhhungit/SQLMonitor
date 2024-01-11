@@ -101,8 +101,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -642,8 +641,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -1003,8 +1001,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -1364,8 +1361,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -2058,7 +2054,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "sp_Blitz"
   ],
   "templating": {
     "list": [
@@ -2505,6 +2502,6 @@
   "timezone": "",
   "title": "t___Blitz_Server_Health_Analysis",
   "uid": "t___Blitz_Server_Health_Analysis",
-  "version": 15,
+  "version": 16,
   "weekStart": ""
 }
