@@ -27,18 +27,6 @@
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
         </ConnectionNode>
-        <ConnectionNode Name="10.253.33.160:E84947">
-          <Created>2024-01-11T11:20:40.7186678+05:30</Created>
-          <Type>SQL</Type>
-          <Server>10.253.33.160</Server>
-          <UserName>E84947</UserName>
-          <Authentication>SQL</Authentication>
-          <InitialDB />
-          <LoginTimeout>30</LoginTimeout>
-          <ExecutionTimeout>0</ExecutionTimeout>
-          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
-          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
-        </ConnectionNode>
         <ConnectionNode Name="localhost:21L-LTPABL-1187\Ajay">
           <Created>2023-10-09T13:26:06.1703448+05:30</Created>
           <Type>SQL</Type>
@@ -368,9 +356,9 @@
           <FullPath>SCH-usp_GetAllServerCollectedData.sql</FullPath>
         </FileNode>
         <FileNode Name="SCH-usp_GetAllServerDashboardMail.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.253.33.160:False:E84947</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>10.253.33.160</AssociatedConnSrvName>
-          <AssociatedConnUserName>E84947</AssociatedConnUserName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
           <FullPath>SCH-usp_GetAllServerDashboardMail.sql</FullPath>
         </FileNode>
         <FileNode Name="SCH-usp_GetAllServerHaDrLatency.sql">
@@ -450,6 +438,18 @@
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
           <FullPath>SCH-WhoIsActive-Partitioning.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SQLQuery1.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>SQLQuery1.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SQLQuery2.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>SQLQuery2.sql</FullPath>
         </FileNode>
         <FileNode Name="Update-SQLAgentJobsThreshold.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>

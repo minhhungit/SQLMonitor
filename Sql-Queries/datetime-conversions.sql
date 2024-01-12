@@ -23,11 +23,13 @@ use DBA
 go
 
 ;with t_Services as (
-	select *, datediff(MILLISECOND, last_startup_time, SYSDATETIME()) as uptime_ms
+	select *, [uptime_ms] = datediff(MILLISECOND, last_startup_time, SYSDATETIME())
+			,[uptime_s] = datediff(SECOND, last_startup_time, SYSDATETIME())
 	from sys.dm_server_services
 	where servicename like 'SQL Server (%'
 )
 select [ddd hh:mm:ss.mss] = right('0000'+convert(varchar, uptime_ms/86400000),3)+ ' '+convert(varchar,dateadd(MILLISECOND,uptime_ms,'1900-01-01 00:00:00'),114),
+		[uptime] = right('   0'+convert(varchar, [uptime_s]/86400),4)+ ' '+convert(varchar,dateadd(SECOND,[uptime_s],'1900-01-01 00:00:00'),114),
 		*
 from t_Services
 go
