@@ -24,8 +24,8 @@ if object_id('[dbo].[resource_consumption_queries]') is not null
 if object_id('[dbo].[resource_consumption]') is not null
 	exec ('drop table [dbo].[resource_consumption]');
 
-if object_id('[dbo].[sql_agent_job_thresholds]') is not null
+if exists (select * from sys.tables t where t.name = 'sql_agent_job_thresholds' and create_date < '2024-01-15')
     exec ('drop table [dbo].[sql_agent_job_thresholds]');
 
-if object_id('[dbo].[sql_agent_job_stats]') is not null
+if exists (select * from sys.tables t where t.name = 'sql_agent_job_stats' and create_date < '2024-01-15')
     exec ('drop table [dbo].[sql_agent_job_stats]');

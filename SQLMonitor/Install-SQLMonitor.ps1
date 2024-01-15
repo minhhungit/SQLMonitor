@@ -204,8 +204,8 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '1.6.4'
-$sqlmonitorVersionDate = '2023-Dec-31'
+$sqlmonitorVersion = '1.6.5'
+$sqlmonitorVersionDate = '2024-Jan-15'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v1.7.0 - 2024-Mar-31
@@ -4818,8 +4818,25 @@ go
 
 # Update SQLMonitor Jobs Thresholds
 if($UpdateSQLAgentJobsThreshold) {
-    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor jobs thresholds on [$SqlInstanceToBaseline]..[sql_agent_job_thresholds] using '$UpdateSQLAgentJobsThresholdFileName'.." | Write-Host -ForegroundColor Cyan
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor jobs thresholds on [$SqlInstanceToBaseline].[$DbaDatabase]..[sql_agent_job_thresholds] using '$UpdateSQLAgentJobsThresholdFileName'.." | Write-Host -ForegroundColor Cyan
     try {
+        $sqlStartJob = @"
+declare @object_id int;
+set @object_id = OBJECT_ID('dbo.sql_agent_job_thresholds');
+
+if @object_id is null
+	exec msdb.dbo.sp_start_job @job_name = '(dba) Check-SQLAgentJobs';
+else
+    select [object_id] = @object_id;
+"@
+        $sqlResult = @()
+        $sqlResult += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query "exec msdb.dbo.sp_start_job @job_name = '(dba) Check-SQLAgentJobs';" -EnableException
+
+        if ($sqlResult.Count -eq 0) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Run job [(dba) Check-SQLAgentJobs] & wait for 10 seconds.."
+            Start-Sleep -Seconds 10
+        }
+        
         $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
     }
     catch {

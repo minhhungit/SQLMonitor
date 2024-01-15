@@ -145,6 +145,12 @@
           <AssociatedConnUserName />
           <FullPath>QRY-SQLMonitor-Jobs-Execution-Performance-Metrics.sql</FullPath>
         </FileNode>
+        <FileNode Name="QRY-WhoIsActive-Infra-ImplicitConversions.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>QRY-WhoIsActive-Infra-ImplicitConversions.sql</FullPath>
+        </FileNode>
         <FileNode Name="QRY-XEventMetrics-Infra-Normalized.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
@@ -198,6 +204,18 @@
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>QRY-WhoIsActive-Infra.sql</FullPath>
+        </FileNode>
+        <FileNode Name="QRY-XEventMetrics-Workload-Delta-By-CPU.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>QRY-XEventMetrics-Workload-Delta-By-CPU.sql</FullPath>
+        </FileNode>
+        <FileNode Name="QRY-XEventMetrics-Workload-Delta-By-Reads.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>QRY-XEventMetrics-Workload-Delta-By-Reads.sql</FullPath>
         </FileNode>
         <FileNode Name="SCH-Change-Table-Partition-Scheme.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>

@@ -1,13 +1,18 @@
 use DBA
 go
 
-select *
+select	[domain] = asi.domain, id.sql_instance, id.host_name, id.[database], 
+		id.data_destination_sql_instance, id.collector_powershell_jobs_server, id.collector_tsql_jobs_server,
+		id.dba_group_mail_id, id.sqlmonitor_version,
+		id.is_alias, id.is_linked_server_working, id.source_sql_instance, id.sql_instance_port		
 from dbo.instance_details id
+outer apply (select top 1 * from dbo.vw_all_server_info asi where asi.srv_name = id.sql_instance) asi
 where 1=1
-and id.sqlmonitor_version <> '1.5.0.4'
+and id.is_enabled = 1 and id.is_available = 1 and id.is_alias = 0
+and id.sqlmonitor_version <> '1.6.5'
 --and id.sqlmonitor_version = '1.5.0.4'
+order by id.sql_instance, id.host_name
 go
-
 
 
 select *

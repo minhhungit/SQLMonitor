@@ -25,7 +25,12 @@ $currentTime = Get-Date
 $conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database master -ClientName "check-instance-availability.ps1" -TrustServerCertificate -EncryptConnection
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Get all SQLInstances in SQLMonitor server [$InventoryServer].[dbo].[instance_details].."
-$sqlSupportedInstances = "select distinct [sql_instance], [sql_instance_port], [database] from dbo.instance_details where is_enabled = 1 and is_alias = 0" 
+$sqlSupportedInstances = @"
+select distinct [sql_instance], [sql_instance_port], [database] 
+from dbo.instance_details id
+where is_enabled = 1 and is_alias = 0
+and id.host_name <> CONVERT(varchar,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
+"@ 
 $supportedInstances = @()
 $supportedInstances += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlSupportedInstances -EnableException
 
