@@ -27,6 +27,24 @@ begin
 	declare @_rows_affected int = 0;
 	declare @_caller_user varchar(125) = SUSER_NAME();
 	declare @_is_caller_sysadmin int = IS_SRVROLEMEMBER('SYSADMIN', @_caller_user);
+	declare @_privilege varchar(10);
+	declare @_privilege_table table (
+		account_name varchar(255), acc_type varchar(50),
+		privilege varchar(10), mapped_login_name varchar(255),
+		permission_path varchar(500));
+
+	if ( (charindex('\',@_caller_user) <> 0) and (@_is_caller_sysadmin is null) )
+	begin
+		insert @_privilege_table (account_name, acc_type, privilege, mapped_login_name, permission_path)
+		exec xp_logininfo @acctname = @_caller_user --, @privilege = @_privilege OUTPUT;
+		--exec xp_logininfo 'angeltrade\Sushant.Banerjee'
+	end
+
+	if exists (select * from @_privilege_table where privilege = 'admin')
+	begin
+		set @_is_caller_sysadmin = 1;
+		set @_privilege = 'admin';
+	end
 
 	if @verbose > 0
 	begin
