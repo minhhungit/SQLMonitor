@@ -2110,10 +2110,10 @@ if($stepName -in $Steps2Execute)
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$CollectDiskSpaceJobFilePath = '$CollectDiskSpaceJobFilePath'"
 
-    # Append HostName if Job Server is different    
+    # Append HostName if Job Server is different
     $jobNameNew = $jobName
     $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
-    if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) ) {
+    if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) -or ($isClustered -eq $true) ) {
         $jobNameNew = "$jobName - $HostName"
         $sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
     }    
@@ -2225,7 +2225,7 @@ if($stepName -in $Steps2Execute)
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
     $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
-    if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) ) {
+    if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) -or ($isClustered -eq $true) ) {
         $jobNameNew = "$jobName - $HostName"
         $sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
     }   
@@ -2336,7 +2336,7 @@ if($stepName -in $Steps2Execute)
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
     $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
-    if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) ) {
+    if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) -or ($isClustered -eq $true) ) {
         $jobNameNew = "$jobName - $HostName"
         $sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
     }
