@@ -31,6 +31,8 @@ Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Sql-Queries-Work", "Sql-Que
 EndProject
 Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Work-SOC-Project", "Work-SOC-Project\Work-SOC-Project.ssmssqlproj", "{BB731120-D924-4882-BF4A-54C0DA7FF385}"
 EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Work-197-33.232-Query-Performance-Issue", "Work-197-33.232-Query-Performance-Issue\Work-197-33.232-Query-Performance-Issue.ssmssqlproj", "{A16605EA-D232-40F8-B38D-CE93A4881DC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Default = Default|Default
@@ -49,8 +51,9 @@ Global
 		{719D9F57-63FF-4A99-870B-BAC8B25845E2}.Default|Default.ActiveCfg = Default
 		{DDEB4AE5-E859-4681-8FCF-078C2BE3D244}.Default|Default.ActiveCfg = Default
 		{71007107-7371-4FA7-9510-357C3738812B}.Default|Default.ActiveCfg = Default
-		{E8804972-4FF6-46F5-B4D3-E914D2341503}.Default|Default.ActiveCfg = Default
 		{BB731120-D924-4882-BF4A-54C0DA7FF385}.Default|Default.ActiveCfg = Default
+		{614282D6-82C4-4419-ABF4-98B4D724F3AA}.Default|Default.ActiveCfg = Default
+		{A16605EA-D232-40F8-B38D-CE93A4881DC1}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
