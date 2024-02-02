@@ -33,6 +33,8 @@ Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Work-SOC-Project", "Work-SO
 EndProject
 Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Work-197-33.232-Query-Performance-Issue", "Work-197-33.232-Query-Performance-Issue\Work-197-33.232-Query-Performance-Issue.ssmssqlproj", "{A16605EA-D232-40F8-B38D-CE93A4881DC1}"
 EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Work-ANAND1-Performance-Optimization", "Work-ANAND1-Performance-Optimization\Work-ANAND1-Performance-Optimization.ssmssqlproj", "{A9B34DA5-0EF8-4564-BF37-8F9B8C28763A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Default = Default|Default
@@ -54,6 +56,7 @@ Global
 		{BB731120-D924-4882-BF4A-54C0DA7FF385}.Default|Default.ActiveCfg = Default
 		{614282D6-82C4-4419-ABF4-98B4D724F3AA}.Default|Default.ActiveCfg = Default
 		{A16605EA-D232-40F8-B38D-CE93A4881DC1}.Default|Default.ActiveCfg = Default
+		{A9B34DA5-0EF8-4564-BF37-8F9B8C28763A}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

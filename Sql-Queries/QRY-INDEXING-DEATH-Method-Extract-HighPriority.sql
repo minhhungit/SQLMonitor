@@ -5,35 +5,39 @@ set nocount on;
 declare @sql nvarchar(max);
 declare @params nvarchar(2000);
 declare @more_info_filter varchar(2000);
-declare @run_datetime_mode0 datetime = '2023-07-07 20:15:00.000';
-declare @run_datetime_mode2 datetime = '2023-07-13 19:12:00.000';
+declare @run_datetime_mode0 datetime = '2024-01-26 20:13:00.000';
+declare @run_datetime_mode2 datetime = '2024-02-01 20:39:00.000';
 declare @heap_size_mb_threshold numeric(20,2) = '200';
 declare @heap_reads_mimimum int = 100;
 
 set @params = '@more_info_filter varchar(2000), @run_datetime_mode0 datetime, @run_datetime_mode2 datetime, @heap_size_mb_threshold numeric(20,2), @heap_reads_mimimum int';
 
 -- Get Findings that should be evaluated further before analysis to decide if Should be Ignored or not
-if object_id('tempdb..#BlitzIndex_Mode0_Filtered') is not null
-	drop table #BlitzIndex_Mode0_Filtered;
+if object_id('tempdb..#BlitzIndex_Mode0_Heaps') is not null
+	drop table #BlitzIndex_Mode0_Heaps;
 select distinct finding, bi.database_name, more_info
-into #BlitzIndex_Mode0_Filtered
+into #BlitzIndex_Mode0_Heaps
 from dbo.BlitzIndex_Mode0 bi
 where 1=1
 --and bi.priority = -1 -- Use it to find out stats for max UpTime Days
 and bi.run_datetime = @run_datetime_mode0
 and bi.finding in ('Self Loathing Indexes: Small Active heap','Self Loathing Indexes: Medium Active heap','Self Loathing Indexes: Large Active Heap');
 
-if object_id('tempdb..#BlitzIndex_Mode0_Filtered_Final') is not null
-	drop table #BlitzIndex_Mode0_Filtered_Final;
+print 'Total records in #BlitzIndex_Mode0_Heaps => '+convert(varchar,@@rowcount);
+
+-- Create table skeleton to store more filtered High Priority Heap warnings
+if object_id('tempdb..#BlitzIndex_Mode0_Heaps_Final') is not null
+	drop table #BlitzIndex_Mode0_Heaps_Final;
 select *
-into #BlitzIndex_Mode0_Filtered_Final
-from #BlitzIndex_Mode0_Filtered
+into #BlitzIndex_Mode0_Heaps_Final
+from #BlitzIndex_Mode0_Heaps
 where 1=0;
 
+-- Loop through Heaps warnings, and filter out Heaps that do not qualify based on {row count/size/reads}
 declare @db_name varchar(255);
 declare @db_db_name varchar(255) = db_name();
 declare cur_index_dbs cursor local fast_forward for
-	select distinct [database_name] from #BlitzIndex_Mode0_Filtered;
+	select distinct [database_name] from #BlitzIndex_Mode0_Heaps;
 
 open cur_index_dbs;
 fetch next from cur_index_dbs into @db_name;
@@ -42,9 +46,9 @@ begin
 	set quoted_identifier off;
 	set @sql = "
 use ["+@db_name+"];
-insert #BlitzIndex_Mode0_Filtered_Final (finding, database_name, more_info)
+insert #BlitzIndex_Mode0_Heaps_Final (finding, database_name, more_info)
 select fi.finding, fi.database_name, fi.more_info
-from #BlitzIndex_Mode0_Filtered fi
+from #BlitzIndex_Mode0_Heaps fi
 join ["+(@db_db_name  collate SQL_Latin1_General_CP1_CI_AS)+"].dbo.BlitzIndex bi 
 	on bi.more_info collate SQL_Latin1_General_CP1_CI_AS = fi.more_info collate SQL_Latin1_General_CP1_CI_AS
 	and bi.run_datetime = @run_datetime_mode2
@@ -78,8 +82,11 @@ end
 close cur_index_dbs;
 deallocate cur_index_dbs;
 
-
-select bi.more_info, sum(bi.priority) as priority_total, min(bi.priority) as priority_min
+-- Get All Index Warnings with Filtered warnings for Heaps
+select bi.more_info, sum(bi.priority) as priority_total, min(bi.priority) as priority_min,
+		[print-msg] = N'-- '+right('000'+convert(varchar,ROW_NUMBER()over(order by min(bi.priority), sum(bi.priority) desc, bi.more_info)),3)+') '
+						+ ' Priority_total='+convert(varchar,sum(bi.priority))+' , Priority_min='+convert(varchar,min(bi.priority))
+						+ nchar(13) + bi.more_info + nchar(13)
 from dbo.BlitzIndex_Mode0 bi
 where 1=1
 and bi.priority <> -1 -- Use it to find out stats for max UpTime Days
@@ -89,20 +96,21 @@ and (	bi.finding not in ('Self Loathing Indexes: Small Active heap','Self Loathi
 		or
 		(	bi.finding in ('Self Loathing Indexes: Small Active heap','Self Loathing Indexes: Medium Active heap','Self Loathing Indexes: Large Active Heap')
 			and exists (	select 1/0
-							from #BlitzIndex_Mode0_Filtered_Final ff
+							from #BlitzIndex_Mode0_Heaps_Final ff
 							where ff.more_info = bi.more_info
 					)
 		)
 	)
 --and bi.finding = 'Self Loathing Indexes: Heaps with Forwarded Fetches'
 group by bi.more_info
-order by priority_min, priority_total DESC, bi.more_info
+--order by priority_min, priority_total DESC, bi.more_info
+order by [print-msg];
 
 --select * from dbo.BlitzIndex_Mode0 where run_datetime = '2023-02-24 20:20:00.000'
 --select top 1000 * from dbo.BlitzIndex_Mode0 where run_datetime = '2022-12-30 20:10:00.000'
 --select top 200 * from dbo.BlitzIndex where index_id = 0 and reads_per_write > 1.0
 go
 
--- SELECT distinct run_datetime from dbo.BlitzIndex_Mode0 where run_datetime >= dateadd(day,-7,getdate())
--- SELECT distinct run_datetime from dbo.BlitzIndex where run_datetime >= dateadd(day,-7,getdate())
--- SELECT distinct run_datetime from dbo.BlitzIndex_Mode4 where run_datetime >= dateadd(day,-7,getdate())
+-- SELECT distinct run_datetime from dbo.BlitzIndex_Mode0 where run_datetime >= dateadd(day,-7,getdate()) -- 2024-01-26 20:13:00.000
+-- SELECT distinct run_datetime from dbo.BlitzIndex where run_datetime >= dateadd(day,-7,getdate()) -- 2024-02-01 20:39:00.000
+-- SELECT distinct run_datetime from dbo.BlitzIndex_Mode4 where run_datetime >= dateadd(day,-7,getdate()) -- 2024-01-26 20:40:00.000

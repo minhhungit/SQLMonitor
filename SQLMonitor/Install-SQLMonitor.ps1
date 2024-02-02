@@ -2106,21 +2106,24 @@ if( $requireProxy -and ($stepName -in $Steps2Execute) )
 $stepName = '13__CreateJobCollectDiskSpace'
 if($stepName -in $Steps2Execute) 
 {
+    Write-Debug $stepName
+
     $jobName = '(dba) Collect-DiskSpace'
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$CollectDiskSpaceJobFilePath = '$CollectDiskSpaceJobFilePath'"
 
     # Append HostName if Job Server is different
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestination"
     if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) -or ($isClustered -eq $true) ) {
         $jobNameNew = "$jobName - $HostName"
-        $sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
+        #$sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
     }    
 
     # Replace defaults
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForPowershellJobs].."
-    $sqlCreateJobCollectDiskSpace = [System.IO.File]::ReadAllText($CollectDiskSpaceJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance `"$sqlInstanceOnJobStep`"")
+    $sqlCreateJobCollectDiskSpace = [System.IO.File]::ReadAllText($CollectDiskSpaceJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance ''$sqlInstanceOnJobStep''")
     $sqlCreateJobCollectDiskSpace = $sqlCreateJobCollectDiskSpace.Replace('-Database DBA', "-Database `"$DbaDatabase`"")
     $sqlCreateJobCollectDiskSpace = $sqlCreateJobCollectDiskSpace.Replace('-HostName localhost', "-HostName `"$HostName`"")
     if($jobNameNew -ne $jobName) {
@@ -2224,14 +2227,15 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestination"
     if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) -or ($isClustered -eq $true) ) {
         $jobNameNew = "$jobName - $HostName"
-        $sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
+        #$sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
     }   
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForPowershellJobs].."
-    $sqlCreateJobCollectOSProcesses = [System.IO.File]::ReadAllText($CollectOSProcessesJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance `"$sqlInstanceOnJobStep`"")
+    $sqlCreateJobCollectOSProcesses = [System.IO.File]::ReadAllText($CollectOSProcessesJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance ''$sqlInstanceOnJobStep''")
     $sqlCreateJobCollectOSProcesses = $sqlCreateJobCollectOSProcesses.Replace('-Database DBA', "-Database `"$DbaDatabase`"")
     $sqlCreateJobCollectOSProcesses = $sqlCreateJobCollectOSProcesses.Replace('-HostName localhost', "-HostName `"$HostName`"")
     if($jobNameNew -ne $jobName) {
@@ -2335,14 +2339,15 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceAsDataDestinationWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceAsDataDestination"
     if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) -or ($HostName -ne $jobServerDbServiceInfo.host_name) -or ($isClustered -eq $true) ) {
         $jobNameNew = "$jobName - $HostName"
-        $sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
+        #$sqlInstanceOnJobStep = $SqlInstanceAsDataDestination
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForPowershellJobs].."
-    $sqlCreateJobCollectPerfmonData = [System.IO.File]::ReadAllText($CollectPerfmonDataJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance `"$sqlInstanceOnJobStep`"")
+    $sqlCreateJobCollectPerfmonData = [System.IO.File]::ReadAllText($CollectPerfmonDataJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance ''$sqlInstanceOnJobStep''")
     $sqlCreateJobCollectPerfmonData = $sqlCreateJobCollectPerfmonData.Replace('-Database DBA', "-Database `"$DbaDatabase`"")
     $sqlCreateJobCollectPerfmonData = $sqlCreateJobCollectPerfmonData.Replace('-HostName localhost', "-HostName `"$HostName`"")
     if($jobNameNew -ne $jobName) {
@@ -2446,10 +2451,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -2543,10 +2549,10 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -2639,10 +2645,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -2736,10 +2743,11 @@ if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -2833,10 +2841,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -2930,15 +2939,16 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if( ($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs) ) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForPowershellJobs].."
     $sqlCreateJobRemoveXEventFiles = [System.IO.File]::ReadAllText($RemoveXEventFilesJobFilePath)
-    $sqlCreateJobRemoveXEventFiles = $sqlCreateJobRemoveXEventFiles.Replace('-SqlInstance localhost', "-SqlInstance `"$sqlInstanceOnJobStep`"")
+    $sqlCreateJobRemoveXEventFiles = $sqlCreateJobRemoveXEventFiles.Replace('-SqlInstance localhost', "-SqlInstance ''$sqlInstanceOnJobStep''")
     $sqlCreateJobRemoveXEventFiles = $sqlCreateJobRemoveXEventFiles.Replace('-Database DBA', "-Database `"$DbaDatabase`"")
     if($jobNameNew -ne $jobName) {
         $sqlCreateJobRemoveXEventFiles = $sqlCreateJobRemoveXEventFiles.Replace($jobName, $jobNameNew)
@@ -3041,10 +3051,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3138,10 +3149,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3235,10 +3247,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3336,10 +3349,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3436,10 +3450,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3536,10 +3551,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3638,10 +3654,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3736,10 +3753,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3833,10 +3851,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -3931,10 +3950,11 @@ if($stepName -in $Steps2Execute)
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -4026,7 +4046,7 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UpdateSqlServerVersionsJobFilePath = '$UpdateSqlServerVersionsJobFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobName] on [$SqlInstanceToBaseline].."
-    $sqlUpdateSqlServerVersions = [System.IO.File]::ReadAllText($UpdateSqlServerVersionsJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance `"$SqlInstanceToBaselineWithOutPort`"")
+    $sqlUpdateSqlServerVersions = [System.IO.File]::ReadAllText($UpdateSqlServerVersionsJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance '$SqlInstanceToBaselineWithOutPort'")
 
     if($RemoteSQLMonitorPath -ne 'C:\SQLMonitor') {
         $sqlUpdateSqlServerVersions = $sqlUpdateSqlServerVersions.Replace('C:\SQLMonitor', $RemoteSQLMonitorPath)
@@ -4224,10 +4244,11 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
@@ -4331,10 +4352,11 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
 
     # Append HostName if Job Server is different    
     $jobNameNew = $jobName
-    $sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
     if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
         $jobNameNew = "$jobName - $SqlInstanceToBaseline"
-        $sqlInstanceOnJobStep = $SqlInstanceToBaseline
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
