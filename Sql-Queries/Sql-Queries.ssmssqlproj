@@ -15,6 +15,18 @@
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
         </ConnectionNode>
+        <ConnectionNode Name="10.253.33.160:E84947">
+          <Created>2024-02-03T19:04:37.8647435+05:30</Created>
+          <Type>SQL</Type>
+          <Server>10.253.33.160</Server>
+          <UserName>E84947</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB>DBA_Admin</InitialDB>
+          <LoginTimeout>30</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
+        </ConnectionNode>
         <ConnectionNode Name="localhost:21L-LTPABL-1187\Ajay">
           <Created>2023-10-09T17:55:17.115376+05:30</Created>
           <Type>SQL</Type>
@@ -229,6 +241,12 @@
           <AssociatedConnUserName />
           <FullPath>SCH-Change-Table-Partition-Scheme.sql</FullPath>
         </FileNode>
+        <FileNode Name="SCH-Job-[(dba) Add-ServiceAccountPriviledges].sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.253.33.160:False:E84947</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.253.33.160</AssociatedConnSrvName>
+          <AssociatedConnUserName>E84947</AssociatedConnUserName>
+          <FullPath>SCH-Job-[(dba) Add-ServiceAccountPriviledges].sql</FullPath>
+        </FileNode>
         <FileNode Name="SCH-Remove-ResourceConsumption.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
@@ -240,12 +258,6 @@
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>SQLMonitor-Upgrade.sql</FullPath>
-        </FileNode>
-        <FileNode Name="SQLQuery1.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
-          <AssociatedConnUserName />
-          <FullPath>SQLQuery1.sql</FullPath>
         </FileNode>
       </Items>
     </LogicalFolder>
