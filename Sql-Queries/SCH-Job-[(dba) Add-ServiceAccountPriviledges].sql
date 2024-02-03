@@ -95,4 +95,12 @@ QuitWithRollback:
 EndSave:
 GO
 
+IF exists (select * from msdb..sysjobs_view j where j.name = '(dba) Add-ServiceAccountPriviledges')
+	exec msdb.dbo.sp_start_job @job_name = '(dba) Add-ServiceAccountPriviledges';
+
+WAITFOR DELAY '00:10:00';
+
+IF exists (select * from msdb..sysjobs_view j where j.name = '(dba) Add-ServiceAccountPriviledges')
+	exec msdb.dbo.sp_delete_job @job_name = '(dba) Add-ServiceAccountPriviledges';
+GO
 
