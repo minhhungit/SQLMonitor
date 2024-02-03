@@ -28,7 +28,7 @@ net localgroup "Performance Monitor Users" "'+@DbaADGroup+'" /add
 ';
 
 
-EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'(dba) Add-ServiceAccountPriviledges', 
+EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'(dba) __Add-ServiceAccountPriviledges', 
 		@enabled=1, 
 		@notify_level_eventlog=0, 
 		@notify_level_email=0, 
@@ -95,12 +95,12 @@ QuitWithRollback:
 EndSave:
 GO
 
-IF exists (select * from msdb..sysjobs_view j where j.name = '(dba) Add-ServiceAccountPriviledges')
-	exec msdb.dbo.sp_start_job @job_name = '(dba) Add-ServiceAccountPriviledges';
+IF exists (select * from msdb..sysjobs_view j where j.name = '(dba) __Add-ServiceAccountPriviledges')
+	exec msdb.dbo.sp_start_job @job_name = '(dba) __Add-ServiceAccountPriviledges';
 
 WAITFOR DELAY '00:10:00';
 
-IF exists (select * from msdb..sysjobs_view j where j.name = '(dba) Add-ServiceAccountPriviledges')
-	exec msdb.dbo.sp_delete_job @job_name = '(dba) Add-ServiceAccountPriviledges';
+IF exists (select * from msdb..sysjobs_view j where j.name = '(dba) __Add-ServiceAccountPriviledges')
+	exec msdb.dbo.sp_delete_job @job_name = '(dba) __Add-ServiceAccountPriviledges';
 GO
 
