@@ -14,7 +14,7 @@ and id.sqlmonitor_version <> '1.6.5'
 order by id.sql_instance, id.host_name
 go
 
-
+/*
 select *
 from vw_all_server_info asi
 where asi.at_server_name like '%SomeHostName%'
@@ -53,6 +53,7 @@ select js.collector_powershell_jobs_server, job_server_hosts = ltrim(rtrim(js.jo
 from t_job_servers_hosts js
 order by js.collector_powershell_jobs_server --, sql_instance
 go
+*/
 
 /*
 select upd.*
@@ -82,9 +83,14 @@ and id.sql_instance in ('192.168.1.10')
 */
 
 /*
+declare @_alias_server nvarchar(500);
+set @_alias_server = '192.168.200.21';
+
 insert dbo.instance_details 
-(sql_instance, [host_name], [database], collector_tsql_jobs_server, collector_powershell_jobs_server, data_destination_sql_instance, is_available, created_date_utc, last_unavailability_time_utc, dba_group_mail_id, sqlmonitor_script_path, sqlmonitor_version, is_alias, source_sql_instance, sql_instance_port)
-select sql_instance = 'Alias Server Name', [host_name], [database], collector_tsql_jobs_server, collector_powershell_jobs_server, data_destination_sql_instance, is_available, created_date_utc, last_unavailability_time_utc, dba_group_mail_id, sqlmonitor_script_path, sqlmonitor_version, is_alias = 1, source_sql_instance = sql_instance, sql_instance_port
+(sql_instance, [host_name], [database], collector_tsql_jobs_server, collector_powershell_jobs_server, data_destination_sql_instance, is_available, created_date_utc, last_unavailability_time_utc, dba_group_mail_id, sqlmonitor_script_path, sqlmonitor_version, is_alias, source_sql_instance, sql_instance_port, more_info, is_enabled, is_linked_server_working)
+select sql_instance = @_alias_server, [host_name], [database], collector_tsql_jobs_server, collector_powershell_jobs_server, data_destination_sql_instance, is_available, created_date_utc, last_unavailability_time_utc, dba_group_mail_id, sqlmonitor_script_path, sqlmonitor_version, is_alias = 1, source_sql_instance = data_destination_sql_instance, sql_instance_port, more_info, is_enabled, is_linked_server_working
 from dbo.instance_details id
 where 1=1
+and id.sql_instance in ('192.168.100.22')
+go
 */
