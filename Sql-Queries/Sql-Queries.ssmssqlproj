@@ -247,6 +247,12 @@
           <AssociatedConnUserName>E84947</AssociatedConnUserName>
           <FullPath>SCH-Job-[(dba) __Add-ServiceAccountPriviledges].sql</FullPath>
         </FileNode>
+        <FileNode Name="SCH-Job-[(dba) __ReSetup-PerfmonDataCollector].sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.253.33.160:False:E84947</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.253.33.160</AssociatedConnSrvName>
+          <AssociatedConnUserName>E84947</AssociatedConnUserName>
+          <FullPath>SCH-Job-[(dba) __ReSetup-PerfmonDataCollector].sql</FullPath>
+        </FileNode>
         <FileNode Name="SCH-Remove-ResourceConsumption.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
