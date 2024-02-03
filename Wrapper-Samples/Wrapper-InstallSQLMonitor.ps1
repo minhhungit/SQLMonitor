@@ -89,6 +89,9 @@ F:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params -PreQuery $dropWh
 # **__ SQLMonitor __**
 Invoke-WebRequest https://github.com/imajaydwivedi/SQLMonitor/archive/refs/heads/dev.zip `
             -OutFile "$($env:USERPROFILE)\Downloads\sqlmonitor.zip"
+Expand-Archive "$($env:USERPROFILE)\Downloads\sqlmonitor.zip" "$($env:USERPROFILE)\Downloads"
+Get-ChildItem "$($env:USERPROFILE)\Downloads\SQLMonitor-dev\SQLMonitor" | Copy-Item -Destination C:\SQLMonitor -Force -Verbose
+
 
 # **__ dbatools & dbatools.library __**
 Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
