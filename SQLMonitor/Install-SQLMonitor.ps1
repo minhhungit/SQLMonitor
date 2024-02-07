@@ -1779,6 +1779,7 @@ if( ($stepName -in $Steps2Execute) -and ($MajorVersion -ge 11) ) {
     if( [String]::IsNullOrEmpty($XEventDirectory) )
     {
         $dbaDatabasePathParent = Split-Path $dbaDatabasePath -Parent
+        $dbaDatabasePathParent = $dbaDatabasePathParent.Replace('\\','\');
         if($dbaDatabasePathParent.Length -eq 3) {
             $xEventTargetPathDirectory = "${dbaDatabasePathParent}xevents"
         }
