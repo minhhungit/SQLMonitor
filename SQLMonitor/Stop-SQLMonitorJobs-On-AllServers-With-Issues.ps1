@@ -11,7 +11,7 @@ Param (
     [Parameter(Mandatory=$false)]
     [Bool]$StartJob = $true,
     [Parameter(Mandatory=$false)]
-    [String]$AllServerLogin
+    [String]$AllServerLogin #= 'sa'
 )
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for InventoryServer '$InventoryServer'.."
@@ -63,7 +63,7 @@ select	/* [Tsql-Stop-Job] = 'exec msdb.dbo.sp_stop_job @job_name = '''+sj.JobNam
 		 [Last_Successful_ExecutionTime], [Last_Successful_Execution_Hours], 
 		 [Running_Since], [Running_StepName], [Running_Since_Min] 
 from dbo.sql_agent_jobs_all_servers sj
-outer apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance +','+ id.sql_instance_port, id.sql_instance), [database] from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1 and id.is_available = 1 and id.is_alias = 0) id
+cross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance +','+ id.sql_instance_port, id.sql_instance), [database] from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1 and id.is_available = 1 and id.is_alias = 0) id
 where 1=1
 and sj.JobCategory = '(dba) SQLMonitor'
 and sj.JobName like '(dba) %'
@@ -88,21 +88,21 @@ $resultGetAllStuckJobs = $conInventoryServer | Invoke-DbaQuery -Database $Invent
 # Execute SQL files & SQL Query
 [System.Collections.ArrayList]$failedJobs = @()
 [System.Collections.ArrayList]$successJobs = @()
-$resultGetAllStuckJobsFiltered = @()
-$resultGetAllStuckJobsFiltered += $resultGetAllStuckJobs
+$resultGetAllStuckJobsServers = @()
+$resultGetAllStuckJobsServers += $resultGetAllStuckJobs | Select-Object -Property sql_instance, sql_instance_with_port, database -Unique
 
 if ($resultGetAllStuckJobsFiltered.Count -eq 0) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "No action required to be taken."
 }
 
-foreach($job in $resultGetAllStuckJobsFiltered)
+foreach($srvDtls in $resultGetAllStuckJobsServers)
 {
-    $sqlInstance = $job.sql_instance
-    $sqlInstanceWithPort = $job.sql_instance_with_port
-    $database = $job.database
-    $jobName = $job.JobName
+    $sqlInstance = $srvDtls.sql_instance
+    $sqlInstanceWithPort = $srvDtls.sql_instance_with_port
+    $database = $srvDtls.database
     $isSqlInstanceAvailable = $true
 
+    # Create SQLServer connection
     try {
         "`n`t$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Create connection to [$sqlInstanceWithPort].."
         $conSqlInstance = Connect-DbaInstance -SqlInstance $sqlInstanceWithPort -Database $database -ClientName "Inventory-(dba) Stop-StuckSQLMonitorJobs" `
@@ -124,81 +124,96 @@ foreach($job in $resultGetAllStuckJobsFiltered)
         $errMessage | Write-Host -ForegroundColor Red
         "`n"
     }
+
+    # If SQLServer is online & connecting
+    if($isSqlInstanceAvailable)
+    {
+        $resultGetAllStuckJobsFiltered = @()
+        $resultGetAllStuckJobsFiltered += $resultGetAllStuckJobs | Where-Object {$_.sql_instance -eq $sqlInstance -and $_.sql_instance_with_port -eq $sqlInstanceWithPort -and $_.database -eq $database}
     
-    try 
-    {
-        if($StopJob -and $isSqlInstanceAvailable) 
+        foreach($job in $resultGetAllStuckJobsFiltered)
         {
-            "`n`t$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Stop job [$jobName] on [$sqlInstance].."
-            $conSqlInstance | Invoke-DbaQuery -CommandType StoredProcedure -EnableException `
-                            -Database msdb -Query sp_stop_job -SqlParameter @{ job_name = $jobName }
+            #$sqlInstance = $job.sql_instance
+            #$sqlInstanceWithPort = $job.sql_instance_with_port
+            #$database = $job.database
+            $jobName = $job.JobName
+            #$isSqlInstanceAvailable = $true
+    
+            try 
+            {
+                if($StopJob -and $isSqlInstanceAvailable) 
+                {
+                    "`n`t$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Stop job [$jobName] on [$sqlInstance].."
+                    $conSqlInstance | Invoke-DbaQuery -CommandType StoredProcedure -EnableException `
+                                    -Database msdb -Query sp_stop_job -SqlParameter @{ job_name = $jobName }
 
-            $resultObj = [PSCustomObject]@{
-                            SqlInstance = $sqlInstance;
-                            SqlIntanceWithPort = $sqlInstanceWithPort; 
-                            JobName = $jobName; 
-                            Action = 'Stop Job';
-                            Result = 'Successes';
-                      }
-            $successJobs.Add($errObj) | Out-Null
+                    $resultObj = [PSCustomObject]@{
+                                    SqlInstance = $sqlInstance;
+                                    SqlIntanceWithPort = $sqlInstanceWithPort; 
+                                    JobName = $jobName; 
+                                    Action = 'Stop Job';
+                                    Result = 'Successes';
+                              }
+                    $successJobs.Add($errObj) | Out-Null
 
-            Start-Sleep -Seconds 5
-        }
-    }
-    catch {
-        $errMessage = $_.Exception.Message
+                    Start-Sleep -Seconds 5
+                }
+            }
+            catch {
+                $errMessage = $_.Exception.Message
 
-        if($errMessage -notlike '*refused because the job is not currently running.') 
-        {           
-            $errObj = [PSCustomObject]@{
-                            SqlInstance = $sqlInstance; 
-                            SqlIntanceWithPort = $sqlInstanceWithPort; 
-                            JobName = $jobName; 
-                            Action = 'Stop Job';
-                            ErrorDetails = $errMessage
-                      }
-            $failedJobs.Add($errObj) | Out-Null
+                if($errMessage -notlike '*refused because the job is not currently running.') 
+                {           
+                    $errObj = [PSCustomObject]@{
+                                    SqlInstance = $sqlInstance; 
+                                    SqlIntanceWithPort = $sqlInstanceWithPort; 
+                                    JobName = $jobName; 
+                                    Action = 'Stop Job';
+                                    ErrorDetails = $errMessage
+                              }
+                    $failedJobs.Add($errObj) | Out-Null
 
-            $errMessage | Write-Host -ForegroundColor Red
-            "`n"
-        }
-    }
+                    $errMessage | Write-Host -ForegroundColor Red
+                    "`n"
+                }
+            }
 
-    try 
-    {
-        if($StartJob -and $isSqlInstanceAvailable)
-        {
-            "`t$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Start job [$jobName] on [$sqlInstance].."
-            $resultObj = [PSCustomObject]@{
-                            SqlInstance = $sqlInstance;
-                            SqlIntanceWithPort = $sqlInstanceWithPort; 
-                            JobName = $jobName; 
-                            Action = 'Start Job';
-                            Result = 'Successes';
-                      }
-            $successJobs.Add($errObj) | Out-Null
-        }
-    }    
-    catch {
-        $errMessage = $_.Exception.Message
+            try 
+            {
+                if($StartJob -and $isSqlInstanceAvailable)
+                {
+                    "`t$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Start job [$jobName] on [$sqlInstance].."
+                    $resultObj = [PSCustomObject]@{
+                                    SqlInstance = $sqlInstance;
+                                    SqlIntanceWithPort = $sqlInstanceWithPort; 
+                                    JobName = $jobName; 
+                                    Action = 'Start Job';
+                                    Result = 'Successes';
+                              }
+                    $successJobs.Add($errObj) | Out-Null
+                }
+            }    
+            catch {
+                $errMessage = $_.Exception.Message
 
-        if($errMessage -notlike '*the job is already running*') 
-        {           
-            $errObj = [PSCustomObject]@{
-                            SqlInstance = $sqlInstance; 
-                            SqlIntanceWithPort = $sqlInstanceWithPort; 
-                            JobName = $jobName; 
-                            Action = 'Start Job';
-                            ErrorDetails = $errMessage
-                      }
-            $failedJobs.Add($errObj) | Out-Null
+                if($errMessage -notlike '*the job is already running*') 
+                {           
+                    $errObj = [PSCustomObject]@{
+                                    SqlInstance = $sqlInstance; 
+                                    SqlIntanceWithPort = $sqlInstanceWithPort; 
+                                    JobName = $jobName; 
+                                    Action = 'Start Job';
+                                    ErrorDetails = $errMessage
+                              }
+                    $failedJobs.Add($errObj) | Out-Null
 
-            $errMessage | Write-Host -ForegroundColor Red
-            "`n"
+                    $errMessage | Write-Host -ForegroundColor Red
+                    "`n"
+                }
+            }
         }
     }
 }
-
 
 if($failedJobs.Count -gt 0) {
     #$failedJobs | ogv -Title "Failed"
