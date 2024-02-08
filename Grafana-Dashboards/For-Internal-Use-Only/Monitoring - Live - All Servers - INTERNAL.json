@@ -837,7 +837,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -845,282 +845,284 @@
         "y": 2
       },
       "id": 846,
-      "panels": [],
-      "repeat": "datasource",
-      "repeatDirection": "h",
-      "title": "CRITICAL - SQLInstance - OFFLINE/Linked Server Issue",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "mssql",
-        "uid": "${sqlmonitor_datasource}"
-      },
-      "description": "USE DBA;\n\nselect /* Offline or Linked Server not working */ *\nfrom dbo.instance_details id where id.is_enabled = 1 \n\tand (id.is_available = 0 or id.is_linked_server_working = 0);\n\nexec /* Check why linked server not working */ dbo.usp_GetAllServerInfo \n\t\t@servers = 'YourInventoryServer,10.10.10.10', \n\t\t@output = 'srv_name, os_start_time_utc', \n\t\t@verbose = 2;",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
+      "panels": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "${sqlmonitor_datasource}"
           },
-          "custom": {
-            "align": "center",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "sql_instance"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "SQL Instance"
+          "description": "USE DBA;\n\nselect /* Offline or Linked Server not working */ *\nfrom dbo.instance_details id where id.is_enabled = 1 \n\tand (id.is_available = 0 or id.is_linked_server_working = 0);\n\nexec /* Check why linked server not working */ dbo.usp_GetAllServerInfo \n\t\t@servers = 'YourInventoryServer,10.10.10.10', \n\t\t@output = 'srv_name, os_start_time_utc', \n\t\t@verbose = 2;",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
               },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background"
-                }
+              "custom": {
+                "align": "center",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": true
               },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "blue",
-                      "value": null
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "host_name"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Host Name"
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background"
-                }
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "super-light-purple",
-                      "value": null
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "is_available"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Is Available"
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "is_linked_server_working"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Linked Server OK?"
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background"
-                }
-              },
-              {
-                "id": "mappings",
-                "value": [
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
                   {
-                    "options": {
-                      "match": "null",
-                      "result": {
-                        "color": "yellow",
-                        "index": 0
-                      }
-                    },
-                    "type": "special"
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sql_instance"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SQL Instance"
                   },
                   {
-                    "options": {
-                      "match": "true",
-                      "result": {
-                        "color": "super-light-green",
-                        "index": 1
-                      }
-                    },
-                    "type": "special"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
                   },
                   {
-                    "options": {
-                      "match": "false",
-                      "result": {
-                        "color": "red",
-                        "index": 2
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue",
+                          "value": null
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "host_name"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Host Name"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "super-light-purple",
+                          "value": null
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "is_available"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Is Available"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "is_linked_server_working"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Linked Server OK?"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "color": "yellow",
+                            "index": 0
+                          }
+                        },
+                        "type": "special"
+                      },
+                      {
+                        "options": {
+                          "match": "true",
+                          "result": {
+                            "color": "super-light-green",
+                            "index": 1
+                          }
+                        },
+                        "type": "special"
+                      },
+                      {
+                        "options": {
+                          "match": "false",
+                          "result": {
+                            "color": "red",
+                            "index": 2
+                          }
+                        },
+                        "type": "special"
                       }
-                    },
-                    "type": "special"
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tsql jobs server"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Server (Tsql) Jobs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "powershell jobs server"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Server (PS) Jobs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "perfmon data server"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Data Server"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "last_unavailability_time_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Last Unavailable Time"
                   }
                 ]
               }
             ]
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "tsql jobs server"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Server (Tsql) Jobs"
-              }
-            ]
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 3
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "powershell jobs server"
+          "id": 844,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "enablePagination": true,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Server (PS) Jobs"
-              }
-            ]
+            "showHeader": true
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "perfmon data server"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Data Server"
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "alias": "",
+              "datasource": {
+                "type": "mssql",
+                "uid": "${sqlmonitor_datasource}"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect sql_instance, [host_name], \n\t\t\tis_available, is_linked_server_working = case when is_available = 0 then null else is_linked_server_working end,\n\t\t\t[tsql jobs server] = collector_tsql_jobs_server, \n\t\t[powershell jobs server] = collector_powershell_jobs_server, [perfmon data server] = data_destination_sql_instance, \n\t\t last_unavailability_time_utc\nfrom dbo.instance_details id\nwhere is_enabled = 1\nand (is_available = 0 or is_linked_server_working = 0)\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+              "refId": "A",
+              "sql": {
+                "columns": [
+                  {
+                    "parameters": [],
+                    "type": "function"
+                  }
+                ],
+                "groupBy": [
+                  {
+                    "property": {
+                      "type": "string"
+                    },
+                    "type": "groupBy"
+                  }
+                ],
+                "limit": 50
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "last_unavailability_time_utc"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Last Unavailable Time"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 3
-      },
-      "id": 844,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
+            }
           ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "10.1.0",
-      "targets": [
-        {
-          "alias": "",
-          "datasource": {
-            "type": "mssql",
-            "uid": "${sqlmonitor_datasource}"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect sql_instance, [host_name], \n\t\t\tis_available, is_linked_server_working = case when is_available = 0 then null else is_linked_server_working end,\n\t\t\t[tsql jobs server] = collector_tsql_jobs_server, \n\t\t[powershell jobs server] = collector_powershell_jobs_server, [perfmon data server] = data_destination_sql_instance, \n\t\t last_unavailability_time_utc\nfrom dbo.instance_details id\nwhere is_enabled = 1\nand (is_available = 0 or is_linked_server_working = 0)\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
+          "title": "SQL Instances that are OFFLINE",
+          "type": "table"
         }
       ],
-      "title": "SQL Instances that are OFFLINE",
-      "type": "table"
+      "repeat": "datasource",
+      "repeatDirection": "h",
+      "title": "CRITICAL - SQLInstance - \"${offline_servers_count}\" OFFLINE/Linked Server Issue",
+      "type": "row"
     },
     {
       "collapsed": true,
@@ -1128,7 +1130,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 3
       },
       "id": 870,
       "panels": [
@@ -1155,8 +1157,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               }
@@ -1185,8 +1186,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "purple",
-                          "value": null
+                          "color": "purple"
                         }
                       ]
                     }
@@ -1216,8 +1216,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-purple",
-                          "value": null
+                          "color": "super-light-purple"
                         }
                       ]
                     }
@@ -1270,8 +1269,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "dark-blue",
-                          "value": null
+                          "color": "dark-blue"
                         }
                       ]
                     }
@@ -1434,8 +1432,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "orange",
@@ -1482,8 +1479,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "yellow",
@@ -1528,8 +1524,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -1648,7 +1643,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 4
       },
       "id": 866,
       "panels": [
@@ -2080,7 +2075,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 5
       },
       "id": 854,
       "panels": [
@@ -2476,7 +2471,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 6
       },
       "id": 868,
       "panels": [
@@ -3335,7 +3330,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 7
       },
       "id": 858,
       "panels": [
@@ -3931,7 +3926,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 8
       },
       "id": 862,
       "panels": [
@@ -4427,7 +4422,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 9
       },
       "id": 245,
       "panels": [],
@@ -4471,7 +4466,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": [
           {
@@ -5058,7 +5054,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 10
       },
       "id": 842,
       "options": {
@@ -5074,7 +5070,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "alias": "",
@@ -5119,7 +5115,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 22
       },
       "id": 121,
       "panels": [
@@ -5163,8 +5159,7 @@
   ],
   "refresh": "1m",
   "revision": 1,
-  "schemaVersion": 38,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [
     "mssql",
     "sqlmonitor",
@@ -5176,7 +5171,7 @@
       {
         "current": {
           "selected": false,
-          "text": "SqlServer",
+          "text": "SQLMonitor",
           "value": "ygPVA4snk"
         },
         "description": "SQLMonitor Inventory Server Name",
@@ -5195,7 +5190,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -5248,8 +5243,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1704944422106",
-          "value": "1704944422106"
+          "text": "1707371444010",
+          "value": "1707371444010"
         },
         "datasource": {
           "type": "mssql",
@@ -5747,7 +5742,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "8",
           "value": "8"
         },
@@ -5815,7 +5810,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "26",
           "value": "26"
         },
@@ -5878,7 +5873,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "60",
           "value": "60"
         },
@@ -5948,6 +5943,30 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "4",
+          "value": "4"
+        },
+        "datasource": {
+          "type": "mssql",
+          "uid": "${sqlmonitor_datasource}"
+        },
+        "definition": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect count(*)\nfrom dbo.instance_details id\nwhere is_enabled = 1\nand (is_available = 0 or is_linked_server_working = 0)\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Offline Servers Count",
+        "multi": false,
+        "name": "offline_servers_count",
+        "options": [],
+        "query": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect count(*)\nfrom dbo.instance_details id\nwhere is_enabled = 1\nand (is_available = 0 or is_linked_server_working = 0)\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -5967,6 +5986,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - All Servers",
   "uid": "distributed_live_dashboard_all_servers",
-  "version": 111,
+  "version": 113,
   "weekStart": ""
 }
