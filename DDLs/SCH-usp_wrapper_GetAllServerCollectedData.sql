@@ -31,8 +31,9 @@ AS
 BEGIN
 
 	/*
-		Version:		1.6.5
-		Date:			2024-01-08 - Backup History
+		Version:		2024-02-10
+		Date:			2024-02-10 - #26 Track Status of SQLAgent Service
+						2024-01-08 - Backup History
 						2023-10-17 - Add Latency Dashboard for AG
 						2023-08-30 - Adding @schedule_minutes parameter
 						2023-07-27 - Added truncate table parameter
@@ -73,7 +74,8 @@ BEGIN
 		raiserror ('@recipients is mandatory parameter', 20, -1) with log;
 
 	IF @step_name NOT IN ('dbo.sql_agent_jobs_all_servers','dbo.disk_space_all_servers','dbo.log_space_consumers_all_servers',
-						'dbo.tempdb_space_usage_all_servers','dbo.ag_health_state_all_servers','dbo.backups_all_servers')
+						'dbo.tempdb_space_usage_all_servers','dbo.ag_health_state_all_servers','dbo.backups_all_servers',
+						'dbo.services_all_servers')
 		THROW 50001, '''step_name'' Parameter value is invalid.', 1;		
 
 	-- Variables for Try/Catch Block
@@ -205,6 +207,26 @@ if	( (select isnull(max(collection_time_utc),''2023-01-01 00:00'') from dbo.back
 begin
 	exec dbo.usp_GetAllServerCollectedData 
 					@result_to_table = ''dbo.backups_all_servers'',
+					@verbose = @verbose,
+					@truncate_table = @truncate_table,
+					@has_staging_table = @has_staging_table
+end
+else
+	print ''Did not meet schedule requirement.''+char(13);';
+			IF @verbose > 0
+				PRINT @_sql;
+			EXEC sp_executesql @_sql, @_params, @verbose, @truncate_table, @has_staging_table, @schedule_minutes;
+		END
+
+		IF @step_name = 'dbo.services_all_servers'
+		BEGIN
+			IF @verbose > 0
+				PRINT 'dbo.services_all_servers';
+			SET @_sql = N'-- Collect SQL Services details from All Servers Every 20 Minutes
+if	( (select isnull(max(collection_time_utc),''2023-01-01 00:00'') from dbo.services_all_servers) < dateadd(minute, -@schedule_minutes, getutcdate()) )
+begin
+	exec dbo.usp_GetAllServerCollectedData 
+					@result_to_table = ''dbo.services_all_servers'',
 					@verbose = @verbose,
 					@truncate_table = @truncate_table,
 					@has_staging_table = @has_staging_table

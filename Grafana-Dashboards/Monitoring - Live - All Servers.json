@@ -1104,7 +1104,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 3
+            "y": 10
           },
           "id": 844,
           "options": {
@@ -1168,6 +1168,250 @@
         "w": 24,
         "x": 0,
         "y": 3
+      },
+      "id": 872,
+      "panels": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "${DS_SQLMONITOR}"
+          },
+          "description": "select sas.sql_instance, id.sql_instance_with_port, sas.startup_type_desc, sas.status_desc,\n\t\tsas.servicename, sas.service_account\nfrom dbo.services_all_servers sas\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+id.sql_instance_port,id.sql_instance) \n\t\t\t\tfrom dbo.instance_details id where id.is_enabled = 1 \n\t\t\t\tand id.is_available = 1 and id.sql_instance = sas.sql_instance) id\nwhere 1=1\nand sas.service_type = 'Agent'\nand sas.status_desc <> 'Running'",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "center",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sql_instance"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SQL Instance"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue",
+                          "value": null
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sql_instance_with_port"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SQL Instance (port)"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "startup_type_desc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Startup Type"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "Automatic": {
+                            "color": "green",
+                            "index": 0
+                          },
+                          "Disabled": {
+                            "color": "orange",
+                            "index": 1
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "status_desc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Status"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "Stopped": {
+                            "color": "red",
+                            "index": 0
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "servicename"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Service Name"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "service_account"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Service Account"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 4
+          },
+          "id": 871,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "enablePagination": true,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "alias": "",
+              "datasource": {
+                "type": "mssql",
+                "uid": "${DS_SQLMONITOR}"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect sas.sql_instance, id.sql_instance_with_port, sas.startup_type_desc, sas.status_desc,\n\t\tsas.servicename, sas.service_account\nfrom dbo.services_all_servers sas\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+id.sql_instance_port,id.sql_instance) \n\t\t\t\tfrom dbo.instance_details id where id.is_enabled = 1 \n\t\t\t\tand id.is_available = 1 and id.sql_instance = sas.sql_instance) id\nwhere 1=1\nand sas.service_type = 'Agent'\nand sas.status_desc <> 'Running'\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+              "refId": "A",
+              "sql": {
+                "columns": [
+                  {
+                    "parameters": [],
+                    "type": "function"
+                  }
+                ],
+                "groupBy": [
+                  {
+                    "property": {
+                      "type": "string"
+                    },
+                    "type": "groupBy"
+                  }
+                ],
+                "limit": 50
+              }
+            }
+          ],
+          "title": "SQLAgent Service is OFFLINE",
+          "type": "table"
+        }
+      ],
+      "title": "CRITICAL - SQLAgent Service - \"${offline_agent_count}\" OFFLINE",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
       },
       "id": 870,
       "panels": [
@@ -1680,7 +1924,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "id": 866,
       "panels": [
@@ -2112,7 +2356,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 6
       },
       "id": 854,
       "panels": [
@@ -2508,7 +2752,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 7
       },
       "id": 868,
       "panels": [
@@ -3367,7 +3611,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 8
       },
       "id": 858,
       "panels": [
@@ -3963,7 +4207,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "id": 862,
       "panels": [
@@ -4459,7 +4703,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 10
       },
       "id": 245,
       "panels": [],
@@ -5091,7 +5335,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 11
       },
       "id": 842,
       "options": {
@@ -5152,7 +5396,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 121,
       "panels": [
@@ -5209,7 +5453,7 @@
         "current": {
           "selected": false,
           "text": "SQLMonitor",
-          "value": "ygPVA4snk"
+          "value": "a28aeb06-bb6e-4c74-81af-65de433776c8"
         },
         "description": "SQLMonitor Inventory Server Name",
         "hide": 2,
@@ -5984,6 +6228,26 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "mssql",
+          "uid": "${DS_SQLMONITOR}"
+        },
+        "definition": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect count(*) as counts\nfrom dbo.services_all_servers sas\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+id.sql_instance_port,id.sql_instance) \n\t\t\t\tfrom dbo.instance_details id where id.is_enabled = 1 \n\t\t\t\tand id.is_available = 1 and id.sql_instance = sas.sql_instance) id\nwhere 1=1\nand sas.service_type = 'Agent'\nand sas.status_desc <> 'Running'\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Offline SQLAgent Services Count",
+        "multi": false,
+        "name": "offline_agent_count",
+        "options": [],
+        "query": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect count(*) as counts\nfrom dbo.services_all_servers sas\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+id.sql_instance_port,id.sql_instance) \n\t\t\t\tfrom dbo.instance_details id where id.is_enabled = 1 \n\t\t\t\tand id.is_available = 1 and id.sql_instance = sas.sql_instance) id\nwhere 1=1\nand sas.service_type = 'Agent'\nand sas.status_desc <> 'Running'\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -6003,6 +6267,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - All Servers",
   "uid": "distributed_live_dashboard_all_servers",
-  "version": 113,
+  "version": 6,
   "weekStart": ""
 }

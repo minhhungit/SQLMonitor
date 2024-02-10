@@ -32,8 +32,9 @@ AS
 BEGIN
 
 	/*
-		Version:		1.6.5
-		Date:			2024-01-08 - Backup History on Dashboard
+		Version:		2024-02-10
+		Date:			2024-02-10 - #26 Track Status of SQLAgent Service
+						2024-01-08 - Backup History on Dashboard
 						2023-10-17 - Add Latency Dashboard for AG
 						2023-07-27 - Add truncate table feature
 						2023-08-13 - Add dbo.disk_space_all_servers
@@ -51,7 +52,8 @@ BEGIN
 	SET LOCK_TIMEOUT 60000; -- 60 seconds
 
 	IF @result_to_table NOT IN ('dbo.sql_agent_jobs_all_servers','dbo.disk_space_all_servers','dbo.log_space_consumers_all_servers',
-								'dbo.tempdb_space_usage_all_servers','dbo.ag_health_state_all_servers','dbo.backups_all_servers')
+								'dbo.tempdb_space_usage_all_servers','dbo.ag_health_state_all_servers','dbo.backups_all_servers',
+								'dbo.services_all_servers')
 		THROW 50001, '''result_to_table'' Parameter value is invalid.', 1;		
 
 	DECLARE @_tbl_servers table (srv_name varchar(125));
@@ -410,8 +412,8 @@ SET NOCOUNT ON;
 								WHEN bs.type = ''I'' THEN ''Differential database Backup''
 								WHEN bs.type = ''L'' THEN ''Transaction Log Backup''
 							END,
-			backup_start_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Start_Date),
-			backup_finish_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Finish_Date),
+			backup_start_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.backup_start_date),
+			backup_finish_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.backup_finish_date),
 			latest_backup_location = bf.physical_device_name,
 			backup_size_mb = CONVERT(decimal(20, 2), bs.backup_size/1024.0/1024.0),
 			compressed_backup_size_mb = CONVERT(decimal(20, 2), bs.compressed_backup_size/1024.0/1024.0),
@@ -460,8 +462,8 @@ SET NOCOUNT ON;
 								WHEN bs.type = ''P'' THEN ''Partial Backup''
 								WHEN bs.type = ''Q'' THEN ''Differential partial Backup''
 							END,
-			backup_start_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Start_Date),
-			backup_finish_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.Backup_Finish_Date),
+			backup_start_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.backup_start_date),
+			backup_finish_date_utc = DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), bs.backup_finish_date),
 			latest_backup_location = bf.physical_device_name,
 			backup_size_mb = CONVERT(decimal(20, 2), bs.backup_size/1024.0/1024.0),
 			compressed_backup_size_mb = CONVERT(decimal(20, 2), bs.compressed_backup_size/1024.0/1024.0),
@@ -533,6 +535,60 @@ order by [database_name], [backup_start_date_utc];';
 			begin try
 				insert into [dbo].[backups_all_servers__staging]
 				(	[sql_instance], [database_name], [backup_type], [log_backups_count], [backup_start_date_utc], [backup_finish_date_utc], [latest_backup_location], [backup_size_mb], [compressed_backup_size_mb], [first_lsn], [last_lsn], [checkpoint_lsn], [database_backup_lsn], [database_creation_date_utc], [backup_software], [recovery_model], [compatibility_level], [device_type], [description]
+				)
+				exec (@_sql);
+			end try
+			begin catch
+				-- print @_sql;
+				print char(10)+char(13)+'Error occurred while executing below query on '+quotename(@_srv_name)+char(10)+'     '+@_sql;
+				print  '	ErrorNumber => '+convert(varchar,ERROR_NUMBER());
+				print  '	ErrorSeverity => '+convert(varchar,ERROR_SEVERITY());
+				print  '	ErrorState => '+convert(varchar,ERROR_STATE());
+				--print  '	ErrorProcedure => '+ERROR_PROCEDURE();
+				print  '	ErrorLine => '+convert(varchar,ERROR_LINE());
+				print  '	ErrorMessage => '+ERROR_MESSAGE();
+			end catch
+		end
+
+		
+		-- dbo.services_all_servers
+		if @_linked_server_failed = 0 and @result_to_table = 'dbo.services_all_servers'
+		begin
+			set @_sql =  "
+SET QUOTED_IDENTIFIER ON;
+
+declare @ports varchar(2000);
+select @ports = coalesce(@ports+', '+convert(varchar,p.local_tcp_port),convert(varchar,p.local_tcp_port))
+from (
+		select distinct local_net_address, local_tcp_port 
+		from sys.dm_exec_connections 
+		where local_net_address is not null
+	) p;
+
+select	[sql_instance] = '"+@_srv_name+"', 
+		[at_server_name] = @@servername,
+		[service_type] = case when dm.servicename like 'SQL Server (%)' then 'Engine'
+								when dm.servicename like 'SQL Server Agent (%)' then 'Agent'
+							 else 'Unknown' 
+							 end,
+		dm.servicename, dm.startup_type_desc, dm.status_desc, dm.process_id, dm.service_account, 
+		[sql_ports] = case when dm.servicename like 'SQL Server (%)' then @ports else null end,
+		dm.last_startup_time, dm.instant_file_initialization_enabled
+		--,[collection_time_utc] = GETUTCDATE()
+from sys.dm_server_services dm
+where 1=1
+and (dm.servicename like 'SQL Server (%)' or dm.servicename like 'SQL Server Agent (%)');
+"
+			-- Decorate for remote query if LinkedServer
+			if @_isLocalHost = 0
+				set @_sql = 'select * from openquery(' + QUOTENAME(@_srv_name) + ', "'+ @_sql + '")';
+			if @verbose >= 1
+				print @_crlf+@_sql+@_crlf;
+		
+			begin try
+				insert into [dbo].[services_all_servers__staging]
+				(	[sql_instance], [at_server_name], [service_type], [servicename], [startup_type_desc], [status_desc], [process_id], 
+					[service_account], [sql_ports], [last_startup_time_utc], [instant_file_initialization_enabled] 
 				)
 				exec (@_sql);
 			end try

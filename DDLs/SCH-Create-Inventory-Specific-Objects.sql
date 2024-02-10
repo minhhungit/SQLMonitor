@@ -98,6 +98,14 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[backu
 	DROP TABLE [dbo].[backups_all_servers__staging]
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[services_all_servers]') AND type in (N'U'))
+	DROP TABLE [dbo].[services_all_servers]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[services_all_servers__staging]') AND type in (N'U'))
+	DROP TABLE [dbo].[services_all_servers__staging]
+GO
+
 
 CREATE TABLE [dbo].[all_server_stable_info]
 (
@@ -641,3 +649,41 @@ CREATE TABLE [dbo].[backups_all_servers__staging]
 ) ON [PRIMARY]
 GO
 
+CREATE TABLE [dbo].[services_all_servers]
+(
+	[sql_instance] [varchar](255) NOT NULL,
+	[at_server_name] [varchar](125) NULL,
+	[service_type] [varchar](20) NOT NULL,
+	[servicename] [varchar](255) NOT NULL,
+	[startup_type_desc] [varchar](50) NOT NULL,
+	[status_desc] [varchar](125) NOT NULL,
+	[process_id] [int] NULL,
+	[service_account] [varchar](255) NOT NULL,
+	[sql_ports] [varchar](500) NULL,
+	[last_startup_time_utc] [datetime2] NULL,
+	[instant_file_initialization_enabled] [varchar](1) NOT NULL,
+
+	[collection_time_utc] [datetime2] NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_services_all_servers] clustered ([sql_instance])
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[services_all_servers__staging]
+(
+	[sql_instance] [varchar](255) NOT NULL,
+	[at_server_name] [varchar](125) NULL,
+	[service_type] [varchar](20) NOT NULL,
+	[servicename] [varchar](255) NOT NULL,
+	[startup_type_desc] [varchar](50) NOT NULL,
+	[status_desc] [varchar](125) NOT NULL,
+	[process_id] [int] NULL,
+	[service_account] [varchar](255) NOT NULL,
+	[sql_ports] [varchar](500) NULL,
+	[last_startup_time_utc] [datetime2] NULL,
+	[instant_file_initialization_enabled] [varchar](1) NOT NULL,
+	[collection_time_utc] [datetime2] NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_services_all_servers__staging] clustered ([sql_instance])
+) ON [PRIMARY]
+GO

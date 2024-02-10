@@ -15,9 +15,12 @@ grant view server state to [grafana]
 go
 grant view any database to [grafana]
 go
+if (SERVERPROPERTY('ProductMajorVersion') >= 16)
+	exec ('GRANT VIEW SERVER SECURITY STATE TO [grafana]');
+go
 
 if object_id('dbo.SqlServerVersions') is not null
-	exec ('grant select on object::dbo.SqlServerVersions to [grafana]')
+	exec ('grant select on object::dbo.SqlServerVersions to [grafana]');
 go
 
 use [msdb];
