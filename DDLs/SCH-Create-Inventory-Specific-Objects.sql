@@ -661,7 +661,7 @@ CREATE TABLE [dbo].[services_all_servers]
 	[service_account] [varchar](255) NOT NULL,
 	[sql_ports] [varchar](500) NULL,
 	[last_startup_time_utc] [datetime2] NULL,
-	[instant_file_initialization_enabled] [varchar](1) NOT NULL,
+	[instant_file_initialization_enabled] [varchar](1) NULL,
 
 	[collection_time_utc] [datetime2] NOT NULL DEFAULT GETUTCDATE(),
 
@@ -681,7 +681,7 @@ CREATE TABLE [dbo].[services_all_servers__staging]
 	[service_account] [varchar](255) NOT NULL,
 	[sql_ports] [varchar](500) NULL,
 	[last_startup_time_utc] [datetime2] NULL,
-	[instant_file_initialization_enabled] [varchar](1) NOT NULL,
+	[instant_file_initialization_enabled] [varchar](1) NULL,
 	[collection_time_utc] [datetime2] NOT NULL DEFAULT GETUTCDATE(),
 
 	index [CI_services_all_servers__staging] clustered ([sql_instance])
