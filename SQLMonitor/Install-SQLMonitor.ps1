@@ -204,8 +204,8 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '1.6.5'
-$sqlmonitorVersionDate = '2024-Jan-15'
+$sqlmonitorVersion = '2024-02-10'
+$sqlmonitorVersionDate = '2024-Feb-10'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v1.7.0 - 2024-Mar-31
@@ -2107,8 +2107,6 @@ if( $requireProxy -and ($stepName -in $Steps2Execute) )
 $stepName = '13__CreateJobCollectDiskSpace'
 if($stepName -in $Steps2Execute) 
 {
-    Write-Debug $stepName
-
     $jobName = '(dba) Collect-DiskSpace'
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$CollectDiskSpaceJobFilePath = '$CollectDiskSpaceJobFilePath'"
@@ -4047,7 +4045,7 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UpdateSqlServerVersionsJobFilePath = '$UpdateSqlServerVersionsJobFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobName] on [$SqlInstanceToBaseline].."
-    $sqlUpdateSqlServerVersions = [System.IO.File]::ReadAllText($UpdateSqlServerVersionsJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance '$SqlInstanceToBaselineWithOutPort'")
+    $sqlUpdateSqlServerVersions = [System.IO.File]::ReadAllText($UpdateSqlServerVersionsJobFilePath).Replace('-SqlInstance localhost', "-SqlInstance ''$SqlInstanceToBaselineWithOutPort''")
 
     if($RemoteSQLMonitorPath -ne 'C:\SQLMonitor') {
         $sqlUpdateSqlServerVersions = $sqlUpdateSqlServerVersions.Replace('C:\SQLMonitor', $RemoteSQLMonitorPath)
@@ -4838,12 +4836,12 @@ go
     $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAlterViewDiskSpace -EnableException
 }
 
+Write-Debug "Update SQLMonitor Jobs Thresholds"
 
 # Update SQLMonitor Jobs Thresholds
-if($UpdateSQLAgentJobsThreshold) {
-    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor jobs thresholds on [$SqlInstanceToBaseline].[$DbaDatabase]..[sql_agent_job_thresholds] using '$UpdateSQLAgentJobsThresholdFileName'.." | Write-Host -ForegroundColor Cyan
-    try {
-        $sqlStartJob = @"
+if($UpdateSQLAgentJobsThreshold) 
+{
+    $sqlStartJob = @"
 declare @object_id int;
 set @object_id = OBJECT_ID('dbo.sql_agent_job_thresholds');
 
@@ -4852,21 +4850,56 @@ if @object_id is null
 else
     select [object_id] = @object_id;
 "@
-        $sqlResult = @()
-        $sqlResult += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query "exec msdb.dbo.sp_start_job @job_name = '(dba) Check-SQLAgentJobs';" -EnableException
 
-        if ($sqlResult.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Run job [(dba) Check-SQLAgentJobs] & wait for 10 seconds.."
-            Start-Sleep -Seconds 10
+    try
+    {
+        if($true)
+        {
+            "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Start job [(dba) Check-SQLAgentJobs] on [$SqlInstanceForTsqlJobs].." | Write-Host -ForegroundColor Cyan
+            $sqlResult = @()
+            $sqlResult += $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database msdb -Query "exec msdb.dbo.sp_start_job @job_name = '(dba) Check-SQLAgentJobs';" -EnableException
+
+            if ($sqlResult.Count -eq 0) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [(dba) Check-SQLAgentJobs] on [$SqlInstanceForTsqlJobs] started & waiting for 10 seconds.."
+                Start-Sleep -Seconds 10
+            }
         }
         
-        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor jobs thresholds on [$SqlInstanceForTsqlJobs].[$DbaDatabase]..[sql_agent_job_thresholds] using '$UpdateSQLAgentJobsThresholdFileName'.." | Write-Host -ForegroundColor Cyan   
+        $conSqlInstanceForTsqlJobs | Invoke-DbaQuery -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
     }
     catch {
         $errMessage = $_.Exception.Message
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
         if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure all SQLAgent jobs, and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure all SQLAgent jobs on [$SqlInstanceForTsqlJobs], and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
+        }
+        "STOP here, and fix above issue." | Write-Error
+    }
+
+
+    try 
+    {
+        if($SqlInstanceForPowershellJobs -ne $SqlInstanceForTsqlJobs)
+        {
+            "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Start job [(dba) Check-SQLAgentJobs] on [$SqlInstanceForPowershellJobs].." | Write-Host -ForegroundColor Cyan
+            $sqlResult = @()
+            $sqlResult += $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database msdb -Query "exec msdb.dbo.sp_start_job @job_name = '(dba) Check-SQLAgentJobs';" -EnableException
+
+            if ($sqlResult.Count -eq 0) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [(dba) Check-SQLAgentJobs] on [$SqlInstanceForPowershellJobs] started & waiting for 10 seconds.."
+                Start-Sleep -Seconds 10
+            }
+        }
+        
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update SQLMonitor jobs thresholds on [$SqlInstanceForPowershellJobs].[$DbaDatabase]..[sql_agent_job_thresholds] using '$UpdateSQLAgentJobsThresholdFileName'.." | Write-Host -ForegroundColor Cyan   
+        $conSqlInstanceForPowershellJobs | Invoke-DbaQuery -Database $DbaDatabase -File $UpdateSQLAgentJobsThresholdFilePath -EnableException
+    }
+    catch {
+        $errMessage = $_.Exception.Message
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
+        if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure all SQLAgent jobs on [$SqlInstanceForPowershellJobs], and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
         }
         "STOP here, and fix above issue." | Write-Error
     }
