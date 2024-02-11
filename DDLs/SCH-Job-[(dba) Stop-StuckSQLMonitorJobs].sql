@@ -1,7 +1,7 @@
 use msdb
 go
 
-IF EXISTS (SELECT * FROM msdb.dbo.sysjobs_view WHERE name = N'(dba) Stop-StuckSQLMonitorJobs')
+if exists (select * from msdb.dbo.sysjobs_view where name = N'(dba) Stop-StuckSQLMonitorJobs') and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
 	EXEC msdb.dbo.sp_delete_job @job_name='(dba) Stop-StuckSQLMonitorJobs', @delete_unused_schedule=1
 GO
 
@@ -70,5 +70,6 @@ QuitWithRollback:
 EndSave:
 GO
 
-EXEC msdb.dbo.sp_start_job @job_name='(dba) Stop-StuckSQLMonitorJobs'
+IF APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
+	EXEC msdb.dbo.sp_start_job @job_name='(dba) Stop-StuckSQLMonitorJobs'
 go
