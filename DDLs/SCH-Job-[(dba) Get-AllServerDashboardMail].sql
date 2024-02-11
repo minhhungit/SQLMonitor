@@ -1,8 +1,8 @@
 use msdb
 go
 
-IF EXISTS (SELECT * FROM msdb.dbo.sysjobs_view WHERE name = N'(dba) Stop-StuckSQLMonitorJobs')
-	EXEC msdb.dbo.sp_delete_job @job_name='(dba) Stop-StuckSQLMonitorJobs', @delete_unused_schedule=1
+IF EXISTS (SELECT * FROM msdb.dbo.sysjobs_view WHERE name = N'(dba) Get-AllServerDashboardMail')
+	EXEC msdb.dbo.sp_delete_job @job_name='(dba) Get-AllServerDashboardMail', @delete_unused_schedule=1
 GO
 
 BEGIN TRANSACTION
@@ -17,22 +17,20 @@ IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 END
 
 DECLARE @jobId BINARY(16)
-EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'(dba) Stop-StuckSQLMonitorJobs', 
+EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'(dba) Get-AllServerDashboardMail', 
 		@enabled=1, 
 		@notify_level_eventlog=0, 
 		@notify_level_email=0, 
 		@notify_level_netsend=0, 
 		@notify_level_page=0, 
 		@delete_level=0, 
-		@description=N'This job stops/restarts any stuck SQLMonitor job.
-
-https://ajaydwivedi.com/github/sqlmonitor', 
+		@description=N'Send Mail for All Critical Metrics Every 8 Hours', 
 		@category_name=N'(dba) SQLMonitor', 
 		--@owner_login_name=N'sa', 
 		@job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
-EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Stop-SQLMonitorJobs-On-AllServers-With-Issues.ps1', 
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'dbo.usp_GetAllServerDashboardMail', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
 		@on_success_action=1, 
@@ -43,23 +41,24 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Stop-SQL
 		@retry_interval=0, 
 		@os_run_priority=0, 
 		@subsystem=N'CmdExec', 
-		@command=N'powershell.exe -executionpolicy bypass -Noninteractive  C:\SQLMonitor\Stop-SQLMonitorJobs-On-AllServers-With-Issues.ps1 -InventoryServer localhost -InventoryDatabase DBA -CredentialManagerDatabase DBA', 
-		@flags=40
+		@command=N'sqlcmd -E -b -S localhost -H "(dba) Get-AllServerDashboardMail" -d DBA -Q "EXEC dbo.usp_GetAllServerDashboardMail @recipients = ''some_dba_mail_id@gmail.com'', @only_threshold_validated = 1, @send_mail = 1, @verbose = 0;"', 
+		@flags=12
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'(dba) Stop-StuckSQLMonitorJobs', 
+EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'(dba) Get-AllServerDashboardMail', 
 		@enabled=1, 
 		@freq_type=4, 
 		@freq_interval=1, 
 		@freq_subday_type=8, 
-		@freq_subday_interval=1, 
+		@freq_subday_interval=6, 
 		@freq_relative_interval=0, 
 		@freq_recurrence_factor=0, 
-		@active_start_date=20230901, 
+		@active_start_date=20240102, 
 		@active_end_date=99991231, 
 		@active_start_time=0, 
-		@active_end_time=235959
+		@active_end_time=235959 
+
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_add_jobserver @job_id = @jobId, @server_name = N'(local)'
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
@@ -70,5 +69,5 @@ QuitWithRollback:
 EndSave:
 GO
 
-EXEC msdb.dbo.sp_start_job @job_name='(dba) Stop-StuckSQLMonitorJobs'
+EXEC msdb.dbo.sp_start_job @job_name='(dba) Get-AllServerDashboardMail'
 go

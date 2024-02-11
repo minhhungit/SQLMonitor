@@ -57,10 +57,10 @@ Param (
                 "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
                 "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
                 "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
-                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
-                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
-                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
-                "43__AlterViewsForDataDestinationInstance")]
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__CreateJobGetAllServerDashboardMail",
+                "37__CreateJobStopStuckSQLMonitorJobs", "38__WhoIsActivePartition", "39__BlitzIndexPartition",
+                "40__BlitzPartition", "41__EnablePageCompression", "42__GrafanaLogin",
+                "43__LinkedServerOnInventory", "44__LinkedServerForDataDestinationInstance", "45__AlterViewsForDataDestinationInstance")]
     [String]$StartAtStep = "1__sp_WhoIsActive",
 
     [Parameter(Mandatory=$false)]
@@ -75,10 +75,10 @@ Param (
                 "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
                 "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
                 "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
-                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
-                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
-                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
-                "43__AlterViewsForDataDestinationInstance")]
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__CreateJobGetAllServerDashboardMail",
+                "37__CreateJobStopStuckSQLMonitorJobs", "38__WhoIsActivePartition", "39__BlitzIndexPartition",
+                "40__BlitzPartition", "41__EnablePageCompression", "42__GrafanaLogin",
+                "43__LinkedServerOnInventory", "44__LinkedServerForDataDestinationInstance", "45__AlterViewsForDataDestinationInstance")]
     [String[]]$SkipSteps,
 
     [Parameter(Mandatory=$false)]
@@ -93,10 +93,10 @@ Param (
                 "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
                 "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
                 "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
-                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
-                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
-                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
-                "43__AlterViewsForDataDestinationInstance")]
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__CreateJobGetAllServerDashboardMail",
+                "37__CreateJobStopStuckSQLMonitorJobs", "38__WhoIsActivePartition", "39__BlitzIndexPartition",
+                "40__BlitzPartition", "41__EnablePageCompression", "42__GrafanaLogin",
+                "43__LinkedServerOnInventory", "44__LinkedServerForDataDestinationInstance", "45__AlterViewsForDataDestinationInstance")]
     [String]$StopAtStep,
 
     [Parameter(Mandatory=$false)]
@@ -111,10 +111,10 @@ Param (
                 "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
                 "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
                 "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
-                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
-                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
-                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
-                "43__AlterViewsForDataDestinationInstance")]
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__CreateJobGetAllServerDashboardMail",
+                "37__CreateJobStopStuckSQLMonitorJobs", "38__WhoIsActivePartition", "39__BlitzIndexPartition",
+                "40__BlitzPartition", "41__EnablePageCompression", "42__GrafanaLogin",
+                "43__LinkedServerOnInventory", "44__LinkedServerForDataDestinationInstance", "45__AlterViewsForDataDestinationInstance")]
     [String[]]$OnlySteps,
 
     [Parameter(Mandatory=$false)]
@@ -204,14 +204,15 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '2024-02-10'
-$sqlmonitorVersionDate = '2024-Feb-10'
+$sqlmonitorVersion = '2024-02-11'
+$sqlmonitorVersionDate = '2024-Feb-11'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
-    v1.7.0 - 2024-Mar-31
+    v2024-Mar-31
         -> Issue#21 - Add Parameters to Skip Particular Wait Type in usp_waits_per_core_per_minute
         -> Issue#19 - Control Immediate Removal of Perfmon File in Job [(dba) Collect-PerfmonData]
         -> Issue#22 - Added Trust for Certificate & Encryption for SQL Connections
+        -> Issue#24 - Daily Mailer for All Server Health Dashboard
         -> Updated few debugging queries
         -> Updated dbo.usp_get_credential as part of bug fix
         -> Updated BlitzIndex Analysis Dashboard variables and ID
@@ -267,6 +268,7 @@ $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 [String]$UspCheckSQLAgentJobsFileName = "SCH-usp_check_sql_agent_jobs.sql"
 [String]$UspLogSaverFileName = "SCH-usp_LogSaver.sql"
 [String]$UspTempDbSaverFileName = "SCH-usp_TempDbSaver.sql"
+[String]$UspGetAllServerDashboardMailFileName = "SCH-usp_GetAllServerDashboardMail.sql"
 [String]$WhoIsActivePartitionFileName = "SCH-WhoIsActive-Partitioning.sql"
 [String]$BlitzIndexPartitionFileName = "SCH-BlitzIndex-Partitioning.sql"
 [String]$BlitzIndexMode0PartitionFileName = "SCH-BlitzIndex_Mode0-Partitioning.sql"
@@ -291,12 +293,15 @@ $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 [String]$UpdateSqlServerVersionsJobFileName = "SCH-Job-[(dba) Update-SqlServerVersions].sql"
 [String]$GetAllServerInfoJobFileName = "SCH-Job-[(dba) Get-AllServerInfo].sql"
 [String]$GetAllServerCollectedDataJobFileName = "SCH-Job-[(dba) Get-AllServerCollectedData].sql"
+[String]$GetAllServerDashboardMailJobFileName = "SCH-Job-[(dba) Get-AllServerDashboardMail].sql"
 [String]$InventorySpecificObjectsFileName = "SCH-Create-Inventory-Specific-Objects.sql"
 [String]$LinkedServerOnInventoryFileName = "SCH-Linked-Servers-Sample.sql"
 [String]$TestWindowsAdminAccessJobFileName = "SCH-Job-[(dba) Test-WindowsAdminAccess].sql"
 [String]$RunBlitzIndexJobFileName = "SCH-Job-[(dba) Run-BlitzIndex].sql"
 [String]$RunBlitzIndexWeeklyJobFileName = "SCH-Job-[(dba) Run-BlitzIndex - Weekly].sql"
 [String]$RunBlitzJobFileName = "SCH-Job-[(dba) Run-Blitz].sql"
+[String]$StopStuckSQLMonitorJobsJobFileName = "SCH-Job-[(dba) Stop-StuckSQLMonitorJobs].sql"
+
 
 [String]$CollectMemoryClerksJobFileName = "SCH-Job-[(dba) Collect-MemoryClerks].sql"
 [String]$CollectAgHealthStateJobFileName = "SCH-Job-[(dba) Collect-AgHealthState].sql"
@@ -345,10 +350,10 @@ $AllSteps = @(  "1__sp_WhoIsActive", "2__AllDatabaseObjects", "3__XEventSession"
                 "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
                 "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
                 "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
-                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
-                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
-                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
-                "43__AlterViewsForDataDestinationInstance")
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__CreateJobGetAllServerDashboardMail",
+                "37__CreateJobStopStuckSQLMonitorJobs", "38__WhoIsActivePartition", "39__BlitzIndexPartition",
+                "40__BlitzPartition", "41__EnablePageCompression", "42__GrafanaLogin",
+                "43__LinkedServerOnInventory", "44__LinkedServerForDataDestinationInstance", "45__AlterViewsForDataDestinationInstance")
 
 # TSQL Jobs
 $TsqlJobSteps = @(
@@ -357,12 +362,13 @@ $TsqlJobSteps = @(
                 "23__CreateJobRunTempDbSaver", "24__CreateJobRunWhoIsActive", "21__CreateJobRemoveXEventFiles",
                 "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly", 
                 "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState", 
-                "31__CreateJobCheckSQLAgentJobs", "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData")
+                "31__CreateJobCheckSQLAgentJobs", "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData",
+                "36__CreateJobGetAllServerDashboardMail")
 
 # PowerShell Jobs
 $PowerShellJobSteps = @(
                 "13__CreateJobCollectDiskSpace", "14__CreateJobCollectOSProcesses", "15__CreateJobCollectPerfmonData",
-                "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability")
+                "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability", "37__CreateJobStopStuckSQLMonitorJobs")
 
 # RDPSessionSteps
 $RDPSessionSteps = @("9__CopyDbaToolsModule2Host", "10__CopyPerfmonFolder2Host", "11__SetupPerfmonDataCollector")
@@ -401,8 +407,8 @@ if($SkipTsqlJobs) {
 }
 
 # Skip Compression
-if($SkipPageCompression -and ('39__EnablePageCompression' -notin $SkipSteps)) {
-    $SkipSteps += @('39__EnablePageCompression')
+if($SkipPageCompression -and ('41__EnablePageCompression' -notin $SkipSteps)) {
+    $SkipSteps += @('41__EnablePageCompression')
 }
 
 # For backward compatability
@@ -469,6 +475,7 @@ $GetAllServerInfoFilePath = "$ddlPath\$UspGetAllServerInfoFileName"
 $GetAllServerCollectedDataFilePath = "$ddlPath\$UspGetAllServerCollectedDataFileName"
 $UspWrapperGetAllServerInfoFilePath = "$ddlPath\$UspWrapperGetAllServerInfoFileName"
 $UspWrapperGetAllServerCollectedDataFilePath = "$ddlPath\$UspWrapperGetAllServerCollectedDataFileName"
+$UspGetAllServerDashboardMailFilePath = "$ddlPath\$UspGetAllServerDashboardMailFileName"
 $UspWrapperCollectPrivilegedInfoFilePath = "$ddlPath\$UspWrapperCollectPrivilegedInfoFileName"
 $UspCollectWaitStatsFilePath = "$ddlPath\$UspCollectWaitStatsFileName"
 $UspCollectFileIOStatsFilePath = "$ddlPath\$UspCollectFileIOStatsFileName"
@@ -515,6 +522,8 @@ $CollectMemoryClerksJobFilePath = "$ddlPath\$CollectMemoryClerksJobFileName"
 $CollectAgHealthStateJobFilePath = "$ddlPath\$CollectAgHealthStateJobFileName"
 $CheckSQLAgentJobsJobFilePath = "$ddlPath\$CheckSQLAgentJobsJobFileName"
 $UpdateSqlServerVersionsJobFilePath = "$ddlPath\$UpdateSqlServerVersionsJobFileName"
+$GetAllServerDashboardMailJobFilePath = "$ddlPath\$GetAllServerDashboardMailJobFileName"
+$StopStuckSQLMonitorJobsJobFilePath = "$ddlPath\$StopStuckSQLMonitorJobsJobFileName"
 $LinkedServerOnInventoryFilePath = "$ddlPath\$LinkedServerOnInventoryFileName"
 $TestWindowsAdminAccessJobFilePath = "$ddlPath\$TestWindowsAdminAccessJobFileName"
 $UpdateSQLAgentJobsThresholdFilePath = "$ddlPath\$UpdateSQLAgentJobsThresholdFileName"
@@ -4449,8 +4458,216 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
 }
 
 
-# 36__WhoIsActivePartition
-$stepName = '36__WhoIsActivePartition'
+# 36__CreateJobGetAllServerDashboardMail
+$stepName = '36__CreateJobGetAllServerDashboardMail'
+if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer) 
+{
+    $jobName = '(dba) Get-AllServerDashboardMail'
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$GetAllServerDashboardMailJobFilePath = '$GetAllServerDashboardMailJobFilePath'"
+
+    # Append HostName if Job Server is different    
+    $jobNameNew = $jobName
+    #$sqlInstanceOnJobStep = "$SqlInstanceToBaselineWithOutPort"
+    $sqlInstanceOnJobStep = "$SqlInstanceToBaseline"
+    if($SqlInstanceToBaseline -ne $SqlInstanceForTsqlJobs) {
+        $jobNameNew = "$jobName - $SqlInstanceToBaseline"
+        #$sqlInstanceOnJobStep = $SqlInstanceToBaseline
+    }
+
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobNameNew] on [$SqlInstanceForTsqlJobs].."
+    $sqlGetAllServerDashboardMailJobFileText = [System.IO.File]::ReadAllText($GetAllServerDashboardMailJobFilePath)
+    $sqlGetAllServerDashboardMailJobFileText = $sqlGetAllServerDashboardMailJobFileText.Replace('-S localhost', "-S `"$sqlInstanceOnJobStep`"")
+    $sqlGetAllServerDashboardMailJobFileText = $sqlGetAllServerDashboardMailJobFileText.Replace('-d DBA', "-d `"$DbaDatabase`"")
+    $sqlGetAllServerDashboardMailJobFileText = $sqlGetAllServerDashboardMailJobFileText.Replace("''some_dba_mail_id@gmail.com''", "''$($DbaGroupMailId -join ';')''" )
+    if($jobNameNew -ne $jobName) {
+        $sqlGetAllServerDashboardMailJobFileText = $sqlGetAllServerDashboardMailJobFileText.Replace($jobName, $jobNameNew)
+    }
+
+
+    # If Express edition, and Task scheduler jobs are required
+    if( ((-not [String]::IsNullOrEmpty($WindowsCredential)) -or ($ssnHostName -eq $env:COMPUTERNAME)) `
+        -and ($isExpressEdition -or $ForceSetupOfTaskSchedulerJobs) -and ($ConfirmSetupOfTaskSchedulerJobs -or $ForceSetupOfTaskSchedulerJobs) )
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Extract Job command from '$GetAllServerDashboardMailJobFilePath'.."
+        [System.Collections.ArrayList]$jobArguments = @()
+        foreach($line in $($sqlGetAllServerDashboardMailJobFileText -split "`n")) 
+        {
+            if($line -match "@command=N'sqlcmd (?'arguments'.*)',") {
+                $command = $Matches['arguments']
+                $command = $command.Replace("''","'").Replace(";;",";")
+                $jobArguments.Add($command) | Out-Null
+            }
+        }
+
+        if($jobArguments.Count -eq 0) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+        }
+
+        $jobDescription = "Run Job [$jobName] daily every 8 hours"
+        $timeIntervalMinutes = "08:00"
+        $taskPath = '\DBA\'
+        $parameters = @{
+            Session = $ssn4PerfmonSetup
+            ScriptBlock = {
+                Param ($jobName, $jobDescription, $jobArguments, $timeIntervalMinutes, $taskPath, $logsPath, $SkipTsqlJobs)
+
+                $currentTime = Get-Date
+                $durationString = ($currentTime.AddMinutes(1)).ToString('HH:mm')
+
+                $doStuff = @()
+                $counter = 1
+                foreach($command in $jobArguments) {
+                    $doStuff += $(New-ScheduledTaskAction -Execute 'sqlcmd' -Argument "$command -o `"$logsPath\$jobName-$counter.txt`"")
+                    $counter += 1
+                }
+                $timeToDoStuff = New-ScheduledTaskTrigger -Daily -DaysInterval 1 -RandomDelay "08:00" -At $durationString
+                $timeToDoStuff.Repetition = $(New-ScheduledTaskTrigger -Once -RandomDelay "08:00" -At $durationString -RepetitionDuration "23:59" -RepetitionInterval $timeIntervalMinutes).Repetition
+                $settingsForTheStuff = New-ScheduledTaskSettingsSet
+                $runAsUser = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+                $finalBuildOfTheStuff = New-ScheduledTask -Action $doStuff -Trigger $timeToDoStuff -Settings $settingsForTheStuff -Principal $runAsUser -Description $jobDescription
+
+                $taskObj = @()
+                try { $taskObj += Get-ScheduledTask -TaskName $jobName -TaskPath $taskPath -ErrorAction SilentlyContinue }
+                catch { "Some Error" | Out-Null }
+
+                $isCreated = $false
+                if([String]::IsNullOrEmpty($taskObj)) {
+                    Register-ScheduledTask -TaskName $jobName -InputObject $finalBuildOfTheStuff -TaskPath $taskPath | Out-Null
+                    $isCreated = $true
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] created in Windows Task Scheduler."
+                }
+                elseif ($SkipTsqlJobs -eq $false) {
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Drop/Recreate Job [$jobName] in Windows Task Scheduler.."
+                    $taskObj | Unregister-ScheduledTask -Confirm:$false | Out-Null
+                    Register-ScheduledTask -TaskName $jobName -InputObject $finalBuildOfTheStuff -TaskPath $taskPath | Out-Null
+                    $isCreated = $true
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] dropped & recreated in Windows Task Scheduler."
+                }
+                else {
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] already exists in Windows Task Scheduler."
+                }
+
+                if($isCreated) {
+                    Start-ScheduledTask -TaskName $jobName -TaskPath $taskPath | Out-Null
+                }
+            }
+            ArgumentList = $jobName, $jobDescription, $jobArguments, $timeIntervalMinutes, $taskPath, $logsPath, $SkipTsqlJobs
+        }
+
+        Invoke-Command @parameters -ErrorAction Stop
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Kindly ensure windows Task Scheduler job [$($taskPath)$($jobName)] is running without Error."
+    }
+    else # If not express edition
+    {
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlGetAllServerDashboardMailJobFileText -EnableException
+    }
+}
+
+
+# 37__CreateJobStopStuckSQLMonitorJobs
+$stepName = '37__CreateJobStopStuckSQLMonitorJobs'
+if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer) 
+{
+    $jobName = '(dba) Stop-StuckSQLMonitorJobs'
+    "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$StopStuckSQLMonitorJobsJobFilePath = '$StopStuckSQLMonitorJobsJobFilePath'"
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating job [$jobName] on [$SqlInstanceToBaseline].."
+    $sqlStopStuckSQLMonitorJobs = [System.IO.File]::ReadAllText($StopStuckSQLMonitorJobsJobFilePath)
+    $sqlStopStuckSQLMonitorJobs = $sqlStopStuckSQLMonitorJobs.Replace('-InventoryServer localhost', "-InventoryServer `"$SqlInstanceToBaselineWithOutPort`"")
+    $sqlStopStuckSQLMonitorJobs = $sqlStopStuckSQLMonitorJobs.Replace('-InventoryDatabase DBA', "-InventoryDatabase `"$InventoryDatabase`"")
+    $sqlStopStuckSQLMonitorJobs = $sqlStopStuckSQLMonitorJobs.Replace('-CredentialManagerDatabase DBA', "-CredentialManagerDatabase `"$InventoryDatabase`"")
+
+    if($RemoteSQLMonitorPath -ne 'C:\SQLMonitor') {
+        $sqlStopStuckSQLMonitorJobs = $sqlStopStuckSQLMonitorJobs.Replace('C:\SQLMonitor', $RemoteSQLMonitorPath)
+    }
+    
+    # If Express edition, and Task scheduler jobs are required
+    if( ((-not [String]::IsNullOrEmpty($WindowsCredential)) -or ($ssnHostName -eq $env:COMPUTERNAME)) `
+        -and ($isExpressEdition -or $ForceSetupOfTaskSchedulerJobs) -and ($ConfirmSetupOfTaskSchedulerJobs -or $ForceSetupOfTaskSchedulerJobs) )
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Extract Job command from '$StopStuckSQLMonitorJobsJobFilePath'.."
+        [String]$jobArguments = $null
+        if($sqlStopStuckSQLMonitorJobs -match "@command=N'powershell.exe(?'arguments'.*)',") {
+            $jobArguments = $Matches['arguments']
+        }
+
+        if([String]::IsNullOrEmpty($jobArguments)) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+        }
+
+        $jobDescription = "Run Job [$jobName] daily every 1 hour"
+        $timeIntervalMinutes = "01:00"
+        $taskPath = '\DBA\'
+        $parameters = @{
+            Session = $ssn4PerfmonSetup
+            ScriptBlock = {
+                Param ($jobName, $jobDescription, $jobArguments, $timeIntervalMinutes, $taskPath, $logsPath, $DropCreatePowerShellJobs)
+
+                $currentTime = Get-Date
+                $durationString = ($currentTime.AddMinutes(1)).ToString('HH:mm')
+
+                $doStuff = New-ScheduledTaskAction -Execute 'powershell' -Argument "$jobArguments *> '$logsPath\$jobName.txt'"
+                $timeToDoStuff = New-ScheduledTaskTrigger -Daily -DaysInterval 1 -RandomDelay "01:00" -At $durationString
+                $timeToDoStuff.Repetition = $(New-ScheduledTaskTrigger -Once -RandomDelay "01:00" -At $durationString -RepetitionDuration "23:59" -RepetitionInterval $timeIntervalMinutes).Repetition
+                $settingsForTheStuff = New-ScheduledTaskSettingsSet
+                $runAsUser = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+                $finalBuildOfTheStuff = New-ScheduledTask -Action $doStuff -Trigger $timeToDoStuff -Settings $settingsForTheStuff -Principal $runAsUser -Description $jobDescription
+
+                $taskObj = @()
+                try { $taskObj += Get-ScheduledTask -TaskName $jobName -TaskPath $taskPath -ErrorAction SilentlyContinue }
+                catch { "Some Error" | Out-Null }
+
+                $isCreated = $false
+                if([String]::IsNullOrEmpty($taskObj)) {
+                    Register-ScheduledTask -TaskName $jobName -InputObject $finalBuildOfTheStuff -TaskPath $taskPath | Out-Null
+                    $isCreated = $true
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] created in Windows Task Scheduler."
+                }
+                elseif ($DropCreatePowerShellJobs) {
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Drop/Recreate Job [$jobName] in Windows Task Scheduler.."
+                    $taskObj | Unregister-ScheduledTask -Confirm:$false | Out-Null
+                    Register-ScheduledTask -TaskName $jobName -InputObject $finalBuildOfTheStuff -TaskPath $taskPath | Out-Null
+                    $isCreated = $true
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] dropped & recreated in Windows Task Scheduler."
+                }
+                else {
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Job [$jobName] already exists in Windows Task Scheduler."
+                }
+
+                if($isCreated) {
+                    Start-ScheduledTask -TaskName $jobName -TaskPath $taskPath | Out-Null
+                }
+            }
+            ArgumentList = $jobName, $jobDescription, $jobArguments, $timeIntervalMinutes, $taskPath, $logsPath, $DropCreatePowerShellJobs
+        }
+
+        Invoke-Command @parameters -ErrorAction Stop
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Kindly ensure windows Task Scheduler job [$($taskPath)$($jobName)] is running without Error." #| Write-Host -ForegroundColor Yellow
+    }
+    else # If not express edition
+    {
+        if($DropCreatePowerShellJobs) {
+            $tsqlSSMSValidation = "and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'"
+            $sqlStopStuckSQLMonitorJobs = $sqlStopStuckSQLMonitorJobs.Replace($tsqlSSMSValidation, "--$tsqlSSMSValidation")
+        }
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlStopStuckSQLMonitorJobs -EnableException
+
+        if($requireProxy) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update job [$jobName] to run under proxy [$credentialName].."
+            $sqlUpdateJob = "EXEC msdb.dbo.sp_update_jobstep @job_name=N'$jobName', @step_id=1 ,@proxy_name=N'$credentialName';"
+            $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlUpdateJob -EnableException
+        }
+        $sqlStartJob = "EXEC msdb.dbo.sp_start_job @job_name=N'$jobName';"
+        $conSqlInstanceToBaseline | Invoke-DbaQuery -Database msdb -Query $sqlStartJob -EnableException
+    }
+}
+
+
+# 38__WhoIsActivePartition
+$stepName = '38__WhoIsActivePartition'
 if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$WhoIsActivePartitionFilePath = '$WhoIsActivePartitionFilePath'"
@@ -4487,8 +4704,8 @@ if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
 }
 
 
-# 37__BlitzIndexPartition
-$stepName = '37__BlitzIndexPartition'
+# 39__BlitzIndexPartition
+$stepName = '39__BlitzIndexPartition'
 #if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
 if($stepName -in $Steps2Execute) 
 {
@@ -4660,8 +4877,8 @@ if($stepName -in $Steps2Execute)
 }
 
 
-# 38__BlitzPartition
-$stepName = '38__BlitzPartition'
+# 40__BlitzPartition
+$stepName = '40__BlitzPartition'
 #if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
 if($stepName -in $Steps2Execute) 
 {
@@ -4710,8 +4927,8 @@ if($stepName -in $Steps2Execute)
 }
 
 
-# 39__EnablePageCompression
-$stepName = '39__EnablePageCompression'
+# 41__EnablePageCompression
+$stepName = '41__EnablePageCompression'
 if( ($stepName -in $Steps2Execute) -and ($SkipPageCompression -eq $false) -and $IsCompressionSupported) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
 
@@ -4721,8 +4938,8 @@ if( ($stepName -in $Steps2Execute) -and ($SkipPageCompression -eq $false) -and $
 }
 
 
-# 40__GrafanaLogin
-$stepName = '40__GrafanaLogin'
+# 42__GrafanaLogin
+$stepName = '42__GrafanaLogin'
 if($stepName -in $Steps2Execute) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$GrafanaLoginFilePath = '$GrafanaLoginFilePath'"
@@ -4733,8 +4950,8 @@ if($stepName -in $Steps2Execute) {
 }
 
 
-# 41__LinkedServerOnInventory
-$stepName = '41__LinkedServerOnInventory'
+# 43__LinkedServerOnInventory
+$stepName = '43__LinkedServerOnInventory'
 if($stepName -in $Steps2Execute -and $SqlInstanceToBaselineWithOutPort -ne $InventoryServerWithOutPort) {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$LinkedServerOnInventoryFilePath = '$LinkedServerOnInventoryFilePath'"
@@ -4757,8 +4974,8 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaselineWithOutPort -ne $Inve
 }
 
 
-# 42__LinkedServerForDataDestinationInstance
-$stepName = '42__LinkedServerForDataDestinationInstance'
+# 44__LinkedServerForDataDestinationInstance
+$stepName = '44__LinkedServerForDataDestinationInstance'
 if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstanceAsDataDestination) )
 {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
@@ -4784,8 +5001,8 @@ if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstance
     }
 }
 
-# 43__AlterViewsForDataDestinationInstance
-$stepName = '43__AlterViewsForDataDestinationInstance'
+# 45__AlterViewsForDataDestinationInstance
+$stepName = '45__AlterViewsForDataDestinationInstance'
 if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstanceAsDataDestination) )
 {
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
@@ -5072,7 +5289,7 @@ $params = @{
     #SqlCredential = $saAdmin
     #WindowsCredential = $LabCredential
     #SkipSteps = @("11__SetupPerfmonDataCollector", "12__CreateJobCollectOSProcesses","13__CreateJobCollectPerfmonData")
-    #StartAtStep = '40__GrafanaLogin'
+    #StartAtStep = '42__GrafanaLogin'
     #StopAtStep = '21__WhoIsActivePartition'
     #DropCreatePowerShellJobs = $true
     #DryRun = $false
@@ -5099,7 +5316,7 @@ $params = @{
     SqlCredential = $saAdmin
     WindowsCredential = $LabCredential
     #SkipSteps = @("11__SetupPerfmonDataCollector", "12__CreateJobCollectOSProcesses","13__CreateJobCollectPerfmonData")
-    #StartAtStep = '40__GrafanaLogin'
+    #StartAtStep = '42__GrafanaLogin'
     #StopAtStep = '21__WhoIsActivePartition'
     #DropCreatePowerShellJobs = $true
     #DryRun = $false
@@ -5117,3 +5334,5 @@ Owner Ajay Kumar Dwivedi (ajay.dwivedi2007@gmail.com)
     https://ajaydwivedi.com/youtube/sqlmonitor
     https://ajaydwivedi.com/blog/sqlmonitor    
 #>
+
+
