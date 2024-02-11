@@ -5053,7 +5053,6 @@ go
     $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -Query $sqlAlterViewDiskSpace -EnableException
 }
 
-Write-Debug "Update SQLMonitor Jobs Thresholds"
 
 # Update SQLMonitor Jobs Thresholds
 if($UpdateSQLAgentJobsThreshold) 
@@ -5171,6 +5170,16 @@ and host_name = '$HostName'
 Get-PSSession | Remove-PSSession
 
 "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Baselining of [$SqlInstanceToBaseline] completed."
+
+$agentServiceAccount = $agentServiceInfo.service_account
+$addAgentAccountToWindowsGroups = @"
+`t net localgroup administrators "$agentServiceAccount" /add
+`t net localgroup "Performance Log Users" "$agentServiceAccount" /add
+`t net localgroup "Performance Monitor Users" "$agentServiceAccount" /add
+"@
+"`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Kindly RDP [$SqlInstanceForPowershellJobs], and execute following commands in Elevated Command Prompt-" | Write-Host -ForegroundColor Cyan
+"$addAgentAccountToWindowsGroups`n" | Write-Host -ForegroundColor Yellow
+"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Post executing above commands, restart SQLAgent service." | Write-Host -ForegroundColor Cyan
 
 $timeTaken = New-TimeSpan -Start $startTime -End $(Get-Date)
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Execution completed in $($timeTaken.TotalSeconds) seconds."

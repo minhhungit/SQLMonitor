@@ -4,8 +4,12 @@
 
 cls
 Import-Module dbatools;
+$SqlInstanceToBaseline = 'Workstation'
+#$SqlInstanceAsDataDestination = 'Workstation'
+#$SqlInstanceForPowershellJobs = 'Workstation'
+#$SqlInstanceForTsqlJobs = 'Workstation'
 $params = @{
-    SqlInstanceToBaseline = 'Workstation'
+    SqlInstanceToBaseline = $SqlInstanceToBaseline
     DbaDatabase = 'DBA'
     #HostName = 'Workstation'
     #RetentionDays = 7
@@ -31,14 +35,14 @@ $params = @{
                 "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
                 "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
                 "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
-                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
-                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
-                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
-                "43__AlterViewsForDataDestinationInstance")
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__CreateJobGetAllServerDashboardMail",
+                "37__CreateJobStopStuckSQLMonitorJobs", "38__WhoIsActivePartition", "39__BlitzIndexPartition",
+                "40__BlitzPartition", "41__EnablePageCompression", "42__GrafanaLogin",
+                "43__LinkedServerOnInventory", "44__LinkedServerForDataDestinationInstance", "45__AlterViewsForDataDestinationInstance")
     #>
-    #OnlySteps = @( "2__AllDatabaseObjects", "29__CreateJobCollectAgHealthState" )
+    #OnlySteps = @( "2__AllDatabaseObjects" )
     #StartAtStep = '1__sp_WhoIsActive'
-    #StopAtStep = '39__AlterViewsForDataDestinationInstance'
+    #StopAtStep = '45__AlterViewsForDataDestinationInstance'
     #DropCreatePowerShellJobs = $true
     #DryRun = $false
     #SkipRDPSessionSteps = $true
@@ -51,9 +55,9 @@ $params = @{
     #SkipPingCheck = $true
     #SkipMultiServerviewsUpgrade = $false
     #ForceSetupOfTaskSchedulerJobs = $true
-    #SqlInstanceAsDataDestination = 'Workstation'
-    #SqlInstanceForPowershellJobs = 'Workstation'
-    #SqlInstanceForTsqlJobs = 'Workstation'
+    #SqlInstanceAsDataDestination = $SqlInstanceAsDataDestination
+    #SqlInstanceForPowershellJobs = $SqlInstanceForPowershellJobs
+    #SqlInstanceForTsqlJobs = $SqlInstanceForTsqlJobs
     #ConfirmValidationOfMultiInstance = $true
     #ConfirmSetupOfTaskSchedulerJobs = $true
     #HasCustomizedTsqlJobs = $true
