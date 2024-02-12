@@ -1,3 +1,16 @@
+use master
+go
+
+declare @DbaADGroup nvarchar(255);
+
+select @DbaADGroup = dss.service_account from sys.dm_server_services dss 
+where servicename like 'SQL Server Agent (%';
+
+select 'net localgroup administrators "'+group_name+'" /add'
+from (values ('administrators'),('Performance Log Users'),('Performance Monitor Users') ) groups (group_name);
+go
+
+
 USE [msdb]
 GO
 
