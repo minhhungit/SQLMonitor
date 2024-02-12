@@ -1908,6 +1908,10 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspWrapperGetAllServerCollectedDataFilePath = '$UspWrapperGetAllServerCollectedDataFilePath'"
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_wrapper_GetAllServerCollectedData procedure in [$DbaDatabase] database.."
     $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $UspWrapperGetAllServerCollectedDataFilePath
+
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspGetAllServerDashboardMailFilePath = '$UspGetAllServerDashboardMailFilePath'"
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerDashboardMail procedure in [$DbaDatabase] database.."
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $UspGetAllServerDashboardMailFilePath
 }
 
 
