@@ -1,21 +1,31 @@
 use DBA
 go
+/* Get Detailed Analysis for a Table */
 set nocount on;
 declare @sql nvarchar(max);
 declare @params nvarchar(2000);
 declare @more_info_filter varchar(2000);
 declare @table_name varchar(2000);
-declare @run_datetime_mode0 datetime = '2023-07-07 20:15:00.000';
-declare @run_datetime_mode2 datetime = '2023-07-13 19:12:00.000';
-declare @run_datetime_mode4 datetime = '2023-07-07 20:39:00.000';
+declare @run_datetime_mode0 datetime = '2024-01-26 20:13:00.000';
+declare @run_datetime_mode2 datetime = '2024-02-01 20:39:00.000';
+declare @run_datetime_mode4 datetime = '2024-01-26 20:40:00.000';
 
 set @params = '@more_info_filter varchar(2000), @run_datetime_mode0 datetime, @run_datetime_mode4 datetime, @run_datetime_mode2 datetime, @table_name varchar(2000) output';
 
 set quoted_identifier off;
-set @more_info_filter = "EXEC dbo.sp_BlitzIndex @DatabaseName='Facebook', @SchemaName='dbo', @TableName='LikesDislikes';";
+set @more_info_filter = "EXEC dbo.sp_BlitzIndex @DatabaseName='facebook', @SchemaName='dbo', @TableName='LikedDislikes';";
 
 set @sql = "
-select [result] = 'High-Priority', finding, details, index_usage_summary, index_size_summary, more_info, create_tsql, sample_query_plan, total_forwarded_fetch_count, url
+select [result] = 'High-Priority', finding, 
+		details = case when finding = 'Indexaphobia: High Value Missing Index' 
+						then RIGHT(details, LEN(details)-CHARINDEX(' Est. benefit per day:',details))
+						else details
+						end, 
+		index_size_summary = case when finding = 'Indexaphobia: High Value Missing Index' 
+								then index_definition 
+								else index_size_summary
+								end, 
+		index_usage_summary, more_info, create_tsql, sample_query_plan, total_forwarded_fetch_count, url
 from dbo.BlitzIndex_Mode0 bi
 where 1=1
 --and bi.priority = -1 -- Use it to find out stats for max UpTime Days
@@ -91,6 +101,6 @@ exec (@more_info_filter)
 go
 
 
--- SELECT distinct run_datetime from dbo.BlitzIndex_Mode0 where run_datetime >= dateadd(day,-7,getdate())
--- SELECT distinct run_datetime from dbo.BlitzIndex where run_datetime >= dateadd(day,-7,getdate())
--- SELECT distinct run_datetime from dbo.BlitzIndex_Mode4 where run_datetime >= dateadd(day,-7,getdate())
+-- SELECT distinct run_datetime from dbo.BlitzIndex_Mode0 where run_datetime >= dateadd(day,-7,getdate()) -- 2024-01-26 20:13:00.000
+-- SELECT distinct run_datetime from dbo.BlitzIndex where run_datetime >= dateadd(day,-7,getdate()) -- 2024-02-01 20:39:00.000
+-- SELECT distinct run_datetime from dbo.BlitzIndex_Mode4 where run_datetime >= dateadd(day,-7,getdate()) -- 2024-01-26 20:40:00.000

@@ -4,11 +4,11 @@ go
 set nocount on;
 declare @top_filter int = 30;
 
-declare @start_time_snap1	datetime2 = '2022-11-02 21:30';
-declare @end_time_snap1		datetime2 = '2022-11-02 22:30';
+declare @start_time_snap1	datetime2 = '2024-01-25 01:00';
+declare @end_time_snap1		datetime2 = '2024-01-25 02:30';
 --
-declare @start_time_snap2	datetime2 = '2022-11-03 21:30';
-declare @end_time_snap2		datetime2 = '2022-11-02 22:30';
+declare @start_time_snap2	datetime2 = '2024-01-30 01:00';
+declare @end_time_snap2		datetime2 = '2024-01-30 02:30';
 
 if object_id('tempdb..#current') is not null 
 	drop table #current;
@@ -39,8 +39,8 @@ set @sql = "
 			username,
 			logical_reads_gb = convert(numeric(20,2),sum(logical_reads)*8.0/1024/1024), 
 			logical_reads_mb = convert(numeric(20,2),sum(logical_reads)*8.0/1024), 
-			cpu_time_minutes = (sum(cpu_time)/1e+6)/60,
-			cpu_time = convert(varchar,floor((sum(cpu_time)/1e+6)/60/60/24)) + ' Day '+ convert(varchar,dateadd(second,(sum(cpu_time)/1e+6),'1900-01-01 00:00:00'),108)
+			cpu_time_minutes = (sum(cpu_time_ms)/60000),
+			cpu_time = convert(varchar,floor((sum(cpu_time_ms)/60000)/60/24)) + ' Day '+ convert(varchar,dateadd(second,(sum(cpu_time_ms)/1000),'1900-01-01 00:00:00'),108)
 			,[executions > 5 sec] = count(1)
 	from dbo.xevent_metrics rc
 	where rc.event_time between @start_time_snap2 and @end_time_snap2
@@ -57,6 +57,8 @@ set quoted_identifier on;
 
 insert #current ([query], [date], [row_rank], [username], [logical_reads_gb], [logical_reads_mb], [cpu_time_minutes], [cpu_time], [executions > 5 sec])
 exec sp_executesql @sql, @params, @top_filter, @start_time_snap1, @end_time_snap1, @start_time_snap2, @end_time_snap2;
+
+print 'records in #current => '+convert(varchar,@@ROWCOUNT);
 
 if object_id('tempdb..#previous') is not null 
 	drop table #previous;
@@ -84,8 +86,10 @@ set @sql = "
 			username,
 			logical_reads_gb = convert(numeric(20,2),sum(logical_reads)*8.0/1024/1024), 
 			logical_reads_mb = convert(numeric(20,2),sum(logical_reads)*8.0/1024), 
-			cpu_time_minutes = (sum(cpu_time)/1e+6)/60,
-			cpu_time = convert(varchar,floor((sum(cpu_time)/1e+6)/60/60/24)) + ' Day '+ convert(varchar,dateadd(second,(sum(cpu_time)/1e+6),'1900-01-01 00:00:00'),108)
+			--cpu_time_minutes = (sum(cpu_time)/1e+6)/60,
+			cpu_time_minutes = (sum(cpu_time_ms)/60000),
+			--cpu_time = convert(varchar,floor((sum(cpu_time)/1e+6)/60/60/24)) + ' Day '+ convert(varchar,dateadd(second,(sum(cpu_time)/1e+6),'1900-01-01 00:00:00'),108)
+			cpu_time = convert(varchar,floor((sum(cpu_time_ms)/60000)/60/24)) + ' Day '+ convert(varchar,dateadd(second,(sum(cpu_time_ms)/1000),'1900-01-01 00:00:00'),108)
 			,[executions > 5 sec] = count(1)
 	from dbo.xevent_metrics rc
 	where rc.event_time between @start_time_snap1 and @end_time_snap1
@@ -101,6 +105,8 @@ set quoted_identifier on;
 
 insert #previous ([query], [date], [row_rank], [username], [logical_reads_gb], [logical_reads_mb], [cpu_time_minutes], [cpu_time], [executions > 5 sec])
 exec sp_executesql @sql, @params, @top_filter, @start_time_snap1, @end_time_snap1, @start_time_snap2, @end_time_snap2;
+
+print 'records in #previous => '+convert(varchar,@@ROWCOUNT);
 
 select	[query] = 'workload-by-READ', 		
 		[date-snap1] = coalesce(p.date, prev_date),

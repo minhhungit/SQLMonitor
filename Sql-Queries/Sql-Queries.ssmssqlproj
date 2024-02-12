@@ -224,8 +224,8 @@
           <FullPath>QRY-XEventMetrics-Workload-Delta-By-Reads(cpu_time_ms).sql</FullPath>
         </FileNode>
         <FileNode Name="QRY-XEventMetrics-Workload-Delta-By-Reads.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>QRY-XEventMetrics-Workload-Delta-By-Reads.sql</FullPath>
         </FileNode>

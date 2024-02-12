@@ -13,6 +13,7 @@ declare @host_name nvarchar(255) --= '';
 declare @index_name nvarchar(255);
 declare @duration_threshold_minutes smallint --= 1;
 declare @memory_threshold_mb smallint --= 1;
+declare @handle_xml_error bit = 1;
 declare @sql nvarchar(max);
 declare @params nvarchar(max);
 
@@ -41,22 +42,16 @@ declare @crlf nvarchar(10) = char(13)+char(10);
 set quoted_identifier off;
 set @sql = "
 ;with xmlnamespaces ('http://schemas.microsoft.com/sqlserver/2004/07/showplan' as qp),
-t_queries as (
-	select	* 
+t_WhoIsActive as (
+	select * 
 			,[sql_handle] = additional_info.value('(/additional_info/sql_handle)[1]','varchar(500)')
-			--,[plan_handle] = additional_info.value('(/additional_info/plan_handle)[1]','varchar(500)')
 			,[command_type] = additional_info.value('(/additional_info/command_type)[1]','varchar(50)')
-			,[query_hash] = query_plan.value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@QueryHash','varchar(100)')
-			,[query_plan_hash] = query_plan.value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@QueryPlanHash','varchar(100)')
-			,[NonParallelPlanReason] = query_plan.value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple/*:QueryPlan)[1]/@NonParallelPlanReason','varchar(200)')
-			--,[optimization_level] = query_plan.value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@StatementOptmLevel', 'sysname')
-			--,[early_abart_reason] = query_plan.value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@StatementOptmEarlyAbortReason', 'sysname')
-			--,[CardinalityEstimationModelVersion] = query_plan.value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@CardinalityEstimationModelVersion','int')
 			,[used_memory_mb] = used_memory*8.0/1024
 			,[granted_memory_mb] = granted_memory*8.0/1024
 			,[duration_minutes] = DATEDIFF_BIG(MILLISECOND,start_time,collection_time)/1000/60
 			,[duration_ms] = DATEDIFF_BIG(MILLISECOND,start_time,collection_time)
-	from dbo.WhoIsActive w	
+			--"+(case when @handle_xml_error = 1 then '' else '--' end)+",[Microsoft SQL Server 2005 XML Showplan] = w.query_plan
+	from dbo.WhoIsActive w
 	where w.collection_time between @collection_time_start and @collection_time_end
 	and additional_info.value('(/additional_info/command_type)[1]','varchar(50)') not in ('ALTER INDEX','UPDATE STATISTICS','DBCC','BACKUP LOG','BACKUP DATABASE')
 	"+(case when @database_name is null then "--" else '' end)+"and w.database_name = @database_name
@@ -64,27 +59,47 @@ t_queries as (
 	"+(case when @login_name is null then "--" else '' end)+"and w.login_name = @login_name
 	"+(case when @host_name is null then "--" else '' end)+"and w.host_name = @host_name
 	"+(case when @session_id is null then "--" else '' end)+"and w.session_id = @session_id
-	
-	"+(case when @table_name is null then "" else '--' end)+"/*
-	and (	w.sql_text like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
-			or w.sql_command like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
-			or convert(nvarchar(max),w.query_plan) like ('%Table=""!['+@table_name+'!]""%') escape '!'
-			"+(case when @database_name is not null and @table_name is not null and @index_name is not null then '' else '--' end)+"or convert(varchar(max),w.query_plan) like ('%Database=""!['+@database_name+'!]"" Schema=""![dbo!]"" Table=""!['+@table_name+'!]"" Index=""!['+@index_name+'!]""%""') escape '!'
-		)
-	"+(case when @table_name is null then "" else '--' end)+"*/
-
 	"+(case when @query_text is null then "" else '--' end)+"/*
 	and (	w.sql_text like ('%'+@query_text+'%') escape '!'
 			or w.sql_command like ('%'+@query_text+'%') escape '!'
 		)
 	"+(case when @query_text is null then "" else '--' end)+"*/
-
-	"+(case when @duration_threshold_minutes is null then "--" else '' end)+"and w.start_time <= dateadd(minute,-@duration_threshold_minutes,w.collection_time)	
+	"+(case when @duration_threshold_minutes is null then "--" else '' end)+"and w.start_time <= dateadd(minute,-@duration_threshold_minutes,w.collection_time)	 
+)
+,t_queries_xml as (
+	select	* 
+			,[query_hash] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@QueryHash','varchar(100)')
+			,[query_plan_hash] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@QueryPlanHash','varchar(100)')
+			,[NonParallelPlanReason] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple/*:QueryPlan)[1]/@NonParallelPlanReason','varchar(200)')
+	from t_WhoIsActive w	
+	where 1=1	
+	"+(case when @table_name is null then "" else '--' end)+"/*
+	and (	w.sql_text like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
+			or w.sql_command like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
+			or convert(nvarchar(max),w.[query_plan]) like ('%Table=""!['+@table_name+'!]""%') escape '!'
+			"+(case when @database_name is not null and @table_name is not null and @index_name is not null then '' else '--' end)+"or convert(nvarchar(max),w.[query_plan]) like ('%Database=""!['+@database_name+'!]"" Schema=""![dbo!]"" Table=""!['+@table_name+'!]"" Index=""!['+@index_name+'!]""%""') escape '!'
+		)
+	"+(case when @table_name is null then "" else '--' end)+"*/
+)
+,t_queries_nonxml as (
+	select	* 
+			,[query_hash] = null
+			,[query_plan_hash] = null
+			,[NonParallelPlanReason] = null
+	from t_WhoIsActive w	
+	where 1=1	
+	"+(case when @table_name is null then "" else '--' end)+"/*
+	and (	w.sql_text like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
+			or w.sql_command like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
+			or convert(nvarchar(max),w.[query_plan]) like ('%Table=""!['+@table_name+'!]""%') escape '!'
+			"+(case when @database_name is not null and @table_name is not null and @index_name is not null then '' else '--' end)+"or convert(nvarchar(max),w.[query_plan]) like ('%Database=""!['+@database_name+'!]"" Schema=""![dbo!]"" Table=""!['+@table_name+'!]"" Index=""!['+@index_name+'!]""%""') escape '!'
+		)
+	"+(case when @table_name is null then "" else '--' end)+"*/
 )
 ,t_capture_interval as (
 	select [capture_interval_sec] = DATEDIFF(SECOND,snap1.collection_time_min, collection_time_snap2) 
-	from (select min(collection_time) as collection_time_min from t_queries) snap1
-	outer apply (select min(s2.collection_time) as collection_time_snap2 from t_queries s2 where s2.collection_time > snap1.collection_time_min) snap2
+	from (select min(collection_time) as collection_time_min from "+(case when @handle_xml_error = 1 then 't_queries_nonxml' else 't_queries_xml' end)+") snap1
+	outer apply (select min(s2.collection_time) as collection_time_snap2 from "+(case when @handle_xml_error = 1 then 't_queries_nonxml' else 't_queries_xml' end)+" s2 where s2.collection_time > snap1.collection_time_min) snap2
 )
 ,top_queries as (
 	select	*,
@@ -101,18 +116,19 @@ t_queries as (
 											when [sql_handle] is not null then [sql_handle]
 											else isnull(sql_text,[sql_command]) 
 											end),20) order by [duration_minutes] desc)
-	from t_queries w
+	from "+(case when @handle_xml_error = 1 then 't_queries_nonxml' else 't_queries_xml' end)+" w
 	where 1=1
 	"+(case when @memory_threshold_mb is null then '--' else '' end)+"and [used_memory_mb] > @memory_threshold_mb
 )
-select top 1000 [collection_time], --[dd hh:mm:ss.mss], 
+select top 200 [collection_time], --[dd hh:mm:ss.mss], 
 		[dd hh:mm:ss.mss] = right('0000'+convert(varchar, duration_ms/86400000),3)+ ' '+convert(varchar,dateadd(MILLISECOND,duration_ms,'1900-01-01 00:00:00'),114),
 		[query_identifier],[capture_interval_sec],
 		--[qry_time_min(~)] = ceiling([query_hash_count]*[capture_interval_sec]/60), 
 		[query_hash_count],
 		[session_id], [blocking_session_id], [command_type], [sql_text], [query_hash], 
 		[sql_handle], [CPU], [used_memory_mb], [open_tran_count], 
-		[status], [wait_info], [sql_command], [blocked_session_count], [reads], [writes], [tempdb_allocations], [tasks], [query_plan], 
+		[status], [wait_info], [sql_command], [blocked_session_count], [reads], [writes], [tempdb_allocations], [tasks], 
+		[query_plan], 
 		[query_plan_hash], [NonParallelPlanReason], [host_name], [additional_info], [program_name], [login_name], [database_name], [duration_minutes],
 		[batch_start_time] = [start_time]
 from top_queries,t_capture_interval
@@ -128,6 +144,7 @@ exec sp_ExecuteSql @sql, @params,
 						@collection_time_start, @collection_time_end, @table_name, @query_text, @database_name, @program_name,
 						@login_name, @host_name, @index_name, @duration_threshold_minutes, @memory_threshold_mb,
 						@session_id;
+
 /*
 select top 10000 sql_text2 = convert(xml,(select sql_text for xml path(''))),*
 from dbo.xevent_metrics rc
