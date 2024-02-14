@@ -1,19 +1,20 @@
 USE [DBA];
 -- Find long running statements
-declare @collection_time_start smalldatetime = '2023-12-12 08:15';
-declare @collection_time_end smalldatetime = '2023-12-12 09:10';
-declare @table_name nvarchar(225) --= 'Posts';
-declare @query_text nvarchar(500) = 'usp_GetUserPosts';
-declare @no_of_days tinyint --= 1;
+declare @collection_time_start smalldatetime --= dateadd(day,-5,getdate()) --'2024-01-25 00:00';
+declare @collection_time_end smalldatetime --= getdate() --'2024-02-05 00:00';
+declare @no_of_days tinyint = 7;
 declare @database_name nvarchar(255) = 'StackOverflow';
-declare @program_name nvarchar(255) = 'SQLQueryStress';
+declare @table_name nvarchar(225) = 'Posts';
+declare @force_plan_search bit = 1;
+declare @index_name nvarchar(255) = 'CreatedDate';
+declare @query_text nvarchar(500) = 'Posts';
+declare @program_name nvarchar(255) --= 'SQLQueryStress';
 declare @login_name nvarchar(255) --= 'SQLQueryStress';
 declare @session_id int = null;
 declare @host_name nvarchar(255) --= '';
-declare @index_name nvarchar(255);
-declare @duration_threshold_minutes smallint --= 1;
+declare @duration_threshold_minutes smallint = 1;
 declare @memory_threshold_mb smallint --= 1;
-declare @handle_xml_error bit = 1;
+declare @handle_xml_error bit = 0;
 declare @sql nvarchar(max);
 declare @params nvarchar(max);
 
@@ -54,52 +55,51 @@ t_WhoIsActive as (
 	from dbo.WhoIsActive w
 	where w.collection_time between @collection_time_start and @collection_time_end
 	and additional_info.value('(/additional_info/command_type)[1]','varchar(50)') not in ('ALTER INDEX','UPDATE STATISTICS','DBCC','BACKUP LOG','BACKUP DATABASE')
-	"+(case when @database_name is null then "--" else '' end)+"and w.database_name = @database_name
 	"+(case when @program_name is null then "--" else '' end)+"and w.program_name = @program_name
 	"+(case when @login_name is null then "--" else '' end)+"and w.login_name = @login_name
 	"+(case when @host_name is null then "--" else '' end)+"and w.host_name = @host_name
 	"+(case when @session_id is null then "--" else '' end)+"and w.session_id = @session_id
+	"+(case when @duration_threshold_minutes is null then "--" else '' end)+"and w.start_time <= dateadd(minute,-@duration_threshold_minutes,w.collection_time)
+	"+(case when @force_plan_search = 1 then "" else "--" end)+"and convert(nvarchar(max),w.[query_plan]) like ('% Table=""!['+@table_name+'!]""%') escape '!'
+	"+(case when @index_name is null then "--" else '' end)+" and convert(nvarchar(max),w.[query_plan]) like ('% Index=""!['+@index_name+'!]""%') escape '!'
+
 	"+(case when @query_text is null then "" else '--' end)+"/*
 	and (	w.sql_text like ('%'+@query_text+'%') escape '!'
 			or w.sql_command like ('%'+@query_text+'%') escape '!'
 		)
-	"+(case when @query_text is null then "" else '--' end)+"*/
-	"+(case when @duration_threshold_minutes is null then "--" else '' end)+"and w.start_time <= dateadd(minute,-@duration_threshold_minutes,w.collection_time)	 
-)
-,t_queries_xml as (
-	select	* 
-			,[query_hash] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@QueryHash','varchar(100)')
-			,[query_plan_hash] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@QueryPlanHash','varchar(100)')
-			,[NonParallelPlanReason] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple/*:QueryPlan)[1]/@NonParallelPlanReason','varchar(200)')
-	from t_WhoIsActive w	
-	where 1=1	
-	"+(case when @table_name is null then "" else '--' end)+"/*
-	and (	w.sql_text like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
-			or w.sql_command like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
-			or convert(nvarchar(max),w.[query_plan]) like ('%Table=""!['+@table_name+'!]""%') escape '!'
-			"+(case when @database_name is not null and @table_name is not null and @index_name is not null then '' else '--' end)+"or convert(nvarchar(max),w.[query_plan]) like ('%Database=""!['+@database_name+'!]"" Schema=""![dbo!]"" Table=""!['+@table_name+'!]"" Index=""!['+@index_name+'!]""%""') escape '!'
+	"+(case when @query_text is null then "" else '--' end)+"*/	
+
+	"+(case when @database_name is null then "" else '--' end)+"/*
+	and	(	w.database_name = @database_name
+			or convert(nvarchar(max),w.[query_plan]) like ('%Database=""!['+@database_name+'!]""%') escape '!'
 		)
-	"+(case when @table_name is null then "" else '--' end)+"*/
+	"+(case when @database_name is null then "" else '--' end)+"*/	
+
+	"+(case when @table_name is null then "" else '--' end)+"/*
+	and	(		w.sql_text like ('%'+@table_name+'%') escape '!'
+			or	w.sql_command like ('%'+@table_name+'%') escape '!'
+			or	convert(nvarchar(max),w.[query_plan]) like ('% Table=""!['+@table_name+'!]""%') escape '!'
+		)
+	"+(case when @table_name is null then "" else '--' end)+"*/	
 )
-,t_queries_nonxml as (
+,t_queries as (
 	select	* 
+			"+(case when @handle_xml_error = 1 then "--" else '' end)+",[query_hash] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@QueryHash','varchar(100)')
+			"+(case when @handle_xml_error = 1 then "--" else '' end)+",[query_plan_hash] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple)[1]/@QueryPlanHash','varchar(100)')
+			"+(case when @handle_xml_error = 1 then "--" else '' end)+",[NonParallelPlanReason] = [query_plan].value('(/*:ShowPlanXML/*:BatchSequence/*:Batch/*:Statements/*:StmtSimple/*:QueryPlan)[1]/@NonParallelPlanReason','varchar(200)')
+
+			"+(case when @handle_xml_error = 1 then "--" else '' end)+"/*
 			,[query_hash] = null
 			,[query_plan_hash] = null
 			,[NonParallelPlanReason] = null
+			"+(case when @handle_xml_error = 1 then "--" else '' end)+"*/
 	from t_WhoIsActive w	
-	where 1=1	
-	"+(case when @table_name is null then "" else '--' end)+"/*
-	and (	w.sql_text like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
-			or w.sql_command like ('%[[. ]'+@table_name+'[!] ]%') escape '!'
-			or convert(nvarchar(max),w.[query_plan]) like ('%Table=""!['+@table_name+'!]""%') escape '!'
-			"+(case when @database_name is not null and @table_name is not null and @index_name is not null then '' else '--' end)+"or convert(nvarchar(max),w.[query_plan]) like ('%Database=""!['+@database_name+'!]"" Schema=""![dbo!]"" Table=""!['+@table_name+'!]"" Index=""!['+@index_name+'!]""%""') escape '!'
-		)
-	"+(case when @table_name is null then "" else '--' end)+"*/
+	where 1=1
 )
 ,t_capture_interval as (
 	select [capture_interval_sec] = DATEDIFF(SECOND,snap1.collection_time_min, collection_time_snap2) 
-	from (select min(collection_time) as collection_time_min from "+(case when @handle_xml_error = 1 then 't_queries_nonxml' else 't_queries_xml' end)+") snap1
-	outer apply (select min(s2.collection_time) as collection_time_snap2 from "+(case when @handle_xml_error = 1 then 't_queries_nonxml' else 't_queries_xml' end)+" s2 where s2.collection_time > snap1.collection_time_min) snap2
+	from (select min(collection_time) as collection_time_min from t_queries) snap1
+	outer apply (select min(s2.collection_time) as collection_time_snap2 from t_queries s2 where s2.collection_time > snap1.collection_time_min) snap2
 )
 ,top_queries as (
 	select	*,
@@ -116,7 +116,7 @@ t_WhoIsActive as (
 											when [sql_handle] is not null then [sql_handle]
 											else isnull(sql_text,[sql_command]) 
 											end),20) order by [duration_minutes] desc)
-	from "+(case when @handle_xml_error = 1 then 't_queries_nonxml' else 't_queries_xml' end)+" w
+	from t_queries w
 	where 1=1
 	"+(case when @memory_threshold_mb is null then '--' else '' end)+"and [used_memory_mb] > @memory_threshold_mb
 )
