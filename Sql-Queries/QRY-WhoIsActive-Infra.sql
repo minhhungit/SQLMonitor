@@ -103,10 +103,16 @@ t_WhoIsActive as (
 )
 ,top_queries as (
 	select	*,
-			[query_identifier] = left((case when [query_hash] is not null then [query_hash] 
+			[query_identity] = left((case when [query_hash] is not null then [query_hash] 
 											when [sql_handle] is not null then [sql_handle]
 											else isnull(sql_text,[sql_command]) 
 											end),20)
+			,[query_identity_type] = (case when [query_hash] is not null then 'query_hash'
+											when [sql_handle] is not null then 'sql_handle'
+											when sql_text is not null then 'sql_text'
+											when sql_command is not null then 'sql_command'
+											else 'none' 
+											end)
 			,[query_hash_count] = COUNT(session_id)over(partition by (case when [query_hash] is not null then [query_hash] 
 																		  when [sql_handle] is not null then [sql_handle]
 																		  else isnull(sql_text,[sql_command])
@@ -120,17 +126,20 @@ t_WhoIsActive as (
 	where 1=1
 	"+(case when @memory_threshold_mb is null then '--' else '' end)+"and [used_memory_mb] > @memory_threshold_mb
 )
-select top 200 [collection_time], --[dd hh:mm:ss.mss], 
-		[dd hh:mm:ss.mss] = right('0000'+convert(varchar, duration_ms/86400000),3)+ ' '+convert(varchar,dateadd(MILLISECOND,duration_ms,'1900-01-01 00:00:00'),114),
-		[query_identifier],[capture_interval_sec],
-		--[qry_time_min(~)] = ceiling([query_hash_count]*[capture_interval_sec]/60), 
-		[query_hash_count],
-		[session_id], [blocking_session_id], [command_type], [sql_text], [query_hash], 
-		[sql_handle], [CPU], [used_memory_mb], [open_tran_count], 
-		[status], [wait_info], [sql_command], [blocked_session_count], [reads], [writes], [tempdb_allocations], [tasks], 
-		[query_plan], 
-		[query_plan_hash], [NonParallelPlanReason], [host_name], [additional_info], [program_name], [login_name], [database_name], [duration_minutes],
-		[batch_start_time] = [start_time]
+select top 200 
+		[dd hh:mm:ss.mss] = right('0000'+convert(varchar, duration_ms/86400000),3)+ ' '+
+									convert(varchar,dateadd(MILLISECOND,duration_ms,'1900-01-01 00:00:00'),114),
+		[query_hash_count], [identifier] = [query_identity_type]+' ('+[query_identity]+')', 	
+		[command_type], [sql_command], [sql_text], [query_plan], 
+		[session_details] = 'login=>'+login_name+' || '+'program=>'+program_name+' || '+'database=>'+[database_name]+' || '+'host_name=>'+host_name,
+		[reads], [CPU], [used_memory_mb], [open_tran_count], 
+		[status], [wait_info],  [blocked_session_count],  [writes], [tempdb_allocations], [tasks], 		 
+		[query_plan_hash], [NonParallelPlanReason], [host_name], [additional_info], [program_name], [login_name], 
+		[database_name], [duration_minutes],
+		[session_id], [blocking_session_id], [batch_start_time] = [start_time], [capture_interval_sec],
+		[query_hash], 
+		[sql_handle],
+		[collection_time]
 from top_queries,t_capture_interval
 where [query_identifier_rowid] = 1
 order by [query_hash_count] desc
