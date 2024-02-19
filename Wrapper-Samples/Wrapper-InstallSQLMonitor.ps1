@@ -98,7 +98,24 @@ Get-ChildItem "$($env:USERPROFILE)\Downloads\SQLMonitor-dev\SQLMonitor" | Copy-I
 
 
 # **__ dbatools & dbatools.library __**
-Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
+if($true)
+{
+    Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
+
+    $downloadsPath = "$($env:USERPROFILE)\Downloads\"
+    $modulePath = ($env:PSModulePath -split ';' | Where-Object {$_ -notlike "*$($env:USERNAME)*"})[0]
+
+    # Copy [dbatools] module
+    [string]$dbatoolsSourceDirectory = "$($downloadsPath)dbatools\"
+    [string]$dbatoolsDestinationDirectory = "$($modulePath)\dbatools\"
+    Copy-Item -Force -Recurse -Verbose $dbatoolsSourceDirectory -Destination $dbatoolsDestinationDirectory
+
+    # Copy [dbatools.library] module
+    [string]$dbatoolsLibrarySourceDirectory = "$($downloadsPath)dbatools.library\"
+    [string]$dbatoolsLibraryDestinationDirectory = "$($modulePath)\dbatools.library\"
+    Copy-Item -Force -Recurse -Verbose $dbatoolsLibrarySourceDirectory -Destination $dbatoolsLibraryDestinationDirectory
+}
+
 
 # **__ PoshRSJob on Inventory __**
 Install-Module PoshRSJob -Scope AllUsers -Verbose
@@ -113,7 +130,8 @@ Invoke-WebRequest https://github.com/olahallengren/sql-server-maintenance-soluti
             -OutFile "$($env:USERPROFILE)\Downloads\sql-server-maintenance-solution-master.zip"
 
 # **__ First Responder Kit from latest release __**
-if ($true) {
+if ($true) 
+{
     $repo = "BrentOzarULTD/SQL-Server-First-Responder-Kit"
     $tags = "https://api.github.com/repos/$repo/tags"
 
@@ -128,7 +146,8 @@ if ($true) {
 }
 
 # **__ PoshRSJob - Download from Github __**
-if ($true) {
+if ($true) 
+{
     $repo = "proxb/PoshRSJob"
     $releases = "https://api.github.com/repos/$repo/releases"
 
