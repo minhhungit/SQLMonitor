@@ -27,7 +27,7 @@ select [result] = 'High-Priority', finding,
 								then index_definition 
 								else index_size_summary
 								end, 
-		index_usage_summary, more_info, create_tsql, sample_query_plan, total_forwarded_fetch_count, url
+		index_usage_summary, create_tsql, sample_query_plan, total_forwarded_fetch_count, url, more_info
 into #BlitzIndex_Mode0
 from dbo.BlitzIndex_Mode0 bi
 where 1=1
@@ -75,14 +75,27 @@ print '/* =================== HIGH VALUE MISSING INDEX: END ====================
 
 select [result] = 'Index-Usage', [table_name] = quotename(bi.database_name)+'.'+quotename(bi.schema_name)+'.'+quotename(bi.table_name),
 		bi.index_name, bi.index_definition, bi.index_size_summary, bi.data_compression_desc, 
-		bi.index_usage_summary, bi.index_op_stats, bi.Create_Tsql, bi.Drop_Tsql, 
+		bi.index_usage_summary, bi.index_op_stats, 
+		[Create_Tsql] = case when bi.Create_Tsql like '--%' then right(bi.Create_Tsql, len(bi.Create_Tsql)-2) else bi.Create_Tsql end, 
+		[Drop_Tsql] = (case when bi.Drop_Tsql like '--%' then right(bi.Drop_Tsql,len(bi.Drop_Tsql)-2) else bi.Drop_Tsql end) + 
+							' -- '+bi.index_usage_summary, 
 		bi.db_schema_object_indexid, bi.total_rows, bi.more_info
 from dbo.BlitzIndex bi
 where 1=1
 and bi.run_datetime = @run_datetime_mode2
-"+(case when @more_info_filter is null then '-- ' else '' end)+"and bi.more_info = @more_info_filter;
+"+(case when @more_info_filter is null then '-- ' else '' end)+"and bi.more_info = @more_info_filter
+order by (case when bi.index_id <= 1 then -1 else total_reads end) asc, index_usage_summary;
 
-select [result] = 'All-Priority', finding, details, index_usage_summary, index_size_summary, more_info, create_tsql, sample_query_plan, total_forwarded_fetch_count, url
+select [result] = 'All-Priority', finding, 
+		details = case when finding = 'Indexaphobia: High Value Missing Index' 
+						then RIGHT(details, LEN(details)-CHARINDEX(' Est. benefit per day:',details))
+						else details
+						end, 
+		index_size_summary = case when finding = 'Indexaphobia: High Value Missing Index' 
+								then index_definition 
+								else index_size_summary
+								end, 
+		index_usage_summary, create_tsql, sample_query_plan, total_forwarded_fetch_count, url, more_info
 from dbo.BlitzIndex_Mode4 bi
 where 1=1
 --and bi.priority = -1 -- Use it to find out stats for max UpTime Days
@@ -135,7 +148,7 @@ begin
 	"
 	set quoted_identifier on;
 	--print @sql
-	exec sp_ExecuteSql @sql, N'@table_name varchar(255), @database_name varchar(255)', @table_name, @database_name;
+	--exec sp_ExecuteSql @sql, N'@table_name varchar(255), @database_name varchar(255)', @table_name, @database_name;
 end
 
 exec (@more_info_filter)
