@@ -204,11 +204,12 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '2024-02-11'
-$sqlmonitorVersionDate = '2024-Feb-11'
+$sqlmonitorVersion = '2024-02-20'
+$sqlmonitorVersionDate = '2024-Feb-20'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v2024-Mar-31
+        -> Issue#29 - Add additional verification step for Instance-Availability apart from job [(dba) Check-InstanceAvailability]
         -> Issue#21 - Add Parameters to Skip Particular Wait Type in usp_waits_per_core_per_minute
         -> Issue#19 - Control Immediate Removal of Perfmon File in Job [(dba) Collect-PerfmonData]
         -> Issue#22 - Added Trust for Certificate & Encryption for SQL Connections
@@ -249,6 +250,7 @@ $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 [String]$XEventSessionFileName = "SCH-Create-XEvents.sql"
 [String]$WhatIsRunningFileName = "SCH-sp_WhatIsRunning.sql"
 [String]$UspGetAllServerInfoFileName = "SCH-usp_GetAllServerInfo.sql"
+[String]$UspCheckInstanceAvailabilityFileName = "SCH-usp_check_instance_availability.sql"
 [String]$UspGetAllServerCollectedDataFileName = "SCH-usp_GetAllServerCollectedData.sql"
 [String]$UspWrapperGetAllServerInfoFileName = "SCH-usp_wrapper_GetAllServerInfo.sql"
 [String]$UspWrapperGetAllServerCollectedDataFileName = "SCH-usp_wrapper_GetAllServerCollectedData.sql"
@@ -472,6 +474,7 @@ $InventorySpecificObjectsFilePath = "$ddlPath\$InventorySpecificObjectsFileName"
 $XEventSessionFilePath = "$ddlPath\$XEventSessionFileName"
 $WhatIsRunningFilePath = "$ddlPath\$WhatIsRunningFileName"
 $GetAllServerInfoFilePath = "$ddlPath\$UspGetAllServerInfoFileName"
+$UspCheckInstanceAvailabilityFilePath = "$ddlPath\$UspCheckInstanceAvailabilityFileName"
 $GetAllServerCollectedDataFilePath = "$ddlPath\$UspGetAllServerCollectedDataFileName"
 $UspWrapperGetAllServerInfoFilePath = "$ddlPath\$UspWrapperGetAllServerInfoFileName"
 $UspWrapperGetAllServerCollectedDataFilePath = "$ddlPath\$UspWrapperGetAllServerCollectedDataFileName"
@@ -1894,24 +1897,28 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
     "`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "*****Working on step '$stepName'.."
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$GetAllServerInfoFilePath = '$GetAllServerInfoFilePath'"
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerInfo procedure in [$DbaDatabase] database.."
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerInfo procedure in [$InventoryServer].[$DbaDatabase] database.."
     $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $GetAllServerInfoFilePath
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspWrapperGetAllServerInfoFilePath = '$UspWrapperGetAllServerInfoFilePath'"
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_wrapper_GetAllServerInfo procedure in [$DbaDatabase] database.."
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_wrapper_GetAllServerInfo procedure in [$InventoryServer].[$DbaDatabase] database.."
     $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $UspWrapperGetAllServerInfoFilePath
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$GetAllServerCollectedDataFilePath = '$GetAllServerCollectedDataFilePath'"
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerCollectedData procedure in [$DbaDatabase] database.."
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerCollectedData procedure in [$InventoryServer].[$DbaDatabase] database.."
     $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $GetAllServerCollectedDataFilePath
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspWrapperGetAllServerCollectedDataFilePath = '$UspWrapperGetAllServerCollectedDataFilePath'"
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_wrapper_GetAllServerCollectedData procedure in [$DbaDatabase] database.."
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_wrapper_GetAllServerCollectedData procedure in [$InventoryServer].[$DbaDatabase] database.."
     $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $UspWrapperGetAllServerCollectedDataFilePath
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspGetAllServerDashboardMailFilePath = '$UspGetAllServerDashboardMailFilePath'"
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerDashboardMail procedure in [$DbaDatabase] database.."
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_GetAllServerDashboardMail procedure in [$InventoryServer].[$DbaDatabase] database.."
     $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $UspGetAllServerDashboardMailFilePath
+
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspCheckInstanceAvailabilityFilePath = '$UspCheckInstanceAvailabilityFilePath'"
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating usp_check_instance_availability procedure in [$InventoryServer].[$DbaDatabase] database.."
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -File $GetAllServerInfoFilePath
 }
 
 
