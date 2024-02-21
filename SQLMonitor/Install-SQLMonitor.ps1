@@ -193,6 +193,9 @@ Param (
     [int]$JobsExecutionWaitTimeoutMinutes = 5,
 
     [Parameter(Mandatory=$false)]
+    [bool]$MemoryOptimizedObjectsUsage = $true,
+
+    [Parameter(Mandatory=$false)]
     [bool]$DryRun = $false,
 
     [Parameter(Mandatory=$false)]
@@ -204,11 +207,12 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '2024-02-20'
-$sqlmonitorVersionDate = '2024-Feb-20'
+$sqlmonitorVersion = '2024-02-21'
+$sqlmonitorVersionDate = '2024-Feb-21'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v2024-Mar-31
+        -> Issue#30 - Add flag for choice of MemoryOptimized Objects
         -> Issue#29 - Add additional verification step for Instance-Availability apart from job [(dba) Check-InstanceAvailability]
         -> Issue#21 - Add Parameters to Skip Particular Wait Type in usp_waits_per_core_per_minute
         -> Issue#19 - Control Immediate Removal of Perfmon File in Job [(dba) Collect-PerfmonData]
@@ -1561,6 +1565,13 @@ if($stepName -in $Steps2Execute)
         $AllDatabaseObjectsFileContent = $AllDatabaseObjectsFileContent.Replace(' on ps_dba', ' --on ps_dba')
     }
 
+    # Modify AllDatabaseObjectsFileContent if MemoryOptimized Objects are NOT to be used
+    if($MemoryOptimizedObjectsUsage -eq $false) {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$MemoryOptimizedObjectsUsage is false. So use disk-based objects."
+
+        $AllDatabaseObjectsFileContent = $AllDatabaseObjectsFileContent.Replace('@MemoryOptimizedObjectUsage bit = 1', '@MemoryOptimizedObjectUsage bit = 0')
+    }
+
     $AllDatabaseObjectsFileContent | Out-File -FilePath $tempAllDatabaseObjectsFilePath
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Runtime All Server Objects file code is generated."
 
@@ -1588,6 +1599,13 @@ if($stepName -in $Steps2Execute)
     {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Update objects on Inventory Server.."
         $InventorySpecificObjectsFileText = [System.IO.File]::ReadAllText($InventorySpecificObjectsFilePath)
+
+        # Modify AllDatabaseObjectsFileContent if MemoryOptimized Objects are NOT to be used
+        if($MemoryOptimizedObjectsUsage -eq $false) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$MemoryOptimizedObjectsUsage is false. So use disk-based objects for Inventory objects."
+            $InventorySpecificObjectsFileText = $InventorySpecificObjectsFileText.Replace('@MemoryOptimizedObjectUsage bit = 1', '@MemoryOptimizedObjectUsage bit = 0')
+        }
+
         $dbaDatabaseParentPath = Split-Path $dbaDatabasePath -Parent
         $memoryOptimizedFilePath = if($dbaDatabaseParentPath -notmatch '\\$') { "$dbaDatabaseParentPath\MemoryOptimized.ndf" } else { "$($dabaDatabaseParentPath)MemoryOptimized.ndf" }
         #$InventorySpecificObjectsFileText = $InventorySpecificObjectsFileText.Replace('E:\Data\MemoryOptimized.ndf', "$(Join-Path $dbaDatabaseParentPath 'MemoryOptimized.ndf')")

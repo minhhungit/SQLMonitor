@@ -1,7 +1,7 @@
 /*
-	Version -> v1.6.0
+	Version -> 2024-Feb-21
 	-----------------
-
+	2024-02-21 - Enhancement#30 - Add flag for choice of MemoryOptimized Tables 
 	2023-10-16 - Enhancement#5 - Dashboard for AlwaysOn Latency
 	2023-07-14 - Enhancement#268 - Add tables sql_agent_job_stats & memory_clerks in Collection Latency Dashboard
 	2023-06-16 - Enhancement#262 - Add is_enabled on Inventory.DBA.dbo.instance_details
@@ -23,15 +23,19 @@ IF DB_NAME() = 'master'
 	raiserror ('Kindly execute all queries in [DBA] database', 20, -1) with log;
 go
 
-ALTER DATABASE CURRENT SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON;
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+IF @MemoryOptimizedObjectUsage = 1
+	EXEC ('ALTER DATABASE CURRENT SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON');
 go
 
-if not exists (select * from sys.filegroups where name = 'MemoryOptimized')
-	ALTER DATABASE CURRENT ADD FILEGROUP MemoryOptimized CONTAINS MEMORY_OPTIMIZED_DATA;
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+if not exists (select * from sys.filegroups where name = 'MemoryOptimized') and (@MemoryOptimizedObjectUsage = 1)
+	EXEC ('ALTER DATABASE CURRENT ADD FILEGROUP MemoryOptimized CONTAINS MEMORY_OPTIMIZED_DATA');
 go
 
-if not exists (select * from sys.database_files where name = 'MemoryOptimized')
-	ALTER DATABASE CURRENT ADD FILE (name='MemoryOptimized', filename='E:\Data\MemoryOptimized.ndf') TO FILEGROUP MemoryOptimized
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+if not exists (select * from sys.database_files where name = 'MemoryOptimized') and (@MemoryOptimizedObjectUsage = 1)
+	EXEC ('ALTER DATABASE CURRENT ADD FILE (name=''MemoryOptimized'', filename=''E:\Data\MemoryOptimized.ndf'') TO FILEGROUP MemoryOptimized');
 go
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[all_server_stable_info]') AND type in (N'U'))
@@ -106,7 +110,10 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[servi
 	DROP TABLE [dbo].[services_all_servers__staging]
 GO
 
+DECLARE @_sql NVARCHAR(MAX);
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
 
+SET @_sql = '
 CREATE TABLE [dbo].[all_server_stable_info]
 (
 	[srv_name] [varchar](125) NOT NULL,
@@ -128,12 +135,20 @@ CREATE TABLE [dbo].[all_server_stable_info]
 	[scheduler_count] [smallint] NULL,
 	[major_version_number] [smallint] NULL,
 	[minor_version_number] [smallint] NULL,
-	[collection_time] [datetime2] NULL default sysdatetime()
-	CONSTRAINT pk_all_server_stable_info primary key nonclustered ([srv_name])
+	[collection_time] [datetime2] NULL default sysdatetime(),
+
+	'+(case when @MemoryOptimizedObjectUsage = 1 then '' else '--' end)+'CONSTRAINT pk_all_server_stable_info primary key nonclustered ([srv_name])
+	'+(case when @MemoryOptimizedObjectUsage = 0 then '' else '--' end)+'CONSTRAINT pk_all_server_stable_info primary key clustered ([srv_name])
 )
-WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+'+(case when @MemoryOptimizedObjectUsage = 1 then '' else '--' end)+'WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);';
+
+EXEC (@_sql);
 GO
 
+DECLARE @_sql NVARCHAR(MAX);
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+
+SET @_sql = '
 CREATE TABLE [dbo].[all_server_volatile_info]
 (
 	[srv_name] [varchar](125) NOT NULL,
@@ -150,10 +165,14 @@ CREATE TABLE [dbo].[all_server_volatile_info]
 	[connection_count] [int] NULL DEFAULT 0,
 	[active_requests_count] [int] NULL DEFAULT 0,
 	[waits_per_core_per_minute] [decimal](20, 2) NULL DEFAULT 0,
-	[collection_time] [datetime2] NULL default sysdatetime()
-	CONSTRAINT pk_all_server_volatile_info primary key nonclustered ([srv_name])
+	[collection_time] [datetime2] NULL default sysdatetime(),
+
+	'+(case when @MemoryOptimizedObjectUsage = 1 then '' else '--' end)+'CONSTRAINT pk_all_server_volatile_info primary key nonclustered ([srv_name])
+	'+(case when @MemoryOptimizedObjectUsage = 0 then '' else '--' end)+'CONSTRAINT pk_all_server_volatile_info primary key clustered ([srv_name])
 )
-WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+'+(case when @MemoryOptimizedObjectUsage = 1 then '' else '--' end)+'WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);';
+
+EXEC (@_sql);
 GO
 
 CREATE TABLE [dbo].[all_server_collection_latency_info]
