@@ -83,10 +83,14 @@ close cur_index_dbs;
 deallocate cur_index_dbs;
 
 -- Get All Index Warnings with Filtered warnings for Heaps
-select bi.more_info, sum(bi.priority) as priority_total, min(bi.priority) as priority_min,
-		[print-msg] = N'-- '+right('000'+convert(varchar,ROW_NUMBER()over(order by min(bi.priority), sum(bi.priority) desc, bi.more_info)),3)+') '
-						+ ' Priority_total='+convert(varchar,sum(bi.priority))+' , Priority_min='+convert(varchar,min(bi.priority))
-						+ nchar(13) + bi.more_info + nchar(13)
+if object_id('tempdb..#BlitzIndex_Mode0_FinalPrint') is not null
+	drop table #BlitzIndex_Mode0_FinalPrint;
+select	[sno] = right('000'+convert(varchar,ROW_NUMBER()over(order by min(bi.priority), sum(bi.priority) desc, bi.more_info)),3), 
+		bi.more_info, sum(bi.priority) as priority_total, min(bi.priority) as priority_min
+		--[print-msg] = N'-- '+right('000'+convert(varchar,ROW_NUMBER()over(order by min(bi.priority), sum(bi.priority) desc, bi.more_info)),3)+') '
+		--				+ ' Priority_total='+convert(varchar,sum(bi.priority))+' , Priority_min='+convert(varchar,min(bi.priority))
+		--				+ nchar(13) + bi.more_info + nchar(13)
+into #BlitzIndex_Mode0_FinalPrint
 from dbo.BlitzIndex_Mode0 bi
 where 1=1
 and bi.priority <> -1 -- Use it to find out stats for max UpTime Days
@@ -102,13 +106,186 @@ and (	bi.finding not in ('Self Loathing Indexes: Small Active heap','Self Loathi
 		)
 	)
 --and bi.finding = 'Self Loathing Indexes: Heaps with Forwarded Fetches'
-group by bi.more_info
+group by bi.more_info;
 --order by priority_min, priority_total DESC, bi.more_info
-order by [print-msg];
+--order by [print-msg];
 
---select * from dbo.BlitzIndex_Mode0 where run_datetime = '2023-02-24 20:20:00.000'
---select top 1000 * from dbo.BlitzIndex_Mode0 where run_datetime = '2022-12-30 20:10:00.000'
---select top 200 * from dbo.BlitzIndex where index_id = 0 and reads_per_write > 1.0
+-- Print user friendly indexing info
+--declare @run_datetime_mode0 datetime = '2024-01-26 20:13:00.000';
+--declare @run_datetime_mode2 datetime = '2024-02-01 20:39:00.000';
+	select	sno, more_info, priority_total, priority_min, m2.tbl_name, m2.type, m2.index_size_summary,
+			m2.data_compression_desc, m2.index_usage_summary, m2.index_op_stats, m2.index_definition, m2.pk_definition,
+			[total_nci_count] = (select count(*) from dbo.BlitzIndex nci where nci.run_datetime = @run_datetime_mode2 
+																and nci.more_info = bi.more_info and nci.index_id > 1),
+			m2.[database_name], m2.schema_name, m2.table_name
+			--[@run_datetime_mode0] = @run_datetime_mode0, [@run_datetime_mode2] = @run_datetime_mode2
+	from #BlitzIndex_Mode0_FinalPrint bi
+	outer apply (select m2.database_name, m2.schema_name, m2.table_name,
+						[tbl_name] = quotename(m2.database_name)+'.'+quotename(m2.schema_name)+'.'+quotename(m2.table_name),
+						[type] = (case when m2.index_id = 1 and m2.is_primary_key = 1 then '[CX][PK]. '
+										when m2.index_id = 1 and m2.is_primary_key = 0 then '[CX]. '
+										when m2.index_id = 0 then '[HEAP]. ' 
+										end) +
+								 (case when pk.is_primary_key = 1 then '[PK]. ' else '' end),
+						m2.index_size_summary,
+						m2.data_compression_desc,
+						m2.index_usage_summary,
+						m2.index_op_stats,
+						m2.index_definition,
+						pk_definition = pk.index_definition
+					from dbo.BlitzIndex m2 
+					left outer join dbo.BlitzIndex pk
+						on pk.more_info = m2.more_info
+						and pk.run_datetime = m2.run_datetime
+						and pk.index_id > 1 and pk.is_primary_key = 1
+					where m2.more_info = bi.more_info
+					and m2.run_datetime = @run_datetime_mode2
+					and m2.index_id <= 1
+
+				) m2
+	order by sno;
+
+declare @_sno varchar(10);
+declare @_more_info nvarchar(2000);
+declare @_priority_total int;
+declare @_priority_min int;
+declare @_tbl_name_full nvarchar(500);
+declare @_type varchar(20);
+declare @_index_size_summary varchar(500);
+declare @_data_compression_desc varchar(500);
+declare @_index_usage_summary varchar(500);
+declare @_index_op_stats varchar(500);
+declare @_index_definition varchar(500);
+declare @_pk_definition varchar(500);
+declare @_total_nci_count int;
+declare @_database_name varchar(255);
+declare @_schema_name varchar(255);
+declare @_table_name varchar(500);
+declare @_total_columns int;
+declare @_identity_column varchar(255);
+declare @_string varchar(2000);
+declare @_sql nvarchar(max);
+declare @_params nvarchar(max);
+set @_params = N'@_database_name varchar(255), @_schema_name varchar(255), @_table_name varchar(500), @_total_columns int output, @_identity_column varchar(255) output';
+
+declare cur_tables cursor local fast_forward for
+	select	sno, more_info, priority_total, priority_min, m2.tbl_name, m2.type, m2.index_size_summary,
+			m2.data_compression_desc, m2.index_usage_summary, m2.index_op_stats, m2.index_definition, m2.pk_definition,
+			[total_nci_count] = (select count(*) from dbo.BlitzIndex nci where nci.run_datetime = @run_datetime_mode2 
+																and nci.more_info = bi.more_info and nci.index_id > 1),
+			m2.[database_name], m2.schema_name, m2.table_name
+			--[@run_datetime_mode0] = @run_datetime_mode0, [@run_datetime_mode2] = @run_datetime_mode2
+	from #BlitzIndex_Mode0_FinalPrint bi
+	outer apply (select m2.database_name, m2.schema_name, m2.table_name,
+						[tbl_name] = quotename(m2.database_name)+'.'+quotename(m2.schema_name)+'.'+quotename(m2.table_name),
+						[type] = (case when m2.index_id = 1 and m2.is_primary_key = 1 then '[CX][PK]. '
+										when m2.index_id = 1 and m2.is_primary_key = 0 then '[CX]. '
+										when m2.index_id = 0 then '[HEAP]. ' 
+										end) +
+								 (case when pk.is_primary_key = 1 then '[PK]. ' else '' end),
+						m2.index_size_summary,
+						m2.data_compression_desc,
+						m2.index_usage_summary,
+						m2.index_op_stats,
+						m2.index_definition,
+						pk_definition = pk.index_definition
+					from dbo.BlitzIndex m2 
+					left outer join dbo.BlitzIndex pk
+						on pk.more_info = m2.more_info
+						and pk.run_datetime = m2.run_datetime
+						and pk.index_id > 1 and pk.is_primary_key = 1
+					where m2.more_info = bi.more_info
+					and m2.run_datetime = @run_datetime_mode2
+					and m2.index_id <= 1
+
+				) m2
+	order by sno;
+
+open cur_tables;
+fetch next from cur_tables into @_sno, @_more_info, @_priority_total, @_priority_min, @_tbl_name_full, @_type, @_index_size_summary,
+			@_data_compression_desc, @_index_usage_summary, @_index_op_stats, @_index_definition, @_pk_definition, @_total_nci_count, 
+			@_database_name, @_schema_name, @_table_name;
+
+while @@FETCH_STATUS = 0
+begin
+	set @_string = NULL;
+	--select @_sno, @_more_info, @_priority_total, @_priority_min, @_tbl_name, @_total_nci_count;
+	--break;
+
+	--print 'Fetch total column counts & identity column name for '+@_tbl_name_full+'..';
+
+	set @_sql = N'USE '+QUOTENAME(@_database_name)+';
+	;with t_columns as (
+		select schema_name = s.name, table_name = t.name, column_name = c.name, c.is_identity,
+				column_counts = count(*) over ()
+		from sys.tables t 
+		join sys.schemas s
+			on s.schema_id = t.schema_id
+		join sys.columns c 
+			on c.object_id = t.object_id
+		where 1=1
+		and s.name = @_schema_name
+		and t.name = @_table_name		
+	)
+	select top 1 @_total_columns = column_counts, 
+				@_identity_column = case when is_identity = 1 then column_name else null end
+	from t_columns 
+	order by is_identity desc
+	';
+
+	exec sp_executesql @_sql, @_params, @_database_name, @_schema_name, @_table_name, @_total_columns output, @_identity_column output;
+
+	set @_string = case when @_index_definition is not null and @_index_definition <> '[HEAP] '
+						then @_index_definition 
+						else null 
+						end;
+	set @_string = case when @_string is not null -- cx is not null
+						then case when @_pk_definition is not null -- pk is not null
+								  then @_string+char(13)+char(9)+@_pk_definition 
+								  else @_string 
+								  end
+						when @_string is null -- cx is null
+						then case when @_pk_definition is not null -- pk is not null
+								  then @_pk_definition
+								  else null
+								  end
+						else null
+						end
+
+	set quoted_identifier off;
+	set @_sql = "
+/*	*****************************************************************************************************************
+	"+@_tbl_name_full+" "+@_type+""+ @_index_size_summary+". "+@_data_compression_desc+"
+	"+@_index_usage_summary+"
+	"+@_index_op_stats+
+	(case when @_string is not null then char(13)+char(9)+@_string else '' end)+ "
+	"+(case when @_total_nci_count > 0 then convert(varchar,@_total_nci_count)+' NCIs || ' else '' end) + 
+	convert(varchar,@_total_columns)+" columns in table"+coalesce(' || '+quotename(@_identity_column)+' as identity column','')+"
+
+
+-- "+@_sno+")  Priority_total="+convert(varchar,@_priority_total)+" , Priority_min="+convert(varchar,@_priority_min)+"
+"+@_more_info+"
+*/
+
+			-- << Some Table Index Changes in HERE >>
+
+/*	ROLLBACK
+
+
+*/
+
+	";
+	set quoted_identifier on;
+	print @_sql;
+
+	fetch next from cur_tables into @_sno, @_more_info, @_priority_total, @_priority_min, @_tbl_name_full, @_type, @_index_size_summary,
+			@_data_compression_desc, @_index_usage_summary, @_index_op_stats, @_index_definition, @_pk_definition, @_total_nci_count, 
+			@_database_name, @_schema_name, @_table_name;
+end
+
+close cur_tables;
+deallocate cur_tables;
+
 go
 
 /*

@@ -97,7 +97,7 @@
                   "type": "auto"
                 },
                 "filterable": true,
-                "inspect": false
+                "inspect": true
               },
               "mappings": [],
               "thresholds": {
@@ -133,6 +133,24 @@
                   {
                     "id": "custom.minWidth",
                     "value": 150
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "purple",
+                          "value": null
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -153,6 +171,24 @@
                   {
                     "id": "custom.hidden",
                     "value": true
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue",
+                          "value": null
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -197,6 +233,24 @@
                   {
                     "id": "custom.minWidth",
                     "value": 150
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "super-light-blue",
+                          "value": null
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -225,6 +279,24 @@
                   {
                     "id": "custom.minWidth",
                     "value": 150
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue",
+                          "value": null
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -237,6 +309,24 @@
                   {
                     "id": "displayName",
                     "value": "Drive"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue",
+                          "value": null
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -602,18 +692,6 @@
                   {
                     "id": "custom.hidden",
                     "value": true
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Drive"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 226
                   }
                 ]
               }
@@ -1888,8 +1966,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -2043,8 +2120,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -2190,8 +2266,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -2298,8 +2373,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -2572,8 +2646,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "super-light-yellow",
@@ -2700,8 +2773,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -2974,8 +3046,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "super-light-yellow",
@@ -3088,8 +3159,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -3366,8 +3436,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "super-light-yellow",
@@ -3494,8 +3563,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -3768,8 +3836,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "super-light-yellow",
@@ -3896,8 +3963,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -4170,8 +4236,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "super-light-yellow",
@@ -4284,8 +4349,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -4558,8 +4622,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "super-light-yellow",
@@ -4923,6 +4986,6 @@
   "timezone": "",
   "title": "t___Database File IO Stats",
   "uid": "database_file_io_stats",
-  "version": 15,
+  "version": 17,
   "weekStart": ""
 }
