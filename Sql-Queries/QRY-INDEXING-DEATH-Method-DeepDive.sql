@@ -199,6 +199,19 @@ exec (@more_info_filter)
 go
 
 
--- SELECT distinct run_datetime from dbo.BlitzIndex_Mode0 where run_datetime >= dateadd(day,-7,getdate()) -- 2024-01-26 20:13:00.000
--- SELECT distinct run_datetime from dbo.BlitzIndex where run_datetime >= dateadd(day,-7,getdate()) -- 2024-02-01 20:39:00.000
--- SELECT distinct run_datetime from dbo.BlitzIndex_Mode4 where run_datetime >= dateadd(day,-7,getdate()) -- 2024-01-26 20:40:00.000
+/*
+SELECT distinct [@run_datetime_mode0] =  run_datetime, index_definition from dbo.BlitzIndex_Mode0 bi
+	where run_datetime >= dateadd(day,-30,getdate())
+	and bi.priority = -1
+	-- 2024-02-16 20:13:00.000
+
+SELECT distinct [@run_datetime_mode4] =  run_datetime, index_definition from dbo.BlitzIndex_Mode4 bi
+	where run_datetime >= dateadd(day,-30,getdate()) 
+	and bi.priority = -1
+	-- 2024-01-26 20:40:00.000
+
+SELECT distinct [@run_datetime_mode2] =  run_datetime from dbo.BlitzIndex bi
+	where run_datetime >= dateadd(day,-30,getdate()) 
+	-- 2024-02-01 20:39:00.000
+
+*/
