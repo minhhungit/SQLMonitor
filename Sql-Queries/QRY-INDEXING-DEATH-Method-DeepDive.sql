@@ -35,7 +35,10 @@ where 1=1
 and bi.run_datetime = @run_datetime_mode0
 "+(case when @more_info_filter is null then '-- ' else '' end)+"and bi.more_info = @more_info_filter;
 
-select * from #BlitzIndex_Mode0;
+select [result], finding, details, index_size_summary, index_usage_summary, 
+		create_tsql, sample_query_plan, total_forwarded_fetch_count, url, more_info
+from #BlitzIndex_Mode0
+where 1=1;
 
 print '/* =================== HIGH VALUE MISSING INDEX: BEGIN ================================== */';
 declare @c_details nvarchar(2000);
@@ -86,6 +89,9 @@ and bi.run_datetime = @run_datetime_mode2
 "+(case when @more_info_filter is null then '-- ' else '' end)+"and bi.more_info = @more_info_filter
 order by (case when bi.index_id <= 1 then -1 else total_reads end) asc, index_usage_summary;
 
+if object_id('tempdb..#BlitzIndex_Mode4') is not null
+	drop table #BlitzIndex_Mode4;
+
 select [result] = 'All-Priority', finding, 
 		details = case when finding = 'Indexaphobia: High Value Missing Index' 
 						then RIGHT(details, LEN(details)-CHARINDEX(' Est. benefit per day:',details))
@@ -96,11 +102,49 @@ select [result] = 'All-Priority', finding,
 								else index_size_summary
 								end, 
 		index_usage_summary, create_tsql, sample_query_plan, total_forwarded_fetch_count, url, more_info
+into #BlitzIndex_Mode4
 from dbo.BlitzIndex_Mode4 bi
 where 1=1
 --and bi.priority = -1 -- Use it to find out stats for max UpTime Days
 and bi.run_datetime = @run_datetime_mode4
 "+(case when @more_info_filter is null then '-- ' else '' end)+"and bi.more_info = @more_info_filter;
+
+select [result], finding, details, index_size_summary, index_usage_summary, 
+		create_tsql, sample_query_plan, total_forwarded_fetch_count, url, more_info
+from #BlitzIndex_Mode4
+where 1=1;
+
+print '/* =================== MISSING INDEX IN ALL WARNINGS: BEGIN ================================== */';
+
+declare cur_index cursor local fast_forward for
+	select details, index_size_summary from #BlitzIndex_Mode4 where finding = 'Indexaphobia: High Value Missing Index';
+
+open cur_index;
+fetch next from cur_index into @c_details, @c_index_size_summary;
+
+while @@fetch_status = 0
+begin
+	print '-- '+@c_details
+	if(@c_index_size_summary LIKE 'EQUALITY:%')
+	begin
+		set @c_index_size_summary = REPLACE(@c_index_size_summary,'INEQUALITY:',char(13)+char(9)+'INEQUALITY:');
+		set @c_index_size_summary = REPLACE(@c_index_size_summary,'INCLUDE:',char(13)+char(9)+'INCLUDE:')
+	end
+	else
+	begin
+		set @c_index_size_summary = REPLACE(@c_index_size_summary,'INCLUDE:',char(13)+char(9)+'INCLUDE:')
+	end	
+	print @c_index_size_summary
+	print ''
+
+	fetch next from cur_index into @c_details, @c_index_size_summary;
+end
+
+CLOSE cur_index;  
+DEALLOCATE cur_index;
+
+print '/* =================== MISSING INDEX IN ALL WARNINGS: END ================================== */';
+
 
 if(@more_info_filter is not null)
 begin
