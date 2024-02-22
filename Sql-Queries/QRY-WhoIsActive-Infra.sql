@@ -60,7 +60,7 @@ t_WhoIsActive as (
 	"+(case when @host_name is null then "--" else '' end)+"and w.host_name = @host_name
 	"+(case when @session_id is null then "--" else '' end)+"and w.session_id = @session_id
 	"+(case when @duration_threshold_minutes is null then "--" else '' end)+"and w.start_time <= dateadd(minute,-@duration_threshold_minutes,w.collection_time)
-	"+(case when @force_plan_search = 1 then "" else "--" end)+"and convert(nvarchar(max),w.[query_plan]) like ('% Table=""!['+@table_name+'!]""%') escape '!'
+	"+(case when @force_plan_search = 1 and @table_name is not null then "" else "--" end)+"and convert(nvarchar(max),w.[query_plan]) like ('% Table=""!['+@table_name+'!]""%') escape '!'
 	"+(case when @index_name is null then "--" else '' end)+" and convert(nvarchar(max),w.[query_plan]) like ('% Index=""!['+@index_name+'!]""%') escape '!'
 
 	"+(case when @query_text is null then "" else '--' end)+"/*

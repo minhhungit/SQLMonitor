@@ -166,6 +166,7 @@ declare @_identity_column varchar(255);
 declare @_string varchar(2000);
 declare @_sql nvarchar(max);
 declare @_params nvarchar(max);
+declare @_all_high_priority_warnings varchar(2000);
 set @_params = N'@_database_name varchar(255), @_schema_name varchar(255), @_table_name varchar(500), @_total_columns int output, @_identity_column varchar(255) output';
 
 declare cur_tables cursor local fast_forward for
@@ -208,11 +209,21 @@ fetch next from cur_tables into @_sno, @_more_info, @_priority_total, @_priority
 
 while @@FETCH_STATUS = 0
 begin
+	set @_all_high_priority_warnings = null;
 	set @_string = NULL;
 	--select @_sno, @_more_info, @_priority_total, @_priority_min, @_tbl_name, @_total_nci_count;
 	--break;
 
 	--print 'Fetch total column counts & identity column name for '+@_tbl_name_full+'..';
+
+	;with t_findings as (
+		select distinct bi.finding
+		from dbo.BlitzIndex_Mode0 bi
+		where bi.more_info = @_more_info
+		and bi.run_datetime = @run_datetime_mode0
+	)
+	select @_all_high_priority_warnings = coalesce(@_all_high_priority_warnings + char(13)+char(9)+finding,finding)
+	from t_findings;
 
 	set @_sql = N'USE '+QUOTENAME(@_database_name)+';
 	;with t_columns as (
@@ -262,6 +273,7 @@ begin
 	"+(case when @_total_nci_count > 0 then convert(varchar,@_total_nci_count)+' NCIs || ' else '' end) + 
 	convert(varchar,@_total_columns)+" columns in table"+coalesce(' || '+quotename(@_identity_column)+' as identity column','')+"
 
+	"+(case when @_all_high_priority_warnings is not null then @_all_high_priority_warnings else '' end)+"
 
 -- "+@_sno+")  Priority_total="+convert(varchar,@_priority_total)+" , Priority_min="+convert(varchar,@_priority_min)+"
 "+@_more_info+"
