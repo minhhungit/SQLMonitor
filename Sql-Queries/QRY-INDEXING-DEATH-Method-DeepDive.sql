@@ -201,17 +201,18 @@ go
 
 /*
 SELECT distinct [@run_datetime_mode0] =  run_datetime, index_definition from dbo.BlitzIndex_Mode0 bi
-	where run_datetime >= dateadd(day,-30,getdate())
-	and bi.priority = -1
+	where run_datetime >= dateadd(day,-30,getdate()) and bi.priority = -1
+	order by run_datetime desc offset 0 rows fetch next 10 rows only
 	-- 2024-02-16 20:13:00.000
 
-SELECT distinct [@run_datetime_mode4] =  run_datetime, index_definition from dbo.BlitzIndex_Mode4 bi
-	where run_datetime >= dateadd(day,-30,getdate()) 
-	and bi.priority = -1
+SELECT distinct  [@run_datetime_mode4] =  run_datetime, index_definition from dbo.BlitzIndex_Mode4 bi
+	where run_datetime >= dateadd(day,-30,getdate()) and bi.priority = -1
+	order by run_datetime desc offset 0 rows fetch next 10 rows only
 	-- 2024-01-26 20:40:00.000
 
-SELECT distinct [@run_datetime_mode2] =  run_datetime from dbo.BlitzIndex bi
+SELECT distinct  [@run_datetime_mode2] =  run_datetime from dbo.BlitzIndex bi
 	where run_datetime >= dateadd(day,-30,getdate()) 
+	order by run_datetime desc offset 0 rows fetch next 20 rows only
 	-- 2024-02-01 20:39:00.000
 
 */
