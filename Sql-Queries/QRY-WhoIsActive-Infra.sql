@@ -12,9 +12,10 @@ declare @program_name nvarchar(255) --= 'SQLQueryStress';
 declare @login_name nvarchar(255) --= 'SQLQueryStress';
 declare @session_id int = null;
 declare @host_name nvarchar(255) --= '';
-declare @duration_threshold_minutes smallint = 1;
+declare @duration_threshold_minutes smallint = 0;
 declare @memory_threshold_mb smallint --= 1;
 declare @handle_xml_error bit = 0;
+declare @ignore_blocking bit = 1;
 declare @sql nvarchar(max);
 declare @params nvarchar(max);
 
@@ -59,6 +60,7 @@ t_WhoIsActive as (
 	"+(case when @login_name is null then "--" else '' end)+"and w.login_name = @login_name
 	"+(case when @host_name is null then "--" else '' end)+"and w.host_name = @host_name
 	"+(case when @session_id is null then "--" else '' end)+"and w.session_id = @session_id
+	"+(case when @ignore_blocking = 1 then "" else "--" end)+"and w.blocking_session_id is null
 	"+(case when @duration_threshold_minutes is null then "--" else '' end)+"and w.start_time <= dateadd(minute,-@duration_threshold_minutes,w.collection_time)
 	"+(case when @force_plan_search = 1 and @table_name is not null then "" else "--" end)+"and convert(nvarchar(max),w.[query_plan]) like ('% Table=""!['+@table_name+'!]""%') escape '!'
 	"+(case when @index_name is null then "--" else '' end)+" and convert(nvarchar(max),w.[query_plan]) like ('% Index=""!['+@index_name+'!]""%') escape '!'
