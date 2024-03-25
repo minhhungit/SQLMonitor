@@ -94,3 +94,24 @@ where 1=1
 and id.sql_instance in ('192.168.100.22')
 go
 */
+
+/*
+declare @_alias_server nvarchar(500);
+set @_alias_server = 'SqlGuest1';
+
+--insert into dbo.instance_hosts
+--select 'SQLGUEST1';
+
+insert dbo.instance_details 
+(sql_instance, sql_instance_port, [host_name], [database], collector_tsql_jobs_server, collector_powershell_jobs_server, data_destination_sql_instance, is_available, created_date_utc, last_unavailability_time_utc, dba_group_mail_id, sqlmonitor_script_path, sqlmonitor_version, is_alias, source_sql_instance, more_info, is_enabled, is_linked_server_working)
+select sql_instance = @_alias_server, 
+		sql_instance_port = '50012', 
+		[host_name] = 'SQLGUEST1', [database], 
+		collector_tsql_jobs_server = 'SqlGuest1,50012', 
+		collector_powershell_jobs_server = 'SqlGuest1,50012', 
+		data_destination_sql_instance = 'SqlGuest1,50012', 
+		is_available, created_date_utc, last_unavailability_time_utc, dba_group_mail_id, sqlmonitor_script_path, sqlmonitor_version, is_alias = 0, source_sql_instance = null, more_info, is_enabled, is_linked_server_working = 1
+from dbo.instance_details id
+where 1=1
+and id.sql_instance in ('SqlProd-GC')
+*/
