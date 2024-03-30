@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 21,
+  "id": 4,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -780,7 +780,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 2
+            "y": 10
           },
           "id": 850,
           "options": {
@@ -837,7 +837,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -845,282 +845,284 @@
         "y": 2
       },
       "id": 846,
-      "panels": [],
-      "repeat": "datasource",
-      "repeatDirection": "h",
-      "title": "CRITICAL - SQLInstance - OFFLINE/Linked Server Issue",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "mssql",
-        "uid": "${sqlmonitor_datasource}"
-      },
-      "description": "USE DBA;\n\nselect /* Offline or Linked Server not working */ *\nfrom dbo.instance_details id where id.is_enabled = 1 \n\tand (id.is_available = 0 or id.is_linked_server_working = 0);\n\nexec /* Check why linked server not working */ dbo.usp_GetAllServerInfo \n\t\t@servers = 'YourInventoryServer,10.10.10.10', \n\t\t@output = 'srv_name, os_start_time_utc', \n\t\t@verbose = 2;",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
+      "panels": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "${sqlmonitor_datasource}"
           },
-          "custom": {
-            "align": "center",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "sql_instance"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "SQL Instance"
+          "description": "USE DBA;\n\nselect /* Offline or Linked Server not working */ *\nfrom dbo.instance_details id where id.is_enabled = 1 \n\tand (id.is_available = 0 or id.is_linked_server_working = 0);\n\nexec /* Check why linked server not working */ dbo.usp_GetAllServerInfo \n\t\t@servers = 'YourInventoryServer,10.10.10.10', \n\t\t@output = 'srv_name, os_start_time_utc', \n\t\t@verbose = 2;",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
               },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background"
-                }
+              "custom": {
+                "align": "center",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": true
               },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "blue",
-                      "value": null
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "host_name"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Host Name"
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background"
-                }
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "super-light-purple",
-                      "value": null
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "is_available"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Is Available"
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "is_linked_server_working"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Linked Server OK?"
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "basic",
-                  "type": "color-background"
-                }
-              },
-              {
-                "id": "mappings",
-                "value": [
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
                   {
-                    "options": {
-                      "match": "null",
-                      "result": {
-                        "color": "yellow",
-                        "index": 0
-                      }
-                    },
-                    "type": "special"
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sql_instance"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SQL Instance"
                   },
                   {
-                    "options": {
-                      "match": "true",
-                      "result": {
-                        "color": "super-light-green",
-                        "index": 1
-                      }
-                    },
-                    "type": "special"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
                   },
                   {
-                    "options": {
-                      "match": "false",
-                      "result": {
-                        "color": "red",
-                        "index": 2
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue",
+                          "value": null
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "host_name"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Host Name"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "super-light-purple",
+                          "value": null
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "is_available"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Is Available"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "is_linked_server_working"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Linked Server OK?"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "color": "yellow",
+                            "index": 0
+                          }
+                        },
+                        "type": "special"
+                      },
+                      {
+                        "options": {
+                          "match": "true",
+                          "result": {
+                            "color": "super-light-green",
+                            "index": 1
+                          }
+                        },
+                        "type": "special"
+                      },
+                      {
+                        "options": {
+                          "match": "false",
+                          "result": {
+                            "color": "red",
+                            "index": 2
+                          }
+                        },
+                        "type": "special"
                       }
-                    },
-                    "type": "special"
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tsql jobs server"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Server (Tsql) Jobs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "powershell jobs server"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Server (PS) Jobs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "perfmon data server"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Data Server"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "last_unavailability_time_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Last Unavailable Time"
                   }
                 ]
               }
             ]
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "tsql jobs server"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Server (Tsql) Jobs"
-              }
-            ]
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 10
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "powershell jobs server"
+          "id": 844,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "enablePagination": true,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
             },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Server (PS) Jobs"
-              }
-            ]
+            "showHeader": true
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "perfmon data server"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Data Server"
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "alias": "",
+              "datasource": {
+                "type": "mssql",
+                "uid": "${sqlmonitor_datasource}"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect sql_instance, [host_name], \n\t\t\tis_available, is_linked_server_working = case when is_available = 0 then null else is_linked_server_working end,\n\t\t\t[tsql jobs server] = collector_tsql_jobs_server, \n\t\t[powershell jobs server] = collector_powershell_jobs_server, [perfmon data server] = data_destination_sql_instance, \n\t\t last_unavailability_time_utc\nfrom dbo.instance_details id\nwhere is_enabled = 1\nand (is_available = 0 or is_linked_server_working = 0)\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+              "refId": "A",
+              "sql": {
+                "columns": [
+                  {
+                    "parameters": [],
+                    "type": "function"
+                  }
+                ],
+                "groupBy": [
+                  {
+                    "property": {
+                      "type": "string"
+                    },
+                    "type": "groupBy"
+                  }
+                ],
+                "limit": 50
               }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "last_unavailability_time_utc"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Last Unavailable Time"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 3
-      },
-      "id": 844,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
+            }
           ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "10.1.0",
-      "targets": [
-        {
-          "alias": "",
-          "datasource": {
-            "type": "mssql",
-            "uid": "${sqlmonitor_datasource}"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect sql_instance, [host_name], \n\t\t\tis_available, is_linked_server_working = case when is_available = 0 then null else is_linked_server_working end,\n\t\t\t[tsql jobs server] = collector_tsql_jobs_server, \n\t\t[powershell jobs server] = collector_powershell_jobs_server, [perfmon data server] = data_destination_sql_instance, \n\t\t last_unavailability_time_utc\nfrom dbo.instance_details id\nwhere is_enabled = 1\nand (is_available = 0 or is_linked_server_working = 0)\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
+          "title": "SQL Instances that are OFFLINE",
+          "type": "table"
         }
       ],
-      "title": "SQL Instances that are OFFLINE",
-      "type": "table"
+      "repeat": "datasource",
+      "repeatDirection": "h",
+      "title": "CRITICAL - SQLInstance - \"${offline_servers_count}\" OFFLINE/Linked Server Issue",
+      "type": "row"
     },
     {
       "collapsed": true,
@@ -1128,7 +1130,764 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 3
+      },
+      "id": 872,
+      "panels": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "${sqlmonitor_datasource}"
+          },
+          "description": "select sas.sql_instance, id.sql_instance_with_port, sas.startup_type_desc, sas.status_desc,\n\t\tsas.servicename, sas.service_account\nfrom dbo.services_all_servers sas\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+id.sql_instance_port,id.sql_instance) \n\t\t\t\tfrom dbo.instance_details id where id.is_enabled = 1 \n\t\t\t\tand id.is_available = 1 and id.sql_instance = sas.sql_instance) id\nwhere 1=1\nand sas.service_type = 'Agent'\nand sas.status_desc <> 'Running'",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "center",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sql_instance"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SQL Instance"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue",
+                          "value": null
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sql_instance_with_port"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SQL Instance (port)"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "startup_type_desc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Startup Type"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "Automatic": {
+                            "color": "green",
+                            "index": 0
+                          },
+                          "Disabled": {
+                            "color": "orange",
+                            "index": 1
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "status_desc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Status"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "Stopped": {
+                            "color": "red",
+                            "index": 0
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "servicename"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Service Name"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "service_account"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Service Account"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 4
+          },
+          "id": 871,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "enablePagination": true,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "alias": "",
+              "datasource": {
+                "type": "mssql",
+                "uid": "${sqlmonitor_datasource}"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect sas.sql_instance, id.sql_instance_with_port, sas.startup_type_desc, sas.status_desc,\n\t\tsas.servicename, sas.service_account\nfrom dbo.services_all_servers sas\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+id.sql_instance_port,id.sql_instance) \n\t\t\t\tfrom dbo.instance_details id where id.is_enabled = 1 \n\t\t\t\tand id.is_available = 1 and id.sql_instance = sas.sql_instance) id\nwhere 1=1\nand sas.service_type = 'Agent'\nand sas.status_desc <> 'Running'\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+              "refId": "A",
+              "sql": {
+                "columns": [
+                  {
+                    "parameters": [],
+                    "type": "function"
+                  }
+                ],
+                "groupBy": [
+                  {
+                    "property": {
+                      "type": "string"
+                    },
+                    "type": "groupBy"
+                  }
+                ],
+                "limit": 50
+              }
+            }
+          ],
+          "title": "SQLAgent Service is OFFLINE",
+          "type": "table"
+        }
+      ],
+      "title": "CRITICAL - SQLAgent Service - \"${offline_agent_count}\" OFFLINE",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 870,
+      "panels": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "${sqlmonitor_datasource}"
+          },
+          "description": "select * from dbo.backups_all_servers",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "sql_instance"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Server"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "purple"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "database_name"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Database"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "super-light-purple"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "log_backups_count"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Total Log Backups"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "database_creation_date_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Db Created Date"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "recovery_model"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Recovery Model"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "dark-blue"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_backup_time_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full Bkp Time"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_backup_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full Bkp Size"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_compressed_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full Compressed"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_backup_time_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff Bkp Time"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_backup_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff Bkp Size"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_compressed_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff Compressed"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_backup_time_utc"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog Bkp Time"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_backup_file"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full File"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_backup_file"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff File"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_backup_file"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog File"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_latency_days"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Full Delay"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "d"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "orange",
+                          "value": 8
+                        },
+                        {
+                          "color": "red",
+                          "value": 15
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "diff_latency_hours"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Diff Delay"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "h"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 24
+                        },
+                        {
+                          "color": "orange",
+                          "value": 32
+                        },
+                        {
+                          "color": "red",
+                          "value": 48
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_latency_minutes"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog Delay"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "m"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 30
+                        },
+                        {
+                          "color": "orange",
+                          "value": 120
+                        },
+                        {
+                          "color": "red",
+                          "value": 360
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_backup_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog Bkp Size"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "tlog_compressed_size_mb"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "TLog Compressed"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 19,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 869,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "10.1.0",
+          "targets": [
+            {
+              "alias": "",
+              "datasource": {
+                "type": "mssql",
+                "uid": "${sqlmonitor_datasource}"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "hide": false,
+              "rawQuery": true,
+              "rawSql": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\n--declare @sql_instance varchar(255);\n--declare @backup_type varchar(2000);\n--declare @backup_description varchar(2000);\n--declare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\n--declare @delta_minutes int;\n--declare @disk_drive varchar(255) = '$disk_drive';\n--declare @database varchar(255) = '$database';\n--declare @filter_for_latency varchar(50) = '$filter_for_latency';\ndeclare @full_threshold_days int = $full_threshold_days;\ndeclare @diff_threshold_hours int = $diff_threshold_hours;\ndeclare @tlog_threshold_minutes int = $tlog_threshold_minutes;\n\n--set @database = case when ltrim(rtrim(@database)) = '__All__' then null else @database end;\n--set @disk_drive = case when ltrim(rtrim(@disk_drive)) = '__All__' then null else @disk_drive end;\n\n--set @perfmon_host_name = '$perfmon_host_name';\nset @start_time_utc = $__timeFrom();\nset @end_time_utc = $__timeTo();\n--set @delta_minutes = $cpu_delta_minutes;\n\n--set @backup_type = '${backup_type:csv}';\n--set @backup_description = case when ltrim(rtrim('$backup_description')) = '' then null else ltrim(rtrim('$backup_description')) end;\n\nset @params = N'@start_time_utc datetime2, @end_time_utc datetime2, \n\t\t\t\t\t\t\t\t@full_threshold_days int, @diff_threshold_hours int, @tlog_threshold_minutes int';\n\nset quoted_identifier off;\nset @sql = \"/* SQLMonitor - Dashboard [$__dashboard] */\nset nocount on;\n\n;with t_backups as (\n\t\tselect [collection_time_utc], [sql_instance], [database_name], [backup_type], [log_backups_count], [backup_start_date_utc], [backup_finish_date_utc], [latest_backup_location], [backup_size_mb], [compressed_backup_size_mb], [first_lsn], [last_lsn], [checkpoint_lsn], [database_backup_lsn], [database_creation_date_utc], [backup_software], [recovery_model], [compatibility_level], [device_type], [description]\n\t\tfrom dbo.backups_all_servers bas\n)\n,t_pivot as (\n\t\tselect\t[sql_instance], [database_name]\n\t\t\t\t,[recovery_model] = max([recovery_model])\n\t\t\t\t,[full_backup_time_utc] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[backup_finish_date_utc] else null end)\n\t\t\t\t,[full_backup_size_mb] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[backup_size_mb] else null end)\n\t\t\t\t,[full_compressed_size_mb] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[compressed_backup_size_mb] else null end)\n\t\t\t\t,[diff_backup_time_utc] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[backup_finish_date_utc] else null end)\n\t\t\t\t,[diff_backup_size_mb] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[backup_size_mb] else null end)\n\t\t\t\t,[diff_compressed_size_mb] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[compressed_backup_size_mb] else null end)\n\t\t\t\t,[tlog_backup_time_utc] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[backup_finish_date_utc] else null end)\n\t\t\t\t,[tlog_backup_size_mb] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[backup_size_mb] else null end)\n\t\t\t\t,[tlog_compressed_size_mb] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[compressed_backup_size_mb] else null end)\n\t\t\t\t,[log_backups_count] = max([log_backups_count])\n\t\t\t\t,[database_creation_date_utc] = max([database_creation_date_utc])\n\t\t\t\t,[full_backup_file] = max(case when bkp.[backup_type] = 'Full Database Backup' then bkp.[latest_backup_location] else null end)\n\t\t\t\t,[diff_backup_file] = max(case when bkp.[backup_type] = 'Differential database Backup' then bkp.[latest_backup_location] else null end)\n\t\t\t\t,[tlog_backup_file] = max(case when bkp.[backup_type] = 'Transaction Log Backup' then bkp.[latest_backup_location] else null end)\n\t\tfrom t_backups bkp\n\t\twhere 1=1\n\t\tgroup by [sql_instance], [database_name]\n)\n,t_latency as (\n\t\t\tselect \t[sql_instance], [database_name], [recovery_model], \t\t\t\t\n\t\t\t\t\t\t\t[full_latency_days] = case when [full_backup_time_utc] is null then @full_threshold_days * 10\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\telse datediff(day,[full_backup_time_utc],getutcdate())\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tend,\t\t\t\t\t\t\n\t\t\t\t\t\t\t[diff_latency_hours] = case when [diff_backup_time_utc] is null \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tthen\tcase when (datediff(day,[full_backup_time_utc],getutcdate()) > @full_threshold_days) and (@full_threshold_days >= 7)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tthen @full_threshold_days * 24\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\twhen (datediff(day,[full_backup_time_utc],getutcdate())*24) > @diff_threshold_hours\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tthen ( (datediff(day,[full_backup_time_utc],getutcdate())-1) * 24 )\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\telse null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tend\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\telse datediff(hour,[diff_backup_time_utc],getutcdate())\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tend,\n\t\t\t\t\t\t\t[tlog_latency_minutes] = case when recovery_model = 'SIMPLE' then null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\twhen recovery_model <> 'SIMPLE'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tthen\tcase when [tlog_backup_time_utc] is null then @full_threshold_days * 1440\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t when [tlog_backup_time_utc] is not null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t then datediff(minute,[tlog_backup_time_utc],getutcdate())\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t else null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t end\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\telse null\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tend,\n\t\t\t\t\t\t\t[full_backup_time_utc], [diff_backup_time_utc], [tlog_backup_time_utc], \n\t\t\t\t\t\t\t[full_backup_size_mb], [full_compressed_size_mb], [diff_backup_size_mb], [diff_compressed_size_mb], [tlog_backup_size_mb],\n\t\t\t\t\t\t\t[tlog_compressed_size_mb], [log_backups_count],\n\t\t\t\t\t\t\t[database_creation_date_utc], [full_backup_file], [diff_backup_file], [tlog_backup_file]\n\t\t\tfrom t_pivot as bkp\n\t\t\twhere 1=1\n)\nselect [sql_instance], [database_name], [recovery_model], \t\t\t\t\n\t\t\t\t\t\t\t[full_latency_days], [diff_latency_hours], [tlog_latency_minutes],\n\t\t\t\t\t\t\t[full_backup_time_utc], [diff_backup_time_utc], [tlog_backup_time_utc], \n\t\t\t\t\t\t\t[full_backup_size_mb], [full_compressed_size_mb], [diff_backup_size_mb], [diff_compressed_size_mb], \n\t\t\t\t\t\t\t[tlog_backup_size_mb], [tlog_compressed_size_mb], [log_backups_count], [database_creation_date_utc], \n\t\t\t\t\t\t\t[full_backup_file], [diff_backup_file], [tlog_backup_file]\nfrom t_latency as l\nwhere 1=1\nAND (\t\t(full_latency_days is null or full_latency_days >= @full_threshold_days)\n\t\tOR \t(diff_latency_hours is not null and diff_latency_hours >= @diff_threshold_hours)\n\t\tOR\t(tlog_latency_minutes is not null and tlog_latency_minutes >= @tlog_threshold_minutes)\n\t\t)\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nexec dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @full_threshold_days, @diff_threshold_hours, \n\t\t\t\t\t\t\t\t\t\t\t\t@tlog_threshold_minutes;",
+              "refId": "Query-Db-File-Stats-Since-Startup",
+              "sql": {
+                "columns": [
+                  {
+                    "parameters": [],
+                    "type": "function"
+                  }
+                ],
+                "groupBy": [
+                  {
+                    "property": {
+                      "type": "string"
+                    },
+                    "type": "groupBy"
+                  }
+                ],
+                "limit": 50
+              }
+            }
+          ],
+          "title": "All Servers - Backup History - Require ATTENTION",
+          "transformations": [],
+          "type": "table"
+        }
+      ],
+      "title": "All Servers - Backup History - Require ATTENTION",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
       },
       "id": 866,
       "panels": [
@@ -1501,7 +2260,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 12
           },
           "id": 864,
           "options": {
@@ -1560,7 +2319,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 6
       },
       "id": 854,
       "panels": [
@@ -1896,7 +2655,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 13
           },
           "id": 852,
           "options": {
@@ -1956,7 +2715,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 7
       },
       "id": 868,
       "panels": [
@@ -2718,6 +3477,35 @@
                     }
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "replica_database"
+                },
+                "properties": [
+                  {
+                    "id": "custom.minWidth",
+                    "value": 250
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "super-light-purple"
+                        }
+                      ]
+                    }
+                  }
+                ]
               }
             ]
           },
@@ -2725,7 +3513,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 6
+            "y": 14
           },
           "id": 867,
           "options": {
@@ -2752,7 +3540,7 @@
               "editorMode": "code",
               "format": "table",
               "rawQuery": true,
-              "rawSql": "set nocount on;\n\ndeclare @_sql nvarchar(max);\ndeclare @_params nvarchar(max);\n\ndeclare @_latency_minutes int;\ndeclare @_redo_queue_size_gb int;\ndeclare @_log_send_queue_size_gb int;\n\nset @_latency_minutes = 30;\nset @_redo_queue_size_gb = 10;\nset @_log_send_queue_size_gb = 10;\n\nset @_params = N'@_latency_minutes int, @_redo_queue_size_gb int, @_log_send_queue_size_gb int';\n\nset @_sql = '\nif object_id(''tempdb..#replica_servers'') is not null\n\tdrop table #replica_servers\nselect distinct ahs.replica_server_name\ninto #replica_servers\nfrom dbo.ag_health_state_all_servers ahs\nwhere 1=1;\n\nselect\tsql_instance, replica_server_name, replica_server = rs.srv_name, is_primary_replica, database_name, ag_name, \n\t\tag_listener, is_local, is_distributed, synchronization_state_desc, synchronization_health_desc, \n\t\tlatency_seconds, redo_queue_size, log_send_queue_size, last_redone_time, log_send_rate, \n\t\tredo_rate, estimated_redo_completion_time_min, last_commit_time, is_suspended, \n\t\tsuspend_reason_desc, updated_date_utc, collection_time_utc\nfrom dbo.ag_health_state_all_servers ahs\nleft join (\tselect replica_server = rs.replica_server_name, srv_name = max(asi.srv_name)\n\t\tfrom #replica_servers rs\n\t\tjoin dbo.vw_all_server_info asi\n\t\t\ton rs.replica_server_name in (asi.machine_name, asi.server_name)\n\t\tgroup by rs.replica_server_name\n\t) rs\n\ton rs.replica_server = ahs.replica_server_name\nwhere 1=1\nand (\tahs.synchronization_health_desc <> ''HEALTHY''\n\tor\tahs.synchronization_state_desc not in (''SYNCHRONIZED'',''SYNCHRONIZING'')\n\tor\t(ahs.latency_seconds is not null and ahs.latency_seconds >= @_latency_minutes*60)\n\tor\t(ahs.log_send_queue_size is not null and ahs.log_send_queue_size >= @_log_send_queue_size_gb*1024*1024)\n\tor\t(ahs.redo_queue_size is not null and ahs.redo_queue_size >= @_redo_queue_size_gb*1024*1024)\n\t);\n';\n\nexec sp_executesql @_sql, @_params, @_latency_minutes, @_redo_queue_size_gb, @_log_send_queue_size_gb;\n",
+              "rawSql": "set nocount on;\n\ndeclare @_sql nvarchar(max);\ndeclare @_params nvarchar(max);\n\ndeclare @_latency_minutes int;\ndeclare @_redo_queue_size_gb int;\ndeclare @_log_send_queue_size_gb int;\n\nset @_latency_minutes = 30;\nset @_redo_queue_size_gb = 10;\nset @_log_send_queue_size_gb = 10;\n\nset @_params = N'@_latency_minutes int, @_redo_queue_size_gb int, @_log_send_queue_size_gb int';\n\nset @_sql = '\nif object_id(''tempdb..#replica_servers'') is not null\n\tdrop table #replica_servers\nselect distinct ahs.replica_server_name\ninto #replica_servers\nfrom dbo.ag_health_state_all_servers ahs\nwhere 1=1;\n\nselect\tsql_instance, [replica_database] = replica_server_name+'' || ''+database_name,\n\t\t--replica_server_name, database_name, \n\t\tag_name, is_primary_replica, \n\t\tag_listener, is_local, synchronization_state_desc, synchronization_health_desc, \n\t\tlatency_seconds, log_send_queue_size, redo_queue_size, last_redone_time, log_send_rate, \n\t\tredo_rate, estimated_redo_completion_time_min, last_commit_time, is_suspended, \n\t\tsuspend_reason_desc, is_distributed, replica_server = rs.srv_name, updated_date_utc, collection_time_utc\nfrom dbo.ag_health_state_all_servers ahs\nleft join (\tselect replica_server = rs.replica_server_name, srv_name = max(asi.srv_name)\n\t\tfrom #replica_servers rs\n\t\tjoin dbo.vw_all_server_info asi\n\t\t\ton rs.replica_server_name in (asi.machine_name, asi.server_name)\n\t\tgroup by rs.replica_server_name\n\t) rs\n\ton rs.replica_server = ahs.replica_server_name\nwhere 1=1\nand (\tahs.synchronization_health_desc <> ''HEALTHY''\n\tor\tahs.synchronization_state_desc not in (''SYNCHRONIZED'',''SYNCHRONIZING'')\n\tor\t(ahs.latency_seconds is not null and ahs.latency_seconds >= @_latency_minutes*60)\n\tor\t(ahs.log_send_queue_size is not null and ahs.log_send_queue_size >= @_log_send_queue_size_gb*1024*1024)\n\tor\t(ahs.redo_queue_size is not null and ahs.redo_queue_size >= @_redo_queue_size_gb*1024*1024)\n\t);\n';\n\nexec sp_executesql @_sql, @_params, @_latency_minutes, @_redo_queue_size_gb, @_log_send_queue_size_gb;\n",
               "refId": "A",
               "sql": {
                 "columns": [
@@ -2786,7 +3574,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 8
       },
       "id": 858,
       "panels": [
@@ -2813,8 +3601,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2851,8 +3638,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue",
-                          "value": null
+                          "color": "blue"
                         }
                       ]
                     }
@@ -2892,8 +3678,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-blue",
-                          "value": null
+                          "color": "super-light-blue"
                         }
                       ]
                     }
@@ -3055,8 +3840,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -3100,8 +3884,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -3190,8 +3973,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-purple",
-                          "value": null
+                          "color": "super-light-purple"
                         }
                       ]
                     }
@@ -3328,7 +4110,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 15
           },
           "id": 856,
           "options": {
@@ -3388,7 +4170,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 9
       },
       "id": 862,
       "panels": [
@@ -3416,8 +4198,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3450,8 +4231,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue",
-                          "value": null
+                          "color": "blue"
                         }
                       ]
                     }
@@ -3551,8 +4331,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "yellow",
@@ -3664,8 +4443,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -3713,8 +4491,8 @@
                     "value": [
                       {
                         "targetBlank": true,
-                        "title": "Perfmon - Version Store Usage Trend",
-                        "url": "d/distributed_perfmon?var-server=${__data.fields.sql_instance}&var-database=tempdb&viewPanel=90"
+                        "title": "Tempdb Space Consumers on Individual Server Dashboard",
+                        "url": "d/distributed_live_dashboard?var-server=${__data.fields.sql_instance}&viewPanel=190"
                       }
                     ]
                   }
@@ -3747,8 +4525,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green",
-                          "value": null
+                          "color": "green"
                         },
                         {
                           "color": "#EAB839",
@@ -3808,8 +4585,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-purple",
-                          "value": null
+                          "color": "super-light-purple"
                         }
                       ]
                     }
@@ -3826,7 +4602,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 8
+            "y": 16
           },
           "id": 860,
           "options": {
@@ -3890,7 +4666,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 10
       },
       "id": 245,
       "panels": [],
@@ -3934,7 +4710,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": [
           {
@@ -4108,7 +4885,7 @@
                   {
                     "targetBlank": true,
                     "title": "Wait Stats Dashboard",
-                    "url": "d/wait_stats?var-server=${__data.fields.srv_name}"
+                    "url": "d/wait_stats?var-server=${__data.fields.srv_name}&from=now-30m&to=now"
                   }
                 ]
               }
@@ -4521,7 +5298,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 11
       },
       "id": 842,
       "options": {
@@ -4537,7 +5314,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.1.0",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "alias": "",
@@ -4582,7 +5359,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 23
       },
       "id": 121,
       "panels": [
@@ -4592,7 +5369,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 50
           },
           "id": 119,
           "links": [],
@@ -4626,19 +5403,20 @@
   ],
   "refresh": "1m",
   "revision": 1,
-  "schemaVersion": 38,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "All Servers",
+    "Alerts"
   ],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "SqlServer",
-          "value": "ygPVA4snk"
+          "text": "SQLMonitor",
+          "value": "a28aeb06-bb6e-4c74-81af-65de433776c8"
         },
         "description": "SQLMonitor Inventory Server Name",
         "hide": 2,
@@ -4709,8 +5487,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1702124083624",
-          "value": "1702124083624"
+          "text": "1707558260640",
+          "value": "1707558260640"
         },
         "datasource": {
           "type": "mssql",
@@ -4780,7 +5558,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "20",
           "value": "20"
         },
@@ -4848,9 +5626,9 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": "Yes",
-          "value": "Yes"
+          "selected": false,
+          "text": "No",
+          "value": "No"
         },
         "description": "When yes, log space threshold won't be considered. Rather threshold are used based on server level LogSaver jobs",
         "hide": 0,
@@ -4860,12 +5638,12 @@
         "name": "only_validated_log_thresholds",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "Yes",
             "value": "Yes"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "No",
             "value": "No"
           }
@@ -4995,7 +5773,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "80",
           "value": "80"
         },
@@ -5080,7 +5858,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "250",
           "value": "250"
         },
@@ -5205,6 +5983,258 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "8",
+          "value": "8"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Full Threshold (Days)",
+        "multi": false,
+        "name": "full_threshold_days",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "7",
+            "value": "7"
+          },
+          {
+            "selected": true,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "9",
+            "value": "9"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "30",
+            "value": "30"
+          },
+          {
+            "selected": false,
+            "text": "90",
+            "value": "90"
+          },
+          {
+            "selected": false,
+            "text": "366",
+            "value": "366"
+          }
+        ],
+        "query": "1,3,7,8,9,10,15,30,90,366",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "26",
+          "value": "26"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Diff Threshold (Hrs)",
+        "multi": false,
+        "name": "diff_threshold_hours",
+        "options": [
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "12",
+            "value": "12"
+          },
+          {
+            "selected": false,
+            "text": "24",
+            "value": "24"
+          },
+          {
+            "selected": true,
+            "text": "26",
+            "value": "26"
+          },
+          {
+            "selected": false,
+            "text": "28",
+            "value": "28"
+          },
+          {
+            "selected": false,
+            "text": "32",
+            "value": "32"
+          },
+          {
+            "selected": false,
+            "text": "36",
+            "value": "36"
+          },
+          {
+            "selected": false,
+            "text": "48",
+            "value": "48"
+          }
+        ],
+        "query": "4,8,12,24,26,28,32,36,48",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "60",
+          "value": "60"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "TLog Threshold (Min)",
+        "multi": false,
+        "name": "tlog_threshold_minutes",
+        "options": [
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "20",
+            "value": "20"
+          },
+          {
+            "selected": false,
+            "text": "30",
+            "value": "30"
+          },
+          {
+            "selected": false,
+            "text": "45",
+            "value": "45"
+          },
+          {
+            "selected": true,
+            "text": "60",
+            "value": "60"
+          },
+          {
+            "selected": false,
+            "text": "90",
+            "value": "90"
+          },
+          {
+            "selected": false,
+            "text": "120",
+            "value": "120"
+          },
+          {
+            "selected": false,
+            "text": "240",
+            "value": "240"
+          },
+          {
+            "selected": false,
+            "text": "360",
+            "value": "360"
+          }
+        ],
+        "query": "5,10,15,20,30,45,60,90,120,240,360",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "3",
+          "value": "3"
+        },
+        "datasource": {
+          "type": "mssql",
+          "uid": "${sqlmonitor_datasource}"
+        },
+        "definition": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect count(*)\nfrom dbo.instance_details id\nwhere is_enabled = 1\nand (is_available = 0 or is_linked_server_working = 0)\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Offline Servers Count",
+        "multi": false,
+        "name": "offline_servers_count",
+        "options": [],
+        "query": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect count(*)\nfrom dbo.instance_details id\nwhere is_enabled = 1\nand (is_available = 0 or is_linked_server_working = 0)\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "2",
+          "value": "2"
+        },
+        "datasource": {
+          "type": "mssql",
+          "uid": "${sqlmonitor_datasource}"
+        },
+        "definition": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect count(*) as counts\nfrom dbo.services_all_servers sas\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+id.sql_instance_port,id.sql_instance) \n\t\t\t\tfrom dbo.instance_details id where id.is_enabled = 1 \n\t\t\t\tand id.is_available = 1 and id.sql_instance = sas.sql_instance) id\nwhere 1=1\nand sas.service_type = 'Agent'\nand sas.status_desc <> 'Running'\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Offline SQLAgent Services Count",
+        "multi": false,
+        "name": "offline_agent_count",
+        "options": [],
+        "query": "declare @sql nvarchar(max);\nset quoted_identifier off;\nset @sql = \"\n/* $__dashboard */\nselect count(*) as counts\nfrom dbo.services_all_servers sas\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+id.sql_instance_port,id.sql_instance) \n\t\t\t\tfrom dbo.instance_details id where id.is_enabled = 1 \n\t\t\t\tand id.is_available = 1 and id.sql_instance = sas.sql_instance) id\nwhere 1=1\nand sas.service_type = 'Agent'\nand sas.status_desc <> 'Running'\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -5224,6 +6254,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - All Servers",
   "uid": "distributed_live_dashboard_all_servers",
-  "version": 91,
+  "version": 6,
   "weekStart": ""
 }

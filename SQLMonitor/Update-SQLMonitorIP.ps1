@@ -45,7 +45,7 @@ if( $isOk ) {
 else {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for InventoryServer '$InventoryServer'.."
     $conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database $InventoryDatabase -ClientName "Update-SQLMonitorIP.ps1" `
-                                                        -TrustServerCertificate -ErrorAction Stop
+                                                        -TrustServerCertificate -EncryptConnection -ErrorAction Stop
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetch [$UserName] password from Credential Manager [$InventoryServer].[$CredentialManagerDatabase].."
     $getCredential = @"
@@ -57,7 +57,7 @@ else {
 		    @password = @password output;
     select @password as [password];
 "@
-    [string]$userNamePassword = Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $CredentialManagerDatabase -Query $getCredential | 
+    [string]$userNamePassword = $conInventoryServer | Invoke-DbaQuery -Database $CredentialManagerDatabase -Query $getCredential | 
                                         Select-Object -ExpandProperty password -First 1
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Find out public ip of system.."

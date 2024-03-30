@@ -42,7 +42,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.4.7"
+      "version": "10.1.0"
     },
     {
       "type": "datasource",
@@ -345,6 +345,7 @@
       },
       "id": 141,
       "options": {
+        "cellHeight": "sm",
         "footer": {
           "countRows": false,
           "enablePagination": true,
@@ -357,7 +358,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -451,7 +452,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "XEvents"
   ],
   "templating": {
     "list": [
@@ -459,7 +461,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -1215,6 +1217,6 @@
   "timezone": "browser",
   "title": "XEvent - Workload",
   "uid": "XEvents",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }

@@ -1674,7 +1674,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "AG"
   ],
   "templating": {
     "list": [
@@ -2233,6 +2234,6 @@
   "timezone": "browser",
   "title": "t__Ag Health State",
   "uid": "ag_health_state",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }

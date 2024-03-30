@@ -49,7 +49,7 @@ $processes += $taskList | Select @{l='collection_time_utc';e={$timeUTC}}, @{l='h
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "$(($processes | Where-Object {$_.memory_kb -gt 1024 -or $_.cpu_time_seconds -gt 0}).Count) processes found consuming cpu or memory over 1 kb."
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Push filtered os processes info to SqlServer [$SqlInstance].[$Database].$TableName.."
-$sqlInstanceObj = Connect-DbaInstance -SqlInstance $SqlInstance -ClientName "(dba) Collect-OSProcesses" -TrustServerCertificate -ErrorAction Stop
+$sqlInstanceObj = Connect-DbaInstance -SqlInstance $SqlInstance -ClientName "(dba) Collect-OSProcesses" -TrustServerCertificate -EncryptConnection -ErrorAction Stop
 $processes | Where-Object {$_.memory_kb -gt 1024 -or $_.cpu_time_seconds -gt 0} |
         Write-DbaDbTableData -SqlInstance $sqlInstanceObj -Database $Database -Table $TableName -EnableException
 

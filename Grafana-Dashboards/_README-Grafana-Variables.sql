@@ -155,3 +155,25 @@ set @params = N', @disk_drive varchar(255), @database varchar(255)';
 */
 go
 
+
+/*	How to get From & To in Grafana URL */
+$StartTime = $Entry.Starttime
+$EndTime = $Entry.Endtime
+
+$unixEpochStart = Get-Date -Date "01/01/1970"
+
+$startTimeSeconds = [bigint]((New-TimeSpan -Start $UnixEpochStart -End $StartTimeUTC).TotalSeconds)
+$endTimeSeconds = [bigint]((New-TimeSpan -Start $UnixEpochStart -End $EndTimeUTC).TotalSeconds)
+
+#$grafana ="https://ajaydwivedi.ddns.net:3000/d-solo/distributed_live_dashboard_all_servers/monitoring---live---all-servers?orgId=1&from=now-15m&to=now&var-Server=$EvaluatedServer"
+#$grafana = "http://$($CentralServer):8989/d-solo/distributed_live_dashboard_all_servers/monitoring---live---all-servers?orgId=1&from=$($startTimeSeconds)000&to=$($endTimeSeconds)000&var-Server=$EvaluatedServer"
+$grafana = "http://$($CentralServer):8989/d-solo/distributed_live_dashboard_all_servers/monitoring---live---all-servers?orgId=1&from=$($startTimeSeconds)000&to=$($endTimeSeconds)000&var-Server=$EvaluatedServer"
+    
+
+/*	Embed Image in Email	*/
+C:\Program Files\GrafanaLabs\grafana\bin> .\grafana-cli.exe plugins install grafana-image-renderer
+
+https://stackoverflow.com/a/27305815/4449743
+https://stackoverflow.com/a/41994121/4449743
+https://www.sqlservercentral.com/forums/topic/how-to-imbed-an-image-into-an-email-sent-by-dbmail#post-1183987
+

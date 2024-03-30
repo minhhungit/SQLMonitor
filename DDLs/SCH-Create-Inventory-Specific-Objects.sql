@@ -1,7 +1,7 @@
 /*
-	Version -> v1.6.0
+	Version -> 2024-Feb-21
 	-----------------
-
+	2024-02-21 - Enhancement#30 - Add flag for choice of MemoryOptimized Tables 
 	2023-10-16 - Enhancement#5 - Dashboard for AlwaysOn Latency
 	2023-07-14 - Enhancement#268 - Add tables sql_agent_job_stats & memory_clerks in Collection Latency Dashboard
 	2023-06-16 - Enhancement#262 - Add is_enabled on Inventory.DBA.dbo.instance_details
@@ -23,15 +23,19 @@ IF DB_NAME() = 'master'
 	raiserror ('Kindly execute all queries in [DBA] database', 20, -1) with log;
 go
 
-ALTER DATABASE CURRENT SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON;
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+IF @MemoryOptimizedObjectUsage = 1
+	EXEC ('ALTER DATABASE CURRENT SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON');
 go
 
-if not exists (select * from sys.filegroups where name = 'MemoryOptimized')
-	ALTER DATABASE CURRENT ADD FILEGROUP MemoryOptimized CONTAINS MEMORY_OPTIMIZED_DATA;
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+if not exists (select * from sys.filegroups where name = 'MemoryOptimized') and (@MemoryOptimizedObjectUsage = 1)
+	EXEC ('ALTER DATABASE CURRENT ADD FILEGROUP MemoryOptimized CONTAINS MEMORY_OPTIMIZED_DATA');
 go
 
-if not exists (select * from sys.database_files where name = 'MemoryOptimized')
-	ALTER DATABASE CURRENT ADD FILE (name='MemoryOptimized', filename='E:\Data\MemoryOptimized.ndf') TO FILEGROUP MemoryOptimized
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+if not exists (select * from sys.database_files where name = 'MemoryOptimized') and (@MemoryOptimizedObjectUsage = 1)
+	EXEC ('ALTER DATABASE CURRENT ADD FILE (name=''MemoryOptimized'', filename=''E:\Data\MemoryOptimized.ndf'') TO FILEGROUP MemoryOptimized');
 go
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[all_server_stable_info]') AND type in (N'U'))
@@ -90,6 +94,26 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ag_he
 	DROP TABLE [dbo].[ag_health_state_all_servers__staging]
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[backups_all_servers]') AND type in (N'U'))
+	DROP TABLE [dbo].[backups_all_servers]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[backups_all_servers__staging]') AND type in (N'U'))
+	DROP TABLE [dbo].[backups_all_servers__staging]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[services_all_servers]') AND type in (N'U'))
+	DROP TABLE [dbo].[services_all_servers]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[services_all_servers__staging]') AND type in (N'U'))
+	DROP TABLE [dbo].[services_all_servers__staging]
+GO
+
+DECLARE @_sql NVARCHAR(MAX);
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+
+SET @_sql = '
 CREATE TABLE [dbo].[all_server_stable_info]
 (
 	[srv_name] [varchar](125) NOT NULL,
@@ -111,12 +135,20 @@ CREATE TABLE [dbo].[all_server_stable_info]
 	[scheduler_count] [smallint] NULL,
 	[major_version_number] [smallint] NULL,
 	[minor_version_number] [smallint] NULL,
-	[collection_time] [datetime2] NULL default sysdatetime()
-	CONSTRAINT pk_all_server_stable_info primary key nonclustered ([srv_name])
+	[collection_time] [datetime2] NULL default sysdatetime(),
+
+	'+(case when @MemoryOptimizedObjectUsage = 1 then '' else '--' end)+'CONSTRAINT pk_all_server_stable_info primary key nonclustered ([srv_name])
+	'+(case when @MemoryOptimizedObjectUsage = 0 then '' else '--' end)+'CONSTRAINT pk_all_server_stable_info primary key clustered ([srv_name])
 )
-WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+'+(case when @MemoryOptimizedObjectUsage = 1 then '' else '--' end)+'WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);';
+
+EXEC (@_sql);
 GO
 
+DECLARE @_sql NVARCHAR(MAX);
+DECLARE @MemoryOptimizedObjectUsage bit = 1;
+
+SET @_sql = '
 CREATE TABLE [dbo].[all_server_volatile_info]
 (
 	[srv_name] [varchar](125) NOT NULL,
@@ -133,10 +165,14 @@ CREATE TABLE [dbo].[all_server_volatile_info]
 	[connection_count] [int] NULL DEFAULT 0,
 	[active_requests_count] [int] NULL DEFAULT 0,
 	[waits_per_core_per_minute] [decimal](20, 2) NULL DEFAULT 0,
-	[collection_time] [datetime2] NULL default sysdatetime()
-	CONSTRAINT pk_all_server_volatile_info primary key nonclustered ([srv_name])
+	[collection_time] [datetime2] NULL default sysdatetime(),
+
+	'+(case when @MemoryOptimizedObjectUsage = 1 then '' else '--' end)+'CONSTRAINT pk_all_server_volatile_info primary key nonclustered ([srv_name])
+	'+(case when @MemoryOptimizedObjectUsage = 0 then '' else '--' end)+'CONSTRAINT pk_all_server_volatile_info primary key clustered ([srv_name])
 )
-WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+'+(case when @MemoryOptimizedObjectUsage = 1 then '' else '--' end)+'WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);';
+
+EXEC (@_sql);
 GO
 
 CREATE TABLE [dbo].[all_server_collection_latency_info]
@@ -385,11 +421,11 @@ go
 CREATE TABLE dbo.tempdb_space_usage_all_servers
 (	
 	[sql_instance] [varchar](255) NOT NULL,
-	[data_size_mb] varchar(100) not null,
-	[data_used_mb] varchar(100) not null, 
+	[data_size_mb] decimal(20,2) not null,
+	[data_used_mb] decimal(20,2) not null, 
 	[data_used_pct] decimal(5,2) not null, 
-	[log_size_mb] varchar(100) not null,
-	[log_used_mb] varchar(100) null,
+	[log_size_mb] decimal(20,2) not null,
+	[log_used_mb] decimal(20,2) null,
 	[log_used_pct] decimal(5,2) null,
 	[version_store_mb] decimal(20,2) null,
 	[version_store_pct] decimal(20,2) null,
@@ -404,11 +440,11 @@ go
 CREATE TABLE dbo.tempdb_space_usage_all_servers__staging
 (	
 	[sql_instance] [varchar](255) NOT NULL,
-	[data_size_mb] varchar(100) not null,
-	[data_used_mb] varchar(100) not null, 
+	[data_size_mb] decimal(20,2) not null,
+	[data_used_mb] decimal(20,2) not null, 
 	[data_used_pct] decimal(5,2) not null, 
-	[log_size_mb] varchar(100) not null,
-	[log_used_mb] varchar(100) null,
+	[log_size_mb] decimal(20,2) not null,
+	[log_used_mb] decimal(20,2) null,
 	[log_used_pct] decimal(5,2) null,
 	[version_store_mb] decimal(20,2) null,
 	[version_store_pct] decimal(20,2) null,
@@ -575,3 +611,98 @@ go
 if not exists (select * from sys.columns c where c.object_id = OBJECT_ID('dbo.instance_details') and c.name = 'is_linked_server_working')
     alter table dbo.instance_details add [is_linked_server_working] bit NOT NULL default 1;
 go
+
+CREATE TABLE [dbo].[backups_all_servers]
+(
+	[sql_instance] [varchar](255) not null,
+	[database_name] [varchar](128) not null,
+	[backup_type] [varchar](35) null,
+	[log_backups_count] [int] NULL,
+	[backup_start_date_utc] [datetime] NULL,
+	[backup_finish_date_utc] [datetime] NULL,
+	[latest_backup_location] [varchar](260) NULL,
+	[backup_size_mb] [decimal](20, 2) NULL,
+	[compressed_backup_size_mb] [decimal](20, 2) NULL,
+	[first_lsn] [numeric](25, 0) NULL,
+	[last_lsn] [numeric](25, 0) NULL,
+	[checkpoint_lsn] [numeric](25, 0) NULL,
+	[database_backup_lsn] [numeric](25, 0) NULL,
+	[database_creation_date_utc] [datetime] NULL,
+	[backup_software] [varchar](128) NULL,
+	[recovery_model] [varchar](60) NULL,
+	[compatibility_level] [tinyint] NULL,
+	[device_type] [varchar](25) NULL,
+	[description] [varchar](255) NULL,
+
+	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_backups_all_servers] clustered ([sql_instance], [database_name], [backup_start_date_utc])
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[backups_all_servers__staging]
+(
+	[sql_instance] [varchar](255) not null,
+	[database_name] [varchar](128) not null,
+	[backup_type] [varchar](35) NULL,
+	[log_backups_count] [int] NULL,
+	[backup_start_date_utc] [datetime] NULL,
+	[backup_finish_date_utc] [datetime] NULL,
+	[latest_backup_location] [varchar](260) NULL,
+	[backup_size_mb] [decimal](20, 2) NULL,
+	[compressed_backup_size_mb] [decimal](20, 2) NULL,
+	[first_lsn] [numeric](25, 0) NULL,
+	[last_lsn] [numeric](25, 0) NULL,
+	[checkpoint_lsn] [numeric](25, 0) NULL,
+	[database_backup_lsn] [numeric](25, 0) NULL,
+	[database_creation_date_utc] [datetime] NULL,
+	[backup_software] [varchar](128) NULL,
+	[recovery_model] [varchar](60) NULL,
+	[compatibility_level] [tinyint] NULL,
+	[device_type] [varchar](25) NULL,
+	[description] [varchar](255) NULL,
+
+	[collection_time_utc] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_backups_all_servers__staging] clustered ([sql_instance], [database_name], [backup_start_date_utc])
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[services_all_servers]
+(
+	[sql_instance] [varchar](255) NOT NULL,
+	[at_server_name] [varchar](125) NULL,
+	[service_type] [varchar](20) NOT NULL,
+	[servicename] [varchar](255) NOT NULL,
+	[startup_type_desc] [varchar](50) NOT NULL,
+	[status_desc] [varchar](125) NOT NULL,
+	[process_id] [int] NULL,
+	[service_account] [varchar](255) NOT NULL,
+	[sql_ports] [varchar](500) NULL,
+	[last_startup_time_utc] [datetime2] NULL,
+	[instant_file_initialization_enabled] [varchar](1) NULL,
+
+	[collection_time_utc] [datetime2] NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_services_all_servers] clustered ([sql_instance])
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[services_all_servers__staging]
+(
+	[sql_instance] [varchar](255) NOT NULL,
+	[at_server_name] [varchar](125) NULL,
+	[service_type] [varchar](20) NOT NULL,
+	[servicename] [varchar](255) NOT NULL,
+	[startup_type_desc] [varchar](50) NOT NULL,
+	[status_desc] [varchar](125) NOT NULL,
+	[process_id] [int] NULL,
+	[service_account] [varchar](255) NOT NULL,
+	[sql_ports] [varchar](500) NULL,
+	[last_startup_time_utc] [datetime2] NULL,
+	[instant_file_initialization_enabled] [varchar](1) NULL,
+	[collection_time_utc] [datetime2] NOT NULL DEFAULT GETUTCDATE(),
+
+	index [CI_services_all_servers__staging] clustered ([sql_instance])
+) ON [PRIMARY]
+GO

@@ -29,7 +29,10 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'(dba) Check-InstanceAvailabi
 		@delete_level=0, 
 		@description=N'Check if SQL Instances are online.
 
-https://ajaydwivedi.com/github/sqlmonitor', 
+https://ajaydwivedi.com/github/sqlmonitor
+
+For additional validation, [DDLs\SCH-usp_check_instance_availability.sql] can also be used at 2nd step of this job.
+', 
 		@category_name=N'(dba) SQLMonitor', 
 		--@owner_login_name=N'sa', 
 		@job_id = @jobId OUTPUT

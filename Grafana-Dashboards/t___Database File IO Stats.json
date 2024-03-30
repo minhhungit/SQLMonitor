@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_SQLSERVER",
-      "label": "SqlServer",
+      "name": "DS_SQLMONITOR",
+      "label": "SQLMonitor",
       "description": "",
       "type": "datasource",
       "pluginId": "mssql",
@@ -15,7 +15,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.4.7"
+      "version": "10.3.1"
     },
     {
       "type": "datasource",
@@ -83,7 +83,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -97,7 +97,7 @@
                   "type": "auto"
                 },
                 "filterable": true,
-                "inspect": false
+                "inspect": true
               },
               "mappings": [],
               "thresholds": {
@@ -107,7 +107,8 @@
                     "color": "green"
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -131,6 +132,23 @@
                   {
                     "id": "custom.minWidth",
                     "value": 150
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "purple"
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -151,6 +169,23 @@
                   {
                     "id": "custom.hidden",
                     "value": true
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue"
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -195,6 +230,23 @@
                   {
                     "id": "custom.minWidth",
                     "value": 150
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "super-light-blue"
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -223,6 +275,23 @@
                   {
                     "id": "custom.minWidth",
                     "value": 150
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue"
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -235,6 +304,23 @@
                   {
                     "id": "displayName",
                     "value": "Drive"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "blue"
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -403,6 +489,44 @@
                   {
                     "id": "custom.align",
                     "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "#EF843C",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "#E24D42",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -427,6 +551,44 @@
                   {
                     "id": "custom.align",
                     "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "#EF843C",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "#E24D42",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -447,6 +609,44 @@
                   {
                     "id": "custom.hidden",
                     "value": true
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "#EF843C",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -496,6 +696,7 @@
           },
           "id": 22,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -511,17 +712,17 @@
             "sortBy": [
               {
                 "desc": true,
-                "displayName": "num_of_bytes_read"
+                "displayName": "Avg Read Stall"
               }
             ]
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
@@ -582,7 +783,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -606,7 +807,8 @@
                     "color": "green"
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -902,6 +1104,43 @@
                   {
                     "id": "custom.align",
                     "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -926,6 +1165,43 @@
                   {
                     "id": "custom.align",
                     "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -995,6 +1271,7 @@
           },
           "id": 17,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -1014,13 +1291,13 @@
               }
             ]
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
@@ -1054,7 +1331,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -1078,7 +1355,8 @@
                     "color": "green"
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1374,6 +1652,43 @@
                   {
                     "id": "custom.align",
                     "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -1398,6 +1713,43 @@
                   {
                     "id": "custom.align",
                     "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               },
@@ -1467,6 +1819,7 @@
           },
           "id": 18,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -1486,13 +1839,13 @@
               }
             ]
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
@@ -1553,7 +1906,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -1562,6 +1915,7 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "Wait Stats (ms)",
@@ -1575,6 +1929,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 1,
@@ -1600,7 +1955,8 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "ms",
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1647,7 +2003,7 @@
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "time_series",
@@ -1704,7 +2060,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -1713,6 +2069,7 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "Wait Stats (ms)",
@@ -1726,6 +2083,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 1,
@@ -1751,7 +2109,8 @@
                   }
                 ]
               },
-              "unit": "ms"
+              "unit": "ms",
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1772,7 +2131,7 @@
             "h": 15,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 19
           },
           "id": 19,
           "options": {
@@ -1798,7 +2157,7 @@
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "time_series",
@@ -1844,7 +2203,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -1853,6 +2212,7 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "Read/Writes (Data)",
@@ -1866,6 +2226,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineStyle": {
                   "fill": "solid"
@@ -1894,7 +2255,8 @@
                   }
                 ]
               },
-              "unit": "decbytes"
+              "unit": "decbytes",
+              "unitScale": true
             },
             "overrides": []
           },
@@ -1929,7 +2291,7 @@
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "time_series",
@@ -1975,7 +2337,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -1996,10 +2358,12 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2255,6 +2619,44 @@
                   {
                     "id": "displayName",
                     "value": "Latency"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               }
@@ -2268,6 +2670,7 @@
           },
           "id": 34,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -2282,19 +2685,19 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
               "hide": false,
               "rawQuery": true,
-              "rawSql": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\n--declare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\n--declare @delta_minutes int;\ndeclare @disk_drive varchar(255) = '$disk_drive';\ndeclare @database varchar(255) = '$database';\n\nset @database = case when ltrim(rtrim(@database)) = '__All__' then null else @database end;\nset @disk_drive = case when ltrim(rtrim(@disk_drive)) = '__All__' then null else @disk_drive end;\n\nset @sql_instance = '$server';\n--set @perfmon_host_name = '$perfmon_host_name';\nset @start_time_utc = $__timeFrom();\nset @end_time_utc = $__timeTo();\n--set @delta_minutes = $cpu_delta_minutes;\nset @params = N'@start_time_utc datetime2, @end_time_utc datetime2, @disk_drive varchar(255), @database varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"/* SQLMonitor - File IO Stats Since Startup */\nset nocount on;\ndeclare @start_time datetime;\ndeclare @schedulers smallint;\ndeclare @cpu_time_min decimal(18,1);\ndeclare @IOStatsTop tinyint = 10;\ndeclare @IOPercentTop int = 99;\n\nselect @start_time = sqlserver_start_time from sys.dm_os_sys_info;\nselect @schedulers = count(*) from sys.dm_os_schedulers where status = 'VISIBLE ONLINE' and is_online = 1;\n-- @cpu_time_min = sum(total_cpu_usage_ms/1000.0)/60.0\n\n;WITH [t_DiskDrives] AS (\n\tselect ds.disk_volume,ds.capacity_mb, ds.free_mb\n\tfrom dbo.disk_space ds\n\twhere ds.collection_time_utc = (select max(i.collection_time_utc) from dbo.disk_space i)\n\t\"+(case when @disk_drive is null then '-- ' else '' end)+\"and ds.disk_volume = @disk_drive\n)\n,[t_FileIO] AS\n\t(\tSELECT\n\t\t\t[running_query] = 'File IO Stats', [collection_time_utc], [sample_ms], [database_name], \n\t\t\t[file_name_DISPLAY] = [file_logical_name]+' '+QUOTENAME(case when right(file_location,3) = 'ldf' then 'LOG' else 'DATA' end),\n\t\t\t[file_logical_name], [file_location], [size_on_disk_bytes],\n\t\t\t[file_type] = case when right(file_location,3) = 'ldf' then 'LOG' else 'DATA' end,\n\n\t\t\t[total_reads_writes] = [num_of_reads] + [num_of_writes],\n\t\t\t[total_reads_writes_stall_ms] = [io_stall_read_ms]+[io_stall_write_ms],\n\t\t\t[num_of_bytes_read], [num_of_bytes_written], \n\t\t\t[total_reads_writes_bytes] = [num_of_bytes_read]+[num_of_bytes_written],\n\t\t\t\n\t\t\t[reads_pcnt] = convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_read]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end),\n\t\t\t[writes_pcnt] = convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_written]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end),\n\t\t\t[pcnt_reads_writes] = convert(varchar,convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_read]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end)) + ' / ' + convert(varchar,convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_written]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end)),\n\n\t\t\t--[num_of_reads], [io_stall_read_ms], [num_of_writes],  [io_stall_write_ms],\n\t\t\t--[io_stall], [io_pending_ms_ticks_total],\n\t\t\t\n\t\t\t[read_latency_ms] = convert(numeric(20,2), case when [num_of_reads] = 0 then 0 else (([io_stall_read_ms] * 1.0)/[num_of_reads]) end),\n\t\t\t[write_latency_ms] = convert(numeric(20,2), case when [num_of_writes] = 0 then 0 else (([io_stall_write_ms] * 1.0)/[num_of_writes]) end),\n\t\t\t[latency_ms] = convert(numeric(20,2), case when [num_of_reads] + [num_of_writes] = 0 then 0 else (([io_stall] * 1.0) / ([num_of_reads] + [num_of_writes])) end),\n\n\t\t\t[avg_bytes_per_read] = convert(numeric(20,2), case when [num_of_reads] = 0 then 0 else ( ([num_of_bytes_read] * 1.0) / [num_of_reads] ) end),\n\t\t\t[avg_bytes_per_write] = convert(numeric(20,2), case when [num_of_writes] = 0 then 0 else ( ([num_of_bytes_written] * 1.0) / [num_of_writes] ) end),\n\t\t\t[avg_bytes_per_transfer] = convert(numeric(20,2), case when [num_of_reads] = 0 and [num_of_writes] = 0 then 0 else ( (([num_of_bytes_read]+[num_of_bytes_written]) * 1.0) / ([num_of_reads]+[num_of_writes]) ) end),\n\t\t\t\n\t\t\tdv.disk_volume, dv.capacity_mb, dv.free_mb\n\t\t\t\n\t\tFROM dbo.file_io_stats fis\n\t\tCROSS APPLY (\n\t\t\t\tselect top 1 *\n\t\t\t\tfrom [t_DiskDrives] dd\n\t\t\t\twhere fis.file_location like (dd.disk_volume+'%')\n\t\t\t\torder by len(dd.disk_volume) desc\n\t\t\t) dv\n\t\tWHERE fis.collection_time_utc = (SELECT MAX(i.collection_time_utc) FROM dbo.file_io_stats i)\n\t\t\"+(case when @database is null then '-- ' else '' end)+\"AND fis.[database_name] = @database\n    )\nselect\t[running_query] = max(running_query),\n\t\t[collection_time_utc] = max(collection_time_utc),\n\t\t[sample_ms] = max(sample_ms),\n\t\t[database_name],\n\t\t[files_count] = count(*),\n\t\t[disk_volume_count] = count(distinct disk_volume),\n\t\t[capacity_mb] = max(capacity_mb), \n\t\t[free_mb] = max(free_mb),\n\t\t[db_files_size_on_disk_mb] = convert(numeric(20,2),sum(size_on_disk_bytes*1.0/1024/1024)),\n\t\t[total_reads_writes] = sum(total_reads_writes),\n\t\t[reads_mb] = convert(numeric(20,2),sum(num_of_bytes_read)/1024.0/1024),\n\t\t[writes_mb] = convert(numeric(20,2),sum(num_of_bytes_written)/1024.0/1024),\n\t\t[reads_writes_mb] = convert(numeric(20,2),sum(num_of_bytes_read+num_of_bytes_written)/1024.0/1024),\n\t\t[pcnt_reads_writes] = convert(varchar,convert(numeric(20,2),(sum(num_of_bytes_read)*100.0/sum(num_of_bytes_read+num_of_bytes_written)))) \n\t\t\t\t\t\t\t\t+ ' / ' + \n\t\t\t\t\t\t\t\tconvert(varchar,convert(numeric(20,2),(sum(num_of_bytes_written)*100.0/sum(num_of_bytes_read+num_of_bytes_written)))),\n\t\t[avg_read_write_stall_ms] = convert(numeric(20,0),(case when sum(total_reads_writes) <> 0 then sum(total_reads_writes_stall_ms)*1.0/sum(total_reads_writes) else 0.0 end))\nfrom [t_FileIO] fio\ngroup by [database_name]\norder by [reads_writes_mb] desc\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @disk_drive, @database;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @disk_drive, @database;",
+              "rawSql": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\n--declare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\n--declare @delta_minutes int;\ndeclare @disk_drive varchar(255) = '$disk_drive';\ndeclare @database varchar(255) = '$database';\n\nset @database = case when ltrim(rtrim(@database)) = '__All__' then null else @database end;\nset @disk_drive = case when ltrim(rtrim(@disk_drive)) = '__All__' then null else @disk_drive end;\n\nset @sql_instance = '$server';\n--set @perfmon_host_name = '$perfmon_host_name';\nset @start_time_utc = $__timeFrom();\nset @end_time_utc = $__timeTo();\n--set @delta_minutes = $cpu_delta_minutes;\nset @params = N'@start_time_utc datetime2, @end_time_utc datetime2, @disk_drive varchar(255), @database varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"/* SQLMonitor - File IO Stats Since Startup */\nset nocount on;\ndeclare @start_time datetime;\ndeclare @schedulers smallint;\ndeclare @cpu_time_min decimal(18,1);\ndeclare @IOStatsTop tinyint = 10;\ndeclare @IOPercentTop int = 99;\n\nselect @start_time = sqlserver_start_time from sys.dm_os_sys_info;\nselect @schedulers = count(*) from sys.dm_os_schedulers where status = 'VISIBLE ONLINE' and is_online = 1;\n-- @cpu_time_min = sum(total_cpu_usage_ms/1000.0)/60.0\n\n;WITH [t_DiskDrives] AS (\n\tselect ds.disk_volume,ds.capacity_mb, ds.free_mb\n\tfrom dbo.disk_space ds\n\twhere ds.collection_time_utc = (select max(i.collection_time_utc) from dbo.disk_space i)\n\t\"+(case when @disk_drive is null then '-- ' else '' end)+\"and ds.disk_volume = @disk_drive\n)\n,[t_FileIO] AS\n\t(\tSELECT\n\t\t\t[running_query] = 'File IO Stats', [collection_time_utc], [sample_ms], [database_name], \n\t\t\t[file_name_DISPLAY] = [file_logical_name]+' '+QUOTENAME(case when right(file_location,3) = 'ldf' then 'LOG' else 'DATA' end),\n\t\t\t[file_logical_name], [file_location], [size_on_disk_bytes],\n\t\t\t[file_type] = case when right(file_location,3) = 'ldf' then 'LOG' else 'DATA' end,\n\n\t\t\t[total_reads_writes] = [num_of_reads] + [num_of_writes],\n\t\t\t[total_reads_writes_stall_ms] = [io_stall_read_ms]+[io_stall_write_ms],\n\t\t\t[num_of_bytes_read], [num_of_bytes_written], \n\t\t\t[total_reads_writes_bytes] = [num_of_bytes_read]+[num_of_bytes_written],\n\t\t\t\n\t\t\t[reads_pcnt] = convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_read]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end),\n\t\t\t[writes_pcnt] = convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_written]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end),\n\t\t\t[pcnt_reads_writes] = convert(varchar,convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_read]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end)) + ' / ' + convert(varchar,convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_written]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end)),\n\n\t\t\t--[num_of_reads], [io_stall_read_ms], [num_of_writes],  [io_stall_write_ms],\n\t\t\t--[io_stall], [io_pending_ms_ticks_total],\n\t\t\t\n\t\t\t[read_latency_ms] = convert(numeric(20,2), case when [num_of_reads] = 0 then 0 else (([io_stall_read_ms] * 1.0)/[num_of_reads]) end),\n\t\t\t[write_latency_ms] = convert(numeric(20,2), case when [num_of_writes] = 0 then 0 else (([io_stall_write_ms] * 1.0)/[num_of_writes]) end),\n\t\t\t[latency_ms] = convert(numeric(20,2), case when [num_of_reads] + [num_of_writes] = 0 then 0 else (([io_stall] * 1.0) / ([num_of_reads] + [num_of_writes])) end),\n\n\t\t\t[avg_bytes_per_read] = convert(numeric(20,2), case when [num_of_reads] = 0 then 0 else ( ([num_of_bytes_read] * 1.0) / [num_of_reads] ) end),\n\t\t\t[avg_bytes_per_write] = convert(numeric(20,2), case when [num_of_writes] = 0 then 0 else ( ([num_of_bytes_written] * 1.0) / [num_of_writes] ) end),\n\t\t\t[avg_bytes_per_transfer] = convert(numeric(20,2), case when [num_of_reads] = 0 and [num_of_writes] = 0 then 0 else ( (([num_of_bytes_read]+[num_of_bytes_written]) * 1.0) / ([num_of_reads]+[num_of_writes]) ) end),\n\t\t\t\n\t\t\tdv.disk_volume, dv.capacity_mb, dv.free_mb\n\t\t\t,[disk_row_id] = row_number()over(partition by database_name, disk_volume order by file_logical_name)\n\t\tFROM dbo.file_io_stats fis\n\t\tCROSS APPLY (\n\t\t\t\tselect top 1 *\n\t\t\t\tfrom [t_DiskDrives] dd\n\t\t\t\twhere fis.file_location like (dd.disk_volume+'%')\n\t\t\t\torder by len(dd.disk_volume) desc\n\t\t\t) dv\n\t\tWHERE fis.collection_time_utc = (SELECT MAX(i.collection_time_utc) FROM dbo.file_io_stats i)\n\t\t\"+(case when @database is null then '-- ' else '' end)+\"AND fis.[database_name] = @database\n    )\nselect\t[running_query] = max(running_query),\n\t\t[collection_time_utc] = max(collection_time_utc),\n\t\t[sample_ms] = max(sample_ms),\n\t\t[database_name],\n\t\t[files_count] = count(*),\n\t\t[disk_volume_count] = count(distinct disk_volume),\n\t\t[capacity_mb] = sum(case when disk_row_id = 1 then capacity_mb else 0 end),\n\t\t[free_mb] = sum(case when disk_row_id = 1 then free_mb else 0 end),\n\t\t[db_files_size_on_disk_mb] = convert(numeric(20,2),sum(size_on_disk_bytes*1.0/1024/1024)),\n\t\t[total_reads_writes] = sum(total_reads_writes),\n\t\t[reads_mb] = convert(numeric(20,2),sum(num_of_bytes_read)/1024.0/1024),\n\t\t[writes_mb] = convert(numeric(20,2),sum(num_of_bytes_written)/1024.0/1024),\n\t\t[reads_writes_mb] = convert(numeric(20,2),sum(num_of_bytes_read+num_of_bytes_written)/1024.0/1024),\n\t\t[pcnt_reads_writes] = convert(varchar,convert(numeric(20,2),(sum(num_of_bytes_read)*100.0/sum(num_of_bytes_read+num_of_bytes_written)))) \n\t\t\t\t\t\t\t\t+ ' / ' + \n\t\t\t\t\t\t\t\tconvert(varchar,convert(numeric(20,2),(sum(num_of_bytes_written)*100.0/sum(num_of_bytes_read+num_of_bytes_written)))),\n\t\t[avg_read_write_stall_ms] = convert(numeric(20,0),(case when sum(total_reads_writes) <> 0 then sum(total_reads_writes_stall_ms)*1.0/sum(total_reads_writes) else 0.0 end))\nfrom [t_FileIO] fio\ngroup by [database_name]\norder by [reads_writes_mb] desc\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @disk_drive, @database;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @disk_drive, @database;",
               "refId": "Query-Db-File-Stats-Since-Startup",
               "sql": {
                 "columns": [
@@ -2336,7 +2739,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -2357,10 +2760,12 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2616,6 +3021,44 @@
                   {
                     "id": "displayName",
                     "value": "Latency"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               }
@@ -2629,6 +3072,7 @@
           },
           "id": 38,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -2643,19 +3087,19 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
               "hide": false,
               "rawQuery": true,
-              "rawSql": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\ndeclare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\n--declare @delta_minutes int;\ndeclare @disk_drive varchar(255) = '$disk_drive';\ndeclare @database varchar(255) = '$database';\n\nset @sql_instance = '$server';\n--set @perfmon_host_name = '$perfmon_host_name';\n--set @start_time_utc = $__timeFrom();\nset @start_time_utc = dateadd(second,$sqlserver_start_time_utc/1000,'1970-01-01 00:00:00');\n--set @end_time_utc = $__timeTo();\nset @end_time_utc = $__timeFrom();\n--select @start_time_utc as start_time, @end_time_utc as end_time;\n--set @delta_minutes = $cpu_delta_minutes;\nset @database = case when ltrim(rtrim(@database)) = '__All__' then null else @database end;\nset @disk_drive = case when ltrim(rtrim(@disk_drive)) = '__All__' then null else @disk_drive end;\nset @params = N'@start_time_utc datetime2, @end_time_utc datetime2, @disk_drive varchar(255), @database varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"/* SQLMonitor - File IO Stats Since Startup */\nset nocount on;\ndeclare @start_time datetime;\ndeclare @schedulers smallint;\ndeclare @cpu_time_min decimal(18,1);\ndeclare @IOStatsTop tinyint = 10;\ndeclare @IOPercentTop int = 99;\n\nselect @start_time = sqlserver_start_time from sys.dm_os_sys_info;\nselect @schedulers = count(*) from sys.dm_os_schedulers where status = 'VISIBLE ONLINE' and is_online = 1;\n-- @cpu_time_min = sum(total_cpu_usage_ms/1000.0)/60.0\n\n;WITH [t_DiskDrives] AS (\n\tselect ds.disk_volume,ds.capacity_mb, ds.free_mb\n\tfrom dbo.disk_space ds\n\twhere ds.collection_time_utc = (select max(i.collection_time_utc) from dbo.disk_space i)\n\t\"+(case when @disk_drive is null then '-- ' else '' end)+\"and ds.disk_volume = @disk_drive\n)\n,[t_FileIO] AS\n\t(\tSELECT\n\t\t\t[running_query] = 'File IO Stats', [collection_time_utc], [sample_ms], [database_name], \n\t\t\t[file_name_DISPLAY] = [file_logical_name]+' '+QUOTENAME(case when right(file_location,3) = 'ldf' then 'LOG' else 'DATA' end),\n\t\t\t[file_logical_name], [file_location], [size_on_disk_bytes],\n\t\t\t[file_type] = case when right(file_location,3) = 'ldf' then 'LOG' else 'DATA' end,\n\n\t\t\t[total_reads_writes] = [num_of_reads] + [num_of_writes],\n\t\t\t[total_reads_writes_stall_ms] = [io_stall_read_ms]+[io_stall_write_ms],\n\t\t\t[num_of_bytes_read], [num_of_bytes_written], \n\t\t\t[total_reads_writes_bytes] = [num_of_bytes_read]+[num_of_bytes_written],\n\t\t\t\n\t\t\t[reads_pcnt] = convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_read]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end),\n\t\t\t[writes_pcnt] = convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_written]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end),\n\t\t\t[pcnt_reads_writes] = convert(varchar,convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_read]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end)) + ' / ' + convert(varchar,convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_written]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end)),\n\n\t\t\t--[num_of_reads], [io_stall_read_ms], [num_of_writes],  [io_stall_write_ms],\n\t\t\t--[io_stall], [io_pending_ms_ticks_total],\n\t\t\t\n\t\t\t[read_latency_ms] = convert(numeric(20,2), case when [num_of_reads] = 0 then 0 else (([io_stall_read_ms] * 1.0)/[num_of_reads]) end),\n\t\t\t[write_latency_ms] = convert(numeric(20,2), case when [num_of_writes] = 0 then 0 else (([io_stall_write_ms] * 1.0)/[num_of_writes]) end),\n\t\t\t[latency_ms] = convert(numeric(20,2), case when [num_of_reads] + [num_of_writes] = 0 then 0 else (([io_stall] * 1.0) / ([num_of_reads] + [num_of_writes])) end),\n\n\t\t\t[avg_bytes_per_read] = convert(numeric(20,2), case when [num_of_reads] = 0 then 0 else ( ([num_of_bytes_read] * 1.0) / [num_of_reads] ) end),\n\t\t\t[avg_bytes_per_write] = convert(numeric(20,2), case when [num_of_writes] = 0 then 0 else ( ([num_of_bytes_written] * 1.0) / [num_of_writes] ) end),\n\t\t\t[avg_bytes_per_transfer] = convert(numeric(20,2), case when [num_of_reads] = 0 and [num_of_writes] = 0 then 0 else ( (([num_of_bytes_read]+[num_of_bytes_written]) * 1.0) / ([num_of_reads]+[num_of_writes]) ) end),\n\t\t\t\n\t\t\tdv.disk_volume, dv.capacity_mb, dv.free_mb\n\t\t\t\n\t\tFROM dbo.file_io_stats fis\n\t\tCROSS APPLY (\n\t\t\t\tselect top 1 *\n\t\t\t\tfrom [t_DiskDrives] dd\n\t\t\t\twhere fis.file_location like (dd.disk_volume+'%')\n\t\t\t\torder by len(dd.disk_volume) desc\n\t\t\t) dv\n\t\tWHERE fis.collection_time_utc = (SELECT MAX(i.collection_time_utc) FROM dbo.file_io_stats i WHERE i.collection_time_utc <= @end_time_utc)\n\t\t\"+(case when @database is null then '-- ' else '' end)+\"AND fis.[database_name] = @database\n    )\nselect\t[running_query] = max(running_query),\n\t\t[collection_time_utc] = max(collection_time_utc),\n\t\t[sample_ms] = max(sample_ms),\n\t\t[database_name],\n\t\t[files_count] = count(*),\n\t\t[disk_volume_count] = count(distinct disk_volume),\n\t\t[capacity_mb] = max(capacity_mb), \n\t\t[free_mb] = max(free_mb),\n\t\t[db_files_size_on_disk_mb] = convert(numeric(20,2),sum(size_on_disk_bytes*1.0/1024/1024)),\n\t\t[total_reads_writes] = sum(total_reads_writes),\n\t\t[reads_mb] = convert(numeric(20,2),sum(num_of_bytes_read)/1024.0/1024),\n\t\t[writes_mb] = convert(numeric(20,2),sum(num_of_bytes_written)/1024.0/1024),\n\t\t[reads_writes_mb] = convert(numeric(20,2),sum(num_of_bytes_read+num_of_bytes_written)/1024.0/1024),\n\t\t[pcnt_reads_writes] = convert(varchar,convert(numeric(20,2),(sum(num_of_bytes_read)*100.0/sum(num_of_bytes_read+num_of_bytes_written)))) \n\t\t\t\t\t\t\t\t+ ' / ' + \n\t\t\t\t\t\t\t\tconvert(varchar,convert(numeric(20,2),(sum(num_of_bytes_written)*100.0/sum(num_of_bytes_read+num_of_bytes_written)))),\n\t\t[avg_read_write_stall_ms] = convert(numeric(20,0),(case when sum(total_reads_writes) <> 0 then sum(total_reads_writes_stall_ms)*1.0/sum(total_reads_writes) else 0.0 end))\nfrom [t_FileIO] fio\ngroup by [database_name]\norder by [reads_writes_mb] desc\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @disk_drive, @database;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @disk_drive, @database;",
+              "rawSql": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\ndeclare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\n--declare @delta_minutes int;\ndeclare @disk_drive varchar(255) = '$disk_drive';\ndeclare @database varchar(255) = '$database';\n\nset @sql_instance = '$server';\n--set @perfmon_host_name = '$perfmon_host_name';\n--set @start_time_utc = $__timeFrom();\nset @start_time_utc = dateadd(second,$sqlserver_start_time_utc/1000,'1970-01-01 00:00:00');\n--set @end_time_utc = $__timeTo();\nset @end_time_utc = $__timeFrom();\n--select @start_time_utc as start_time, @end_time_utc as end_time;\n--set @delta_minutes = $cpu_delta_minutes;\nset @database = case when ltrim(rtrim(@database)) = '__All__' then null else @database end;\nset @disk_drive = case when ltrim(rtrim(@disk_drive)) = '__All__' then null else @disk_drive end;\nset @params = N'@start_time_utc datetime2, @end_time_utc datetime2, @disk_drive varchar(255), @database varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"/* SQLMonitor - File IO Stats Since Startup */\nset nocount on;\ndeclare @start_time datetime;\ndeclare @schedulers smallint;\ndeclare @cpu_time_min decimal(18,1);\ndeclare @IOStatsTop tinyint = 10;\ndeclare @IOPercentTop int = 99;\n\nselect @start_time = sqlserver_start_time from sys.dm_os_sys_info;\nselect @schedulers = count(*) from sys.dm_os_schedulers where status = 'VISIBLE ONLINE' and is_online = 1;\n-- @cpu_time_min = sum(total_cpu_usage_ms/1000.0)/60.0\n\n;WITH [t_DiskDrives] AS (\n\tselect ds.disk_volume,ds.capacity_mb, ds.free_mb\n\tfrom dbo.disk_space ds\n\twhere ds.collection_time_utc = (select max(i.collection_time_utc) from dbo.disk_space i)\n\t\"+(case when @disk_drive is null then '-- ' else '' end)+\"and ds.disk_volume = @disk_drive\n)\n,[t_FileIO] AS\n\t(\tSELECT\n\t\t\t[running_query] = 'File IO Stats', [collection_time_utc], [sample_ms], [database_name], \n\t\t\t[file_name_DISPLAY] = [file_logical_name]+' '+QUOTENAME(case when right(file_location,3) = 'ldf' then 'LOG' else 'DATA' end),\n\t\t\t[file_logical_name], [file_location], [size_on_disk_bytes],\n\t\t\t[file_type] = case when right(file_location,3) = 'ldf' then 'LOG' else 'DATA' end,\n\n\t\t\t[total_reads_writes] = [num_of_reads] + [num_of_writes],\n\t\t\t[total_reads_writes_stall_ms] = [io_stall_read_ms]+[io_stall_write_ms],\n\t\t\t[num_of_bytes_read], [num_of_bytes_written], \n\t\t\t[total_reads_writes_bytes] = [num_of_bytes_read]+[num_of_bytes_written],\n\t\t\t\n\t\t\t[reads_pcnt] = convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_read]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end),\n\t\t\t[writes_pcnt] = convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_written]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end),\n\t\t\t[pcnt_reads_writes] = convert(varchar,convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_read]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end)) + ' / ' + convert(varchar,convert(numeric(20,2),case when [num_of_bytes_read] = 0 and [num_of_bytes_written] = 0 then 0\n\t\t\t\t\t\t\t\telse 100.0 * ([num_of_bytes_written]*1.0)/([num_of_bytes_read]+[num_of_bytes_written]) end)),\n\n\t\t\t--[num_of_reads], [io_stall_read_ms], [num_of_writes],  [io_stall_write_ms],\n\t\t\t--[io_stall], [io_pending_ms_ticks_total],\n\t\t\t\n\t\t\t[read_latency_ms] = convert(numeric(20,2), case when [num_of_reads] = 0 then 0 else (([io_stall_read_ms] * 1.0)/[num_of_reads]) end),\n\t\t\t[write_latency_ms] = convert(numeric(20,2), case when [num_of_writes] = 0 then 0 else (([io_stall_write_ms] * 1.0)/[num_of_writes]) end),\n\t\t\t[latency_ms] = convert(numeric(20,2), case when [num_of_reads] + [num_of_writes] = 0 then 0 else (([io_stall] * 1.0) / ([num_of_reads] + [num_of_writes])) end),\n\n\t\t\t[avg_bytes_per_read] = convert(numeric(20,2), case when [num_of_reads] = 0 then 0 else ( ([num_of_bytes_read] * 1.0) / [num_of_reads] ) end),\n\t\t\t[avg_bytes_per_write] = convert(numeric(20,2), case when [num_of_writes] = 0 then 0 else ( ([num_of_bytes_written] * 1.0) / [num_of_writes] ) end),\n\t\t\t[avg_bytes_per_transfer] = convert(numeric(20,2), case when [num_of_reads] = 0 and [num_of_writes] = 0 then 0 else ( (([num_of_bytes_read]+[num_of_bytes_written]) * 1.0) / ([num_of_reads]+[num_of_writes]) ) end),\n\t\t\t\n\t\t\tdv.disk_volume, dv.capacity_mb, dv.free_mb\n\t\t\t,[disk_row_id] = row_number()over(partition by database_name, disk_volume order by file_logical_name)\n\t\tFROM dbo.file_io_stats fis\n\t\tCROSS APPLY (\n\t\t\t\tselect top 1 *\n\t\t\t\tfrom [t_DiskDrives] dd\n\t\t\t\twhere fis.file_location like (dd.disk_volume+'%')\n\t\t\t\torder by len(dd.disk_volume) desc\n\t\t\t) dv\n\t\tWHERE fis.collection_time_utc = (SELECT MAX(i.collection_time_utc) FROM dbo.file_io_stats i)\n\t\t\"+(case when @database is null then '-- ' else '' end)+\"AND fis.[database_name] = @database\n    )\nselect\t[running_query] = max(running_query),\n\t\t[collection_time_utc] = max(collection_time_utc),\n\t\t[sample_ms] = max(sample_ms),\n\t\t[database_name],\n\t\t[files_count] = count(*),\n\t\t[disk_volume_count] = count(distinct disk_volume),\n\t\t[capacity_mb] = sum(case when disk_row_id = 1 then capacity_mb else 0 end),\n\t\t[free_mb] = sum(case when disk_row_id = 1 then free_mb else 0 end),\n\t\t[db_files_size_on_disk_mb] = convert(numeric(20,2),sum(size_on_disk_bytes*1.0/1024/1024)),\n\t\t[total_reads_writes] = sum(total_reads_writes),\n\t\t[reads_mb] = convert(numeric(20,2),sum(num_of_bytes_read)/1024.0/1024),\n\t\t[writes_mb] = convert(numeric(20,2),sum(num_of_bytes_written)/1024.0/1024),\n\t\t[reads_writes_mb] = convert(numeric(20,2),sum(num_of_bytes_read+num_of_bytes_written)/1024.0/1024),\n\t\t[pcnt_reads_writes] = convert(varchar,convert(numeric(20,2),(sum(num_of_bytes_read)*100.0/sum(num_of_bytes_read+num_of_bytes_written)))) \n\t\t\t\t\t\t\t\t+ ' / ' + \n\t\t\t\t\t\t\t\tconvert(varchar,convert(numeric(20,2),(sum(num_of_bytes_written)*100.0/sum(num_of_bytes_read+num_of_bytes_written)))),\n\t\t[avg_read_write_stall_ms] = convert(numeric(20,0),(case when sum(total_reads_writes) <> 0 then sum(total_reads_writes_stall_ms)*1.0/sum(total_reads_writes) else 0.0 end))\nfrom [t_FileIO] fio\ngroup by [database_name]\norder by [reads_writes_mb] desc\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @disk_drive, @database;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc, @disk_drive, @database;",
               "refId": "Query-Db-File-Stats-Since-Startup",
               "sql": {
                 "columns": [
@@ -2683,7 +3127,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -2704,10 +3148,12 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2967,6 +3413,44 @@
                   {
                     "id": "displayName",
                     "value": "Latency"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               }
@@ -2980,6 +3464,7 @@
           },
           "id": 32,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -2994,13 +3479,13 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
@@ -3048,7 +3533,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -3072,7 +3557,8 @@
                     "color": "green"
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -3328,6 +3814,43 @@
                   {
                     "id": "displayName",
                     "value": "Latency"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               }
@@ -3341,6 +3864,7 @@
           },
           "id": 10,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -3355,13 +3879,13 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
@@ -3409,7 +3933,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -3433,7 +3957,8 @@
                     "color": "green"
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -3689,6 +4214,43 @@
                   {
                     "id": "displayName",
                     "value": "Latency"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               }
@@ -3698,10 +4260,11 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 9
+            "y": 19
           },
           "id": 31,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -3716,13 +4279,13 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
@@ -3756,7 +4319,7 @@
         {
           "datasource": {
             "type": "mssql",
-            "uid": "${DS_SQLSERVER}"
+            "uid": "${DS_SQLMONITOR}"
           },
           "description": "exec sp_BlitzFirst @seconds = 60, @ExpertMode = 1",
           "fieldConfig": {
@@ -3780,7 +4343,8 @@
                     "color": "green"
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -4036,6 +4600,43 @@
                   {
                     "id": "displayName",
                     "value": "Latency"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "super-light-yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 15
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "super-light-red",
+                          "value": 35
+                        },
+                        {
+                          "color": "red",
+                          "value": 50
+                        }
+                      ]
+                    }
                   }
                 ]
               }
@@ -4045,10 +4646,11 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 19
+            "y": 29
           },
           "id": 41,
           "options": {
+            "cellHeight": "sm",
             "footer": {
               "countRows": false,
               "enablePagination": true,
@@ -4063,13 +4665,13 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "9.4.7",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "alias": "",
               "datasource": {
                 "type": "mssql",
-                "uid": "${DS_SQLSERVER}"
+                "uid": "${DS_SQLMONITOR}"
               },
               "editorMode": "code",
               "format": "table",
@@ -4107,19 +4709,19 @@
   ],
   "refresh": "",
   "revision": 1,
-  "schemaVersion": 38,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "File IO Stats"
   ],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "SqlServer",
-          "value": "SqlServer"
+          "text": "SQLMonitor",
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -4138,7 +4740,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql nvarchar(max);\n\nset quoted_identifier off;\nset @sql = \"select distinct srvname = sql_instance from dbo.instance_details with (nolock)\nwhere is_available = 1 and is_enabled = 1\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql;",
         "hide": 0,
@@ -4158,7 +4760,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "SELECT DB_NAME()",
         "hide": 2,
@@ -4178,7 +4780,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql_instance varchar(255); \nset @sql_instance = '$server';\nselect is_local = case when ( (CONVERT(varchar,SERVERPROPERTY('MachineName')) = @sql_instance ) \n\t\t\tor (CONVERT(varchar,SERVERPROPERTY('ServerName')) = @sql_instance )\n\t\t\t)  then 1 else 0 end",
         "hide": 2,
@@ -4198,7 +4800,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql nvarchar(max);\ndeclare @sql_instance varchar(255);\nset @sql_instance = '$server';\n\nset quoted_identifier off;\nset @sql = \"select top 1 [database] from dbo.instance_details id\nwhere id.sql_instance = @sql_instance\n\";\nset quoted_identifier off;\n\nexec dbo.sp_executesql @sql, N'@sql_instance varchar(255)', @sql_instance;",
         "hide": 2,
@@ -4218,7 +4820,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\n\nset @sql_instance = '$server';\nset @params = N'@sql_instance varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"select CONVERT(varchar,  CONNECTIONPROPERTY('local_net_address') ) as [ip];\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql --, @params, @sql_instance;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql --, @params, @sql_instance;",
         "hide": 2,
@@ -4238,7 +4840,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "exec dbo.usp_GetAllServerInfo \n\t\t\t\t@servers = '$server',\n\t\t\t\t@output = 'fqdn'",
         "hide": 2,
@@ -4258,7 +4860,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\n--declare @perfmon_host_name varchar(255);\ndeclare @start_time_utc datetime2;\ndeclare @end_time_utc datetime2;\n--declare @delta_minutes int;\n\nset @sql_instance = '$server';\n--set @perfmon_host_name = '$perfmon_host_name';\nset @start_time_utc = $__timeFrom();\nset @end_time_utc = $__timeTo();\n--set @delta_minutes = $cpu_delta_minutes;\nset @params = N'@start_time_utc datetime2, @end_time_utc datetime2';\n\nset quoted_identifier off;\nset @sql = \"\nset nocount on;\nselect top 1 collection_time_utc\nfrom [dbo].[file_io_stats]\norder by collection_time_utc desc\n\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql, @params, @start_time_utc, @end_time_utc;",
         "hide": 2,
@@ -4278,7 +4880,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\ndeclare @perfmon_host_name varchar(255);\n\nset @sql_instance = '$server';\n--set @perfmon_host_name = '$perfmon_host_name';\nset @params = N'@perfmon_host_name varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"select count(*) as counts from sys.dm_os_schedulers dos where status = 'VISIBLE ONLINE' and is_online = 1;\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql , @params, @perfmon_host_name;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql , @params, @perfmon_host_name;",
         "hide": 2,
@@ -4298,7 +4900,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\ndeclare @perfmon_host_name varchar(255);\n\nset @sql_instance = '$server';\nset @perfmon_host_name = '$perfmon_host_name';\nset @params = N'@perfmon_host_name varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"select DATEADD(mi, DATEDIFF(mi, getdate(), getutcdate()), sqlserver_start_time) from sys.dm_os_sys_info as osi;\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql , @params, @perfmon_host_name;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql , @params, @perfmon_host_name;",
         "hide": 2,
@@ -4318,7 +4920,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\ndeclare @perfmon_host_name varchar(255);\n\nset @sql_instance = '$server';\n--set @perfmon_host_name = '$perfmon_host_name';\nset @params = N'@perfmon_host_name varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"select ds.disk_volume as disk_drive\n\tfrom dbo.disk_space ds\n\twhere ds.collection_time_utc = (select max(i.collection_time_utc) from dbo.disk_space i)\n\tunion all\n\tselect '__All__' as disk_drive\n\torder by disk_drive\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql , @params, @perfmon_host_name;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql , @params, @perfmon_host_name;",
         "hide": 0,
@@ -4338,7 +4940,7 @@
         "current": {},
         "datasource": {
           "type": "mssql",
-          "uid": "${DS_SQLSERVER}"
+          "uid": "${DS_SQLMONITOR}"
         },
         "definition": "declare @sql nvarchar(max);\ndeclare @params nvarchar(max);\ndeclare @sql_instance varchar(255);\ndeclare @perfmon_host_name varchar(255);\n\nset @sql_instance = '$server';\n--set @perfmon_host_name = '$perfmon_host_name';\nset @params = N'@perfmon_host_name varchar(255)';\n\nset quoted_identifier off;\nset @sql = \"select name from sys.databases d where d.state_desc = 'ONLINE' union all select '__All__' as name order by name;\"\nset quoted_identifier on;\n\n--if (@sql_instance = SERVERPROPERTY('SERVERNAME'))\nif ($is_local = 1)\n  exec dbo.sp_executesql @sql , @params, @perfmon_host_name;\nelse\n  exec [$server].[$dba_db].dbo.sp_executesql @sql , @params, @perfmon_host_name;",
         "hide": 0,
@@ -4375,6 +4977,6 @@
   "timezone": "",
   "title": "t___Database File IO Stats",
   "uid": "database_file_io_stats",
-  "version": 8,
+  "version": 18,
   "weekStart": ""
 }

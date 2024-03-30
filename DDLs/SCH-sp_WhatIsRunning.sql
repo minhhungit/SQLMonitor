@@ -52,7 +52,7 @@ BEGIN
 									from msdb.dbo.sysjobs (nolock) as j
 									inner join msdb.dbo.sysjobsteps (nolock) AS js on j.job_id=js.job_id
 									where right(cast(js.job_id as nvarchar(50)),10) = RIGHT(substring(s.program_name,30,34),10) 
-								) + ' ( '+SUBSTRING(LTRIM(RTRIM(s.program_name)), CHARINDEX(': Step ',LTRIM(RTRIM(s.program_name)))+2,LEN(LTRIM(RTRIM(s.program_name)))-CHARINDEX(': Step ',LTRIM(RTRIM(s.program_name)))-2)+' )'
+								) + ' ( '+SUBSTRING(LTRIM(RTRIM(s.program_name)), CHARINDEX(': Step ',LTRIM(RTRIM(s.program_name)))+2,LEN(LTRIM(RTRIM(s.program_name)))-CHARINDEX(': Step ',LTRIM(RTRIM(s.program_name)))-2)+' )'  COLLATE SQL_Latin1_General_CP1_CI_AS
 						ELSE	s.program_name
 						END
 				,(case when r.wait_time = 0 then null else r.wait_type end) as wait_type
@@ -135,12 +135,12 @@ BEGIN
 			or (	r.sql_command like ('%'+@query_pattern+'%')
 				 )
 		 ) 
-	and ( @program_name is null or [program_name] like ('%'+@program_name+'%'))
-	and ( @login_name is null or [login_name] like ('%'+@login_name+'%'))
-	and ( @database_name is null or [database_name] like ('%'+@database_name+'%'))
+	and ( @program_name is null or [program_name] like ('%'+@program_name+'%') COLLATE SQL_Latin1_General_CP1_CI_AS)
+	and ( @login_name is null or [login_name] like ('%'+@login_name+'%') COLLATE SQL_Latin1_General_CP1_CI_AS)
+	and ( @database_name is null or [database_name] like ('%'+@database_name+'%') COLLATE SQL_Latin1_General_CP1_CI_AS)
 	and ( @session_id is null or [session_id] = @session_id )
-	and ( @session_host_name is null or [host_name]like ('%'+@session_host_name+'%'))
-	and ( @query_pattern is null or sql_command like ('%'+@query_pattern+'%'))
+	and ( @session_host_name is null or [host_name]like ('%'+@session_host_name+'%') COLLATE SQL_Latin1_General_CP1_CI_AS)
+	and ( @query_pattern is null or sql_command like ('%'+@query_pattern+'%') COLLATE SQL_Latin1_General_CP1_CI_AS)
 	ORDER BY start_time asc, granted_query_memory_raw desc
 END
 GO

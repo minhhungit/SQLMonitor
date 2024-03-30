@@ -380,8 +380,8 @@ Test-WSMan '192.168.56.31' -Credential $localAdmin -Authentication Negotiate
 
 ## Support
 
-For community support regarding this tool, kindly join [#sqlmonitor](https://ajaydwivedi.com/go/slack) channel on [sqlcommunity.slack.com](https://ajaydwivedi.com/go/slack) slack workspace.
-For paid support, reach out to me directly on [sqlcommunity.slack.com](https://ajaydwivedi.com/go/slack) slack workspace.
+For community support regarding this tool, kindly join [#sqlmonitor](https://ajaydwivedi.com/sqlmonitor/slack) channel on [sqlcommunity.slack.com](https://ajaydwivedi.com/join/slack) slack workspace.
+For paid support, reach out to me directly on [#sqlmonitor](https://ajaydwivedi.com/go/slack) slack channel.
 
 ## Related Links
 - Github Repo -> [https://ajaydwivedi.com/github/sqlmonitor](https://ajaydwivedi.com/github/sqlmonitor)
@@ -389,7 +389,7 @@ For paid support, reach out to me directly on [sqlcommunity.slack.com](https://a
 - Demo site Credentials -> [https://ajaydwivedi.com/go/sqlmonitor](https://ajaydwivedi.com/go/sqlmonitor)
 - YouTube Playlist -> [https://ajaydwivedi.com/youtube/sqlmonitor](https://ajaydwivedi.com/youtube/sqlmonitor)
 - Blogs -> [https://ajaydwivedi.com/category/sqlmonitor](https://ajaydwivedi.com/category/sqlmonitor)
-- Community Help on **#sqlmonitor** channel -> [https://ajaydwivedi.com/go/slack](https://ajaydwivedi.com/go/slack)
+- Community Help on **#sqlmonitor** channel -> [https://ajaydwivedi.com/sqlmonitor/slack](https://ajaydwivedi.com/sqlmonitor/slack)
 
 -----------------------------
 

@@ -17,7 +17,8 @@ GO
 ALTER PROCEDURE dbo.usp_enable_page_compression
 	@verbose tinyint = 0,
 	@dry_run bit = 0
-WITH EXECUTE AS OWNER AS 
+--WITH EXECUTE AS OWNER 
+AS 
 BEGIN
 
 	/*

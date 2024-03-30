@@ -23,6 +23,9 @@ Param (
     $ErrorActionPreference = 'Stop',
 
     [Parameter(Mandatory=$false)]
+    [Bool]$RemoveProcessedFileImmediately = $true,
+
+    [Parameter(Mandatory=$false)]
     [Bool]$CleanupFiles = $true,
 
     [Parameter(Mandatory=$false)]
@@ -58,14 +61,12 @@ else {
 $lastImportedFile = $null
 
 # Create Server Object
-$sqlInstanceObj = Connect-DbaInstance -SqlInstance $SqlInstance -ClientName "(dba) Collect-PerfmonData" -TrustServerCertificate -ErrorAction Stop
+$sqlInstanceObj = Connect-DbaInstance -SqlInstance $SqlInstance -ClientName "(dba) Collect-PerfmonData" -TrustServerCertificate -EncryptConnection -ErrorAction Stop
 
 # Get latest imported file
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Fetch details of last imported file from [$SqlInstance].[$Database].$TablePerfmonFiles.."
-$lastImportedFile = Invoke-DbaQuery -SqlInstance $sqlInstanceObj -Database $Database -Query "select top 1 file_name from $TablePerfmonFiles where host_name = '$computerName' and file_name like '$computerName%' order by file_name desc" | Select-Object -ExpandProperty file_name;
+$lastImportedFile = $sqlInstanceObj | Invoke-DbaQuery -Database $Database -Query "select top 1 file_name from $TablePerfmonFiles where host_name = '$computerName' and file_name like '$computerName%' order by file_name desc" | Select-Object -ExpandProperty file_name;
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$lastImportedFile => '$lastImportedFile'."
-
-Write-Debug "Stop collector set"
 
 # Stop collector set
 if ($SkipStopStartDataCollector) {
@@ -225,13 +226,16 @@ foreach($file in $pfCollectorFiles)
         insert $TablePerfmonFiles (host_name, file_name, file_path)
         select @host_name, @file_name, @file_path;
 "@
-        Invoke-DbaQuery -SqlInstance $sqlInstanceObj -Database $Database -Query $sqlInsertFile -SqlParameter @{host_name = $computerName; file_name = $file; file_path = "$pfCollectorFolder\$file"} -EnableException
+        $sqlInstanceObj | Invoke-DbaQuery -Database $Database -Query $sqlInsertFile -SqlParameter @{host_name = $computerName; file_name = $file; file_path = "$pfCollectorFolder\$file"} -EnableException
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Entry made.."
 
-        if($CleanupFiles) {
+        if($CleanupFiles -and $RemoveProcessedFileImmediately) {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Remove file.."
             Remove-Item "$perfmonFilePath"
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "File removed.."
+        }
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "File removal skipped due to parameter RemoveProcessedFileImmediately."
         }
     }
     catch {
@@ -248,7 +252,7 @@ foreach($file in $pfCollectorFiles)
             insert $TablePerfmonFiles (host_name, file_name, file_path)
             select @host_name, @file_name, @file_path;
 "@
-            Invoke-DbaQuery -SqlInstance $sqlInstanceObj -Database $Database -Query $sqlInsertFile -SqlParameter @{host_name = $computerName; file_name = $file; file_path = "$pfCollectorFolder\$file"} -EnableException
+            $sqlInstanceObj | Invoke-DbaQuery -Database $Database -Query $sqlInsertFile -SqlParameter @{host_name = $computerName; file_name = $file; file_path = "$pfCollectorFolder\$file"} -EnableException
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Skip Entry made into [$SqlInstance].[$Database].$TablePerfmonFiles.."
 
             # Try to remove file for which we got error
@@ -268,7 +272,8 @@ foreach($file in $pfCollectorFiles)
 if($CleanupFiles) {
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Search files older than $FileCleanupThresholdHours hours.."
     $oldFilesForCleanup = @()
-    $oldFilesForCleanup += Get-ChildItem $perfmonFilesDirectory -Recurse -File -Name *.blg | Where-Object {$_.LastWriteTimeUtc -lt (Get-Date).AddHours(-$FileCleanupThresholdHours)}
+    $oldFilesForCleanup += Get-ChildItem $perfmonFilesDirectory -Recurse -File | `
+                                Where-Object { ($_.Name -like '*.blg') -and ($_.LastWriteTimeUtc -lt $startTime.AddHours(-$FileCleanupThresholdHours).ToUniversalTime()) }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "$($oldFilesForCleanup.Count) files detected older than $FileCleanupThresholdHours hours."
     if($oldFilesForCleanup.Count -gt 0) {
@@ -278,3 +283,4 @@ if($CleanupFiles) {
 }
 
 "`n`n$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'END:', "All files processed.."
+

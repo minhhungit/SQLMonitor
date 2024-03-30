@@ -32,3 +32,8 @@ select * from sys.dm_exec_query_statistics_xml(159);
 
 --	exec sp_WhoIsActive @help = 1
 
+/*
+select [ddd hh:mm:ss:mss] = right('   0'+convert(varchar, datediff(second,w.start_time,w.collection_time)/86400),4)+ ' '+convert(varchar,dateadd(SECOND,datediff(second,w.start_time,w.collection_time),'1900-01-01 00:00:00'),114), *
+from dbo.WhoIsActive w
+where w.collection_time between '2024-01-12 09:00' and '2024-01-12 14:30'
+*/

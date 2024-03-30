@@ -1631,7 +1631,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "AG"
   ],
   "templating": {
     "list": [
@@ -1858,8 +1859,8 @@
       {
         "current": {
           "selected": false,
-          "text": "fe80::cab1:7f0e:21bd:3ed6%14",
-          "value": "fe80::cab1:7f0e:21bd:3ed6%14"
+          "text": "100.64.0.1",
+          "value": "100.64.0.1"
         },
         "datasource": {
           "type": "mssql",
@@ -2239,6 +2240,6 @@
   "timezone": "browser",
   "title": "t__Ag Health State",
   "uid": "ag_health_state",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }

@@ -193,6 +193,12 @@
           <AssociatedConnUserName />
           <FullPath>SCH-Job-[(dba) Get-AllServerCollectedData].sql</FullPath>
         </FileNode>
+        <FileNode Name="SCH-Job-[(dba) Get-AllServerDashboardMail].sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-Job-[(dba) Get-AllServerDashboardMail].sql</FullPath>
+        </FileNode>
         <FileNode Name="SCH-Job-[(dba) Get-AllServerInfo].sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
@@ -253,6 +259,12 @@
           <AssociatedConnUserName />
           <FullPath>SCH-Job-[(dba) Run-WhoIsActive].sql</FullPath>
         </FileNode>
+        <FileNode Name="SCH-Job-[(dba) Stop-StuckSQLMonitorJobs].sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-Job-[(dba) Stop-StuckSQLMonitorJobs].sql</FullPath>
+        </FileNode>
         <FileNode Name="SCH-Job-[(dba) Test-WindowsAdminAccess].sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
@@ -294,6 +306,12 @@
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>SCH-usp_active_requests_count.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SCH-usp_check_instance_availability.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-usp_check_instance_availability.sql</FullPath>
         </FileNode>
         <FileNode Name="SCH-usp_check_sql_agent_jobs.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
@@ -354,6 +372,12 @@
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>SCH-usp_GetAllServerCollectedData.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SCH-usp_GetAllServerDashboardMail.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-usp_GetAllServerDashboardMail.sql</FullPath>
         </FileNode>
         <FileNode Name="SCH-usp_GetAllServerHaDrLatency.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
@@ -432,12 +456,6 @@
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
           <FullPath>SCH-WhoIsActive-Partitioning.sql</FullPath>
-        </FileNode>
-        <FileNode Name="SQLQuery1.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
-          <AssociatedConnUserName />
-          <FullPath>SQLQuery1.sql</FullPath>
         </FileNode>
         <FileNode Name="Update-SQLAgentJobsThreshold.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>

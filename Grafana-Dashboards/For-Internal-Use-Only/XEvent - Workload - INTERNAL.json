@@ -287,6 +287,7 @@
       },
       "id": 141,
       "options": {
+        "cellHeight": "sm",
         "footer": {
           "countRows": false,
           "enablePagination": true,
@@ -299,7 +300,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.1.0",
       "targets": [
         {
           "alias": "",
@@ -393,7 +394,8 @@
   "style": "dark",
   "tags": [
     "mssql",
-    "sqlmonitor"
+    "sqlmonitor",
+    "XEvents"
   ],
   "templating": {
     "list": [
@@ -401,7 +403,7 @@
         "current": {
           "selected": false,
           "text": "SqlServer",
-          "value": "SqlServer"
+          "value": "ygPVA4snk"
         },
         "description": "Inventory Server Name",
         "hide": 2,
@@ -898,8 +900,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1693494758458",
-          "value": "1693494758458"
+          "text": "1704945644033",
+          "value": "1704945644033"
         },
         "datasource": {
           "type": "mssql",
@@ -1157,6 +1159,6 @@
   "timezone": "browser",
   "title": "XEvent - Workload",
   "uid": "XEvents",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }

@@ -1,4 +1,8 @@
-USE [msdb]
+use msdb
+go
+
+if exists (select * from msdb.dbo.sysjobs_view where name = N'(dba) Stop-StuckSQLMonitorJobs') and APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
+	EXEC msdb.dbo.sp_delete_job @job_name='(dba) Stop-StuckSQLMonitorJobs', @delete_unused_schedule=1
 GO
 
 BEGIN TRANSACTION
@@ -37,8 +41,9 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Stop-SQL
 		@on_fail_step_id=0, 
 		@retry_attempts=0, 
 		@retry_interval=0, 
-		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=N'powershell.exe -executionpolicy bypass -Noninteractive  C:\SQLMonitor\SQLMonitor\Stop-SQLMonitorJobs-On-AllServers-With-Issues.ps1 -InventoryServer localhost -InventoryDatabase DBA -CredentialManagerDatabase DBA', 
+		@os_run_priority=0, 
+		@subsystem=N'CmdExec', 
+		@command=N'powershell.exe -executionpolicy bypass -Noninteractive  C:\SQLMonitor\Stop-SQLMonitorJobs-On-AllServers-With-Issues.ps1 -InventoryServer localhost -InventoryDatabase DBA -CredentialManagerDatabase DBA', 
 		@flags=40
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
@@ -54,8 +59,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'(dba) Sto
 		@active_start_date=20230901, 
 		@active_end_date=99991231, 
 		@active_start_time=0, 
-		@active_end_time=235959 
-		--,@schedule_uid=N'a92f669d-86ab-4185-99be-8b07857b99f3'
+		@active_end_time=235959
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_add_jobserver @job_id = @jobId, @server_name = N'(local)'
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
@@ -66,3 +70,6 @@ QuitWithRollback:
 EndSave:
 GO
 
+IF APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
+	EXEC msdb.dbo.sp_start_job @job_name='(dba) Stop-StuckSQLMonitorJobs'
+go

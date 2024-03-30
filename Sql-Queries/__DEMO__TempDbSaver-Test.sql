@@ -18,7 +18,9 @@ begin tran
 	update top (100) percent dbo.WhoIsActive_TempdbSaver
 	set blocked_session_count = blocked_session_count
 
-	delete top (10) percent from dbo.WhoIsActive_TempdbSaver
+	--delete top (10) percent from dbo.WhoIsActive_TempdbSaver
+
+	--delete top (10) percent from dbo.WhoIsActive_TempdbSaver
 
 	select @@TRANCOUNT
 

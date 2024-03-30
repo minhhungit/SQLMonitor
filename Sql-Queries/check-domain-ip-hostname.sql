@@ -1,6 +1,7 @@
 USE DBA
 GO
 
+
 select @@SERVERNAME, name, recovery_model_desc, collation_name from sys.databases where database_id = db_id();
 go
 
@@ -24,6 +25,14 @@ begin catch
 	print 'some erorr accessing registry'
 end catch
 
+declare @ports varchar(2000);
+select @ports = coalesce(@ports+', '+convert(varchar,p.local_tcp_port),convert(varchar,p.local_tcp_port))
+from (
+		select distinct local_net_address, local_tcp_port 
+		from sys.dm_exec_connections 
+		where local_net_address is not null
+	) p;
+
 select	[domain] = DEFAULT_DOMAIN(),
 		[domain_reg] = @Domain,
 		[ip] = CONNECTIONPROPERTY('local_net_address'),
@@ -40,6 +49,7 @@ select	[domain] = DEFAULT_DOMAIN(),
 								else 'MSSQL$'+@@servicename end,
 		[instance_name] = @@servicename,
 		service_account,
+		[@ports] = @ports,
 		SERVERPROPERTY('Edition') AS Edition,
 		SERVERPROPERTY('ProductVersion') AS ProductVersion,
 		SERVERPROPERTY('ProductLevel') AS ProductLevel

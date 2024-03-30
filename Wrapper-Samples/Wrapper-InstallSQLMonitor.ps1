@@ -4,8 +4,12 @@
 
 cls
 Import-Module dbatools;
+$SqlInstanceToBaseline = 'Workstation'
+#$SqlInstanceAsDataDestination = 'Workstation'
+#$SqlInstanceForPowershellJobs = 'Workstation'
+#$SqlInstanceForTsqlJobs = 'Workstation'
 $params = @{
-    SqlInstanceToBaseline = 'Workstation'
+    SqlInstanceToBaseline = $SqlInstanceToBaseline
     DbaDatabase = 'DBA'
     #HostName = 'Workstation'
     #RetentionDays = 7
@@ -31,14 +35,14 @@ $params = @{
                 "25__CreateJobRunBlitzIndex", "26__CreateJobRunBlitz", "27__CreateJobRunBlitzIndexWeekly",
                 "28__CreateJobCollectMemoryClerks", "29__CreateJobCollectPrivilegedInfo", "30__CreateJobCollectAgHealthState",
                 "31__CreateJobCheckSQLAgentJobs", "32__CreateJobUpdateSqlServerVersions", "33__CreateJobCheckInstanceAvailability",
-                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__WhoIsActivePartition",
-                "37__BlitzIndexPartition", "38__BlitzPartition", "39__EnablePageCompression",
-                "40__GrafanaLogin", "41__LinkedServerOnInventory", "42__LinkedServerForDataDestinationInstance",
-                "43__AlterViewsForDataDestinationInstance")
+                "34__CreateJobGetAllServerInfo", "35__CreateJobGetAllServerCollectedData", "36__CreateJobGetAllServerDashboardMail",
+                "37__CreateJobStopStuckSQLMonitorJobs", "38__WhoIsActivePartition", "39__BlitzIndexPartition",
+                "40__BlitzPartition", "41__EnablePageCompression", "42__GrafanaLogin",
+                "43__LinkedServerOnInventory", "44__LinkedServerForDataDestinationInstance", "45__AlterViewsForDataDestinationInstance")
     #>
-    #OnlySteps = @( "2__AllDatabaseObjects", "29__CreateJobCollectAgHealthState" )
+    #OnlySteps = @( "2__AllDatabaseObjects" )
     #StartAtStep = '1__sp_WhoIsActive'
-    #StopAtStep = '39__AlterViewsForDataDestinationInstance'
+    #StopAtStep = '45__AlterViewsForDataDestinationInstance'
     #DropCreatePowerShellJobs = $true
     #DryRun = $false
     #SkipRDPSessionSteps = $true
@@ -51,9 +55,9 @@ $params = @{
     #SkipPingCheck = $true
     #SkipMultiServerviewsUpgrade = $false
     #ForceSetupOfTaskSchedulerJobs = $true
-    #SqlInstanceAsDataDestination = 'Workstation'
-    #SqlInstanceForPowershellJobs = 'Workstation'
-    #SqlInstanceForTsqlJobs = 'Workstation'
+    #SqlInstanceAsDataDestination = $SqlInstanceAsDataDestination
+    #SqlInstanceForPowershellJobs = $SqlInstanceForPowershellJobs
+    #SqlInstanceForTsqlJobs = $SqlInstanceForTsqlJobs
     #ConfirmValidationOfMultiInstance = $true
     #ConfirmSetupOfTaskSchedulerJobs = $true
     #HasCustomizedTsqlJobs = $true
@@ -63,6 +67,7 @@ $params = @{
     #UpdateSQLAgentJobsThreshold = $false
     #XEventDirectory = 'D:\MSSQL15.MSSQLSERVER\XEvents\'
     #JobsExecutionWaitTimeoutMinutes = 15
+    #MemoryOptimizedObjectsUsage = $false
 }
 
 #$preSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'sqlagentservice@gmail.com', @drop_recreate = 1"
@@ -89,9 +94,29 @@ F:\GitHub\SQLMonitor\SQLMonitor\Install-SQLMonitor.ps1 @Params -PreQuery $dropWh
 # **__ SQLMonitor __**
 Invoke-WebRequest https://github.com/imajaydwivedi/SQLMonitor/archive/refs/heads/dev.zip `
             -OutFile "$($env:USERPROFILE)\Downloads\sqlmonitor.zip"
+Expand-Archive "$($env:USERPROFILE)\Downloads\sqlmonitor.zip" "$($env:USERPROFILE)\Downloads"
+Get-ChildItem "$($env:USERPROFILE)\Downloads\SQLMonitor-dev\SQLMonitor" | Copy-Item -Destination C:\SQLMonitor -Force -Verbose
+
 
 # **__ dbatools & dbatools.library __**
-Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
+if($true)
+{
+    Save-Module dbatools -Path "$($env:USERPROFILE)\Downloads\"
+
+    $downloadsPath = "$($env:USERPROFILE)\Downloads\"
+    $modulePath = ($env:PSModulePath -split ';' | Where-Object {$_ -notlike "*$($env:USERNAME)*"})[0]
+
+    # Copy [dbatools] module
+    [string]$dbatoolsSourceDirectory = "$($downloadsPath)dbatools\"
+    [string]$dbatoolsDestinationDirectory = "$($modulePath)\dbatools\"
+    Copy-Item -Force -Recurse -Verbose $dbatoolsSourceDirectory -Destination $dbatoolsDestinationDirectory
+
+    # Copy [dbatools.library] module
+    [string]$dbatoolsLibrarySourceDirectory = "$($downloadsPath)dbatools.library\"
+    [string]$dbatoolsLibraryDestinationDirectory = "$($modulePath)\dbatools.library\"
+    Copy-Item -Force -Recurse -Verbose $dbatoolsLibrarySourceDirectory -Destination $dbatoolsLibraryDestinationDirectory
+}
+
 
 # **__ PoshRSJob on Inventory __**
 Install-Module PoshRSJob -Scope AllUsers -Verbose
@@ -106,19 +131,24 @@ Invoke-WebRequest https://github.com/olahallengren/sql-server-maintenance-soluti
             -OutFile "$($env:USERPROFILE)\Downloads\sql-server-maintenance-solution-master.zip"
 
 # **__ First Responder Kit from latest release __**
-if ($true) {
+if ($true) 
+{
     $repo = "BrentOzarULTD/SQL-Server-First-Responder-Kit"
     $tags = "https://api.github.com/repos/$repo/tags"
 
     $tagName = (Invoke-WebRequest $tags | ConvertFrom-Json)[0].name
     $releaseZip = "https://github.com/$repo/archive/refs/tags/$tagName.zip"
+    $outFile = "$($env:USERPROFILE)\Downloads\SQL-Server-First-Responder-Kit-$tagName.zip"
 
     Invoke-WebRequest $releaseZip `
-            -OutFile "$($env:USERPROFILE)\Downloads\SQL-Server-First-Responder-Kit-$tagName.zip"
+            -OutFile $outFile
+
+    "File downloaded: '$outFile'" | Write-Host -ForegroundColor Green
 }
 
 # **__ PoshRSJob - Download from Github __**
-if ($true) {
+if ($true) 
+{
     $repo = "proxb/PoshRSJob"
     $releases = "https://api.github.com/repos/$repo/releases"
 

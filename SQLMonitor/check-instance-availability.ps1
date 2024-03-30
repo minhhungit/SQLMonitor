@@ -22,12 +22,17 @@ $ErrorActionPreference = 'Stop'
 $currentTime = Get-Date
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[Connect-DbaInstance] Create connection for '$InventoryServer'.."
-$conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database master -ClientName "check-instance-availability.ps1" -TrustServerCertificate
+$conInventoryServer = Connect-DbaInstance -SqlInstance $InventoryServer -Database master -ClientName "check-instance-availability.ps1" -TrustServerCertificate -EncryptConnection
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Get all SQLInstances in SQLMonitor server [$InventoryServer].[dbo].[instance_details].."
-$sqlSupportedInstances = "select distinct [sql_instance], [sql_instance_port], [database] from dbo.instance_details where is_enabled = 1 and is_alias = 0" 
+$sqlSupportedInstances = @"
+select distinct [sql_instance], [sql_instance_port], [database] 
+from dbo.instance_details id
+where is_enabled = 1 and is_alias = 0
+and id.host_name <> CONVERT(varchar,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
+"@ 
 $supportedInstances = @()
-$supportedInstances += Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlSupportedInstances -EnableException
+$supportedInstances += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlSupportedInstances -EnableException
 
 "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Below SQLInstances found in dbo.instance_details-"
 "`n($(($supportedInstances.sql_instance|%{"'$_'"}) -join ','))`n"
@@ -51,8 +56,8 @@ $blockGetServerHealth = {
     #"`$sqlInstance => $sqlInstance"
 
     Import-Module dbatools
-    $conSqlInstanceWithPort = Connect-DbaInstance -SqlInstance $sqlInstanceWithPort -Database master -ClientName "check-instance-availability.ps1" -SqlCredential $Using:sqlCredential -TrustServerCertificate
-    Invoke-DbaQuery -SqlInstance $conSqlInstanceWithPort -Database $database -Query "select [sql_instance] = '$sqlInstance', [database] = db_name();" -EnableException;
+    $conSqlInstanceWithPort = Connect-DbaInstance -SqlInstance $sqlInstanceWithPort -Database master -ClientName "check-instance-availability.ps1" -SqlCredential $Using:sqlCredential -TrustServerCertificate -EncryptConnection
+    $conSqlInstanceWithPort | Invoke-DbaQuery -Database $database -Query "select [sql_instance] = '$sqlInstance', [database] = db_name();" -EnableException;
 }
 
 "{0} {1,-10} {2}" -f "($((Get-Date).ToString('yyyy-MM-dd HH:mm:ss')))","(INFO)","Start RSJobs with $Threads threads.." | Write-Output
@@ -125,7 +130,7 @@ update dbo.instance_details set is_available = 1
 where is_enabled = 1 and is_available = 0 
     and ( sql_instance in ($onlineSqlInstancesCSV) or source_sql_instance in ($onlineSqlInstancesCSV) )
 "@
-    Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlSetOnlineFlag -EnableException
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlSetOnlineFlag -EnableException
 }
 
 if($jobs_exception.Count -gt 0) {
@@ -136,7 +141,7 @@ update dbo.instance_details set is_available = 0, last_unavailability_time_utc =
 where is_enabled = 1 and is_available = 1 
     and ( sql_instance in ($offlineSqlInstancesCSV) or source_sql_instance in ($offlineSqlInstancesCSV) )
 "@
-    Invoke-DbaQuery -SqlInstance $conInventoryServer -Database $InventoryDatabase -Query $sqlSetOfflineFlag -EnableException
+    $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlSetOfflineFlag -EnableException
 }
 
 $errMessage
