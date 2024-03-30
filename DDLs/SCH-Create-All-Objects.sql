@@ -1,5 +1,5 @@
 /*
-	Version -> v1.6.4
+	Version -> 2024-03-31
 	2023-12-30 - #21 - Add exception for some waits through Wait Stats table
 	-----------------
 
