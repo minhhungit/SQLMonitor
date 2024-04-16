@@ -8,11 +8,16 @@ from datetime import datetime
 parser = argparse.ArgumentParser(description="Script to Raise Disk Space Alert",
                                   formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-s", "--inventory_server", type=str, required=False, action="store", default="localhost", help="Inventory Server")
-parser.add_argument("-d", "--inventory_database", type=str, required=False, action="store", default="DBA", help="Inventory Database")
-parser.add_argument("-k", "--service_key", type=str, required=True, action="store", help="Pager Duty API Service Key", )
+parser.add_argument("-d", "--inventory_database", type=str, required=False, action="store", default="DBA_Admin", help="Inventory Database")
+parser.add_argument("-k", "--service_key", type=str, required=True, action="store", default="afie5a643ff44a04d02b710591a33551", help="Pager Duty API Service Key", )
 parser.add_argument("-n", "--alert_name", type=str, required=False, action="store", default="Disk Space Issue", help="PagerDuty Alert Name")
 parser.add_argument("-j", "--alert_job_name", type=str, required=False, action="store", default="(dba) Raise-DiskSpaceAlert", help="Script/Job calling this script")
 parser.add_argument("-u", "--dashboard_url", type=str, required=False, action="store", default="https://ajaydwivedi.ddns.net:3000/d/distributed_live_dashboard_all_servers/monitoring-live-all-servers?orgId=1&refresh=1m'", help="All Server Dashboard URL")
+
+parser.add_argument("--disk_used_warning_percentage", type=int, required=False, action="store", default=80, help="Percentage Used for Warning Alert")
+parser.add_argument("--disk_used_warning_gb", type=int, required=False, action="store", default=200, help="Used gb size for alert")
+parser.add_argument("--disk_used_critical_percentage", type=int, required=False, action="store", default=95, help="Percentage Used for Warning Alert")
+
 args=parser.parse_args()
 
 today = datetime.today()
@@ -24,6 +29,9 @@ alert_name = args.alert_name
 alert_key = f"{alert_name} - {today_str}"
 alert_job_name = args.alert_job_name
 dashboard_url = args.dashboard_url
+disk_used_warning_percentage = args.disk_used_warning_percentage
+disk_used_warning_gb = args.disk_used_warning_gb
+disk_used_critical_percentage = args.disk_used_critical_percentage
 
 # https://pagerduty-api.readthedocs.io/en/develop/ref/pagerduty_api.html
 alert = Alert(service_key=service_key)
@@ -36,17 +44,16 @@ cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
 
 
 cursor = cnxn.cursor()
-
-sql_get_alert_data = """
+sql_get_alert_data = f"""
 select	ds.sql_instance, disk_drive = ds.host_name + ' (' + ds.disk_volume + ')', 
         [state] = case when (ds.free_mb*100.0/ds.capacity_mb) < 10.0 then 'Critical' else 'Warning' end,
         state_desc = convert(varchar,ds.free_mb) + ' mb ('+convert(varchar,convert(numeric(20,2),ds.free_mb*100.0/ds.capacity_mb))+' %) free of ' + convert(varchar,ds.capacity_mb) + ' mb'
 from dbo.disk_space_all_servers ds
 where ds.updated_date_utc >= dateadd(minute,-60,getutcdate())
-and (	(	(ds.free_mb*100.0/ds.capacity_mb) < 20.0 -- free %
-			and ds.free_mb < 200*1024 -- 200 gb
+and (	(	(ds.free_mb*100.0/ds.capacity_mb) < (100.0-{disk_used_warning_percentage}) -- free %
+			and ds.free_mb < ({disk_used_warning_gb}*1024) -- 200 gb
 	  	)
-		or ( (ds.free_mb*100.0/ds.capacity_mb) < 5.0 -- free %
+		or ( (ds.free_mb*100.0/ds.capacity_mb) < (100.0-{disk_used_critical_percentage}) -- free %
 			)
 		);
 """
@@ -71,13 +78,13 @@ else:
   print(f"No rows found for '{alert_name}'.")
 
 
-'''
+''' 
 # https://www.analyticsvidhya.com/blog/2024/01/ways-to-convert-python-scripts-to-exe-files/
 
 pip install pyinstaller
 
-PS C:\Windows\system32> cd C:\sqlmonitor\Work\
+PS C:\Windows\system32> cd C:\sqlmonitor\Work
 PS C:\sqlmonitor\Work> pyinstaller.exe --onefile .\Raise-AgHealthStateAlert.py
 
-C:\sqlmonitor\Work\dist\Raise-AgHealthStateAlert.exe
+C:\sqlmonitor\Work\dist\Raise-AgHealthStateAlert.exe 
 '''

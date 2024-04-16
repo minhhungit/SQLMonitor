@@ -9,10 +9,15 @@ parser = argparse.ArgumentParser(description="Script to Raise AlwaysOn Availabil
                                   formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-s", "--inventory_server", type=str, required=False, action="store", default="localhost", help="Inventory Server")
 parser.add_argument("-d", "--inventory_database", type=str, required=False, action="store", default="DBA", help="Inventory Database")
-parser.add_argument("-k", "--service_key", type=str, required=True, action="store", help="Pager Duty API Service Key", )
+parser.add_argument("-k", "--service_key", type=str, required=True, action="store", default="afie5a643ff44a04d02b710591a33551", help="Pager Duty API Service Key", )
 parser.add_argument("-n", "--alert_name", type=str, required=False, action="store", default="AG Health State Alert", help="PagerDuty Alert Name")
 parser.add_argument("-j", "--alert_job_name", type=str, required=False, action="store", default="(dba) Raise-AgHealthStateAlert", help="Script/Job calling this script")
 parser.add_argument("-u", "--dashboard_url", type=str, required=False, action="store", default="https://ajaydwivedi.ddns.net:3000/d/distributed_live_dashboard_all_servers/monitoring-live-all-servers?orgId=1&refresh=1m'", help="All Server Dashboard URL")
+
+parser.add_argument("--latency_minutes", type=int, required=False, action="store", default=30, help="Latency in minutes for Alert")
+parser.add_argument("--redo_queue_size_gb", type=int, required=False, action="store", default=10, help="Redo Queue size in gb for alert")
+parser.add_argument("--log_send_queue_size_gb", type=int, required=False, action="store", default=10, help="Send Queue Size for Alert")
+
 args=parser.parse_args()
 
 today = datetime.today()
@@ -24,10 +29,12 @@ alert_name = args.alert_name
 alert_key = f"{alert_name} - {today_str}"
 alert_job_name = args.alert_job_name
 dashboard_url = args.dashboard_url
+latency_minutes = args.latency_minutes
+redo_queue_size_gb = args.redo_queue_size_gb
+log_send_queue_size_gb = args.log_send_queue_size_gb
 
 # https://pagerduty-api.readthedocs.io/en/develop/ref/pagerduty_api.html
 alert = Alert(service_key=service_key)
-
 
 cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
                       f"Server={inventory_server};"
@@ -37,7 +44,7 @@ cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
 
 cursor = cnxn.cursor()
 
-sql_get_alert_data = """
+sql_get_alert_data = f"""
 set nocount on;
 
 declare @_sql nvarchar(max);
@@ -47,9 +54,9 @@ declare @_latency_minutes int;
 declare @_redo_queue_size_gb int;
 declare @_log_send_queue_size_gb int;
 
-set @_latency_minutes = 30;
-set @_redo_queue_size_gb = 10;
-set @_log_send_queue_size_gb = 10;
+set @_latency_minutes = {latency_minutes};
+set @_redo_queue_size_gb = {redo_queue_size_gb};
+set @_log_send_queue_size_gb = {log_send_queue_size_gb};
 
 set @_params = N'@_latency_minutes int, @_redo_queue_size_gb int, @_log_send_queue_size_gb int';
 
