@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(description="Script to Raise Alert for SQLMonit
 parser.add_argument("-s", "--inventory_server", type=str, required=False, action="store", default="localhost", help="Inventory Server")
 parser.add_argument("-d", "--inventory_database", type=str, required=False, action="store", default="DBA", help="Inventory Database")
 parser.add_argument("-c", "--credential_manager_database", type=str, required=False, action="store", default="DBA", help="Credential Manager Database")
-parser.add_argument("-t", "--slack_token", type=str, required=False, action="store", default="xoxb-487535517683-4702777428578-O4bFcfkyLPD3zqtTAhE9voKG", help="API Bot Token", )
+parser.add_argument("-t", "--slack_token", type=str, required=False, action="store", default="some-dummy-slack-token-here", help="API Bot Token", )
 parser.add_argument("--slack_channel", type=str, required=False, action="store", default="sqlmonitor-alerts", help="Slack Channel Name", )
 parser.add_argument("--slack_bot", type=str, required=False, action="store", default="SQLMonitor", help="Slack Bot name", )
 parser.add_argument("-n", "--alert_name", type=str, required=False, action="store", default="Core Health Metrics Alert", help="Alert Name")
