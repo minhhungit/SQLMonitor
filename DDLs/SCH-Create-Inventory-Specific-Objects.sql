@@ -1,6 +1,7 @@
 /*
-	Version -> 2024-03-31
+	Version -> 2024-04-26
 	-----------------
+	2024-04-26 - Enhancement#40 - Change Retention of dbo.all_server_volatile_info_history to 15 Days
 	2024-02-21 - Enhancement#30 - Add flag for choice of MemoryOptimized Tables 
 	2023-10-16 - Enhancement#5 - Dashboard for AlwaysOn Latency
 	2023-07-14 - Enhancement#268 - Add tables sql_agent_job_stats & memory_clerks in Collection Latency Dashboard
@@ -524,7 +525,7 @@ begin
 	(table_name, date_key, retention_days, purge_row_size, reference)
 	select	table_name = 'dbo.all_server_volatile_info_history', 
 			date_key = 'collection_time', 
-			retention_days = 1, 
+			retention_days = 15, 
 			purge_row_size = 1000,
 			reference = 'SQLMonitor Data Collection'
 end

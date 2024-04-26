@@ -1,5 +1,6 @@
 /*
-	Version -> 2024-03-31
+	Version -> 2024-04-26
+	2024-04-26 - #38 - Add Infra to Track AG State Change
 	2023-12-30 - #21 - Add exception for some waits through Wait Stats table
 	-----------------
 
@@ -47,9 +48,11 @@
 	25) Create table [dbo].[memory_clerks]
 	26) Create table [dbo].[server_privileged_info]
 	27) Create table [dbo].[ag_health_state] using Partition scheme
-	28) Add boundaries to partition. 1 boundary per hour
-	29) Remove boundaries with retention of 3 months
-	30) Populate [dbo].[BlitzFirst_WaitStats_Categories]
+	28) Create table [dbo].[alert_categories]
+	29) Create table [dbo].[alert_history]
+	30) Add boundaries to partition. 1 boundary per hour
+	31) Remove boundaries with retention of 3 months
+	32) Populate [dbo].[BlitzFirst_WaitStats_Categories]
 */
 
 IF DB_NAME() = 'master'
@@ -1055,7 +1058,102 @@ end
 go
 
 
-/* ***** 28) Add boundaries to partition. 1 boundary per hour ***************** */
+/* ***** 28) Create table [dbo].[alert_categories] **************************** */
+-- drop table [dbo].[alert_categories]
+if OBJECT_ID('[dbo].[alert_categories]') is null
+begin
+	create table [dbo].[alert_categories]
+	(
+		[error_number] [int] NOT NULL,
+		[error_state] [int] NULL,
+		[category] [varchar](128) NOT NULL,
+		[sub_category] [varchar](128) NULL,
+		[alert_name] [varchar](255) NULL,
+		[remarks] [nvarchar](500) NULL,
+
+		[created_time] [datetime2](7) NOT NULL default sysdatetime(),
+		[created_by] [nvarchar](128) NOT NULL default suser_name()
+	);
+end
+go
+
+if not exists (select * from sys.indexes where [object_id] = OBJECT_ID('[dbo].[alert_categories]') and name = 'ci_alert_categories')
+begin
+	create unique clustered index ci_alert_categories on [dbo].[alert_categories] ([error_number],[error_state]);
+end
+go
+
+if OBJECT_ID('[dbo].[alert_categories]') is not null
+begin
+	insert dbo.alert_categories
+	([error_number], [error_state], [category], [sub_category], [alert_name], [remarks])
+	select en.[error_number], en.[error_state], en.[category], en.[sub_category], en.[alert_name], en.[remarks]
+	from (VALUES	('1480', NULL, 'Availability Group', NULL, '(dba) AG Role Change - failover', NULL)
+				  , ('976', NULL, 'Availability Group', NULL, '(dba) Database Not Accessible', NULL)
+				  , ('983', NULL, 'Availability Group', NULL, '(dba) Database Role Resolving', NULL)
+				  , ('3402' , NULL, 'Availability Group', NULL, '(dba) Database Restoring', NULL)
+				  , ('19406', NULL, 'Availability Group', NULL, '(dba) AG Replica Changed States', NULL)
+				  , ('35206', NULL, 'Availability Group', NULL, '(dba) Connection Timeout', NULL)
+				  , ('35250', NULL, 'Availability Group', NULL, '(dba) Connection to Primary Inactive', NULL)
+				  , ('35264', NULL, 'Availability Group', NULL, '(dba) Data Movement Suspended', NULL)
+				  , ('35273', NULL, 'Availability Group', NULL, '(dba) Database Inaccessible', NULL)
+				  , ('35274', NULL, 'Availability Group', NULL, '(dba) Database Recovery Pending', NULL)
+				  , ('35275', NULL, 'Availability Group', NULL, '(dba) Database in Suspect State', NULL)
+				  , ('35276', NULL, 'Availability Group', NULL, '(dba) Database Out of Sync', NULL)
+				  , ('41091', NULL, 'Availability Group', NULL, '(dba) Replica Going Offline', NULL)
+				  , ('41131', NULL, 'Availability Group', NULL, '(dba) Failed to Bring AG Online', NULL)
+				  , ('41142', NULL, 'Availability Group', NULL, '(dba) Replica Cannot Become Primary', NULL)
+				  , ('41406', NULL, 'Availability Group', NULL, '(dba) AG Not Ready for Auto Failover', NULL)
+				  , ('41414', NULL, 'Availability Group', NULL, '(dba) Secondary Not Connected', NULL)
+		) en ([error_number], [error_state], [category], [sub_category], [alert_name], [remarks])
+	left join dbo.alert_categories ac
+		on ac.error_number = en.error_number
+		and exists (select ac.[error_state] intersect select en.[error_state])
+	where ac.category is null;			
+end
+go
+
+
+/* ***** 29) Create table [dbo].[alert_history]		**************************** */
+-- drop table [dbo].[alert_history]
+if OBJECT_ID('[dbo].[alert_history]') is null
+begin
+	create table [dbo].[alert_history]
+	(
+		[collection_time_utc] [datetime2](7) NOT NULL default sysutcdatetime(),		
+		[server_name] [nvarchar](128) NULL,
+		[database_name] [sysname] NULL,
+		[error_number] [int] NULL,
+		[error_severity] [tinyint] NULL,
+		[error_message] [nvarchar](510) NULL,
+		[host_instance] [nvarchar](128) NULL,
+		--[category] [varchar](128) NULL,
+		--[sub_category] [varchar](128) NULL,
+		[collection_time] [datetime2](7) NOT NULL default sysdatetime()
+	) on ps_dba_datetime2_daily ([collection_time_utc]);
+end
+go
+
+if not exists (select * from sys.indexes where [object_id] = OBJECT_ID('[dbo].[alert_history]') and name = 'ci_alert_history')
+begin
+	create clustered index ci_alert_history on [dbo].[alert_history] ([collection_time_utc]) on ps_dba_datetime2_daily ([collection_time_utc])
+end
+go
+
+if not exists (select 1 from dbo.purge_table where table_name = 'dbo.alert_history')
+begin
+	insert dbo.purge_table
+	(table_name, date_key, retention_days, purge_row_size, reference)
+	select	table_name = 'dbo.alert_history', 
+			date_key = 'collection_time_utc', 
+			retention_days = 15, 
+			purge_row_size = 100000,
+			reference = 'SQLMonitor Data Collection'
+end
+go
+
+
+/* ***** 30) Add boundaries to partition. 1 boundary per hour ***************** */
 set nocount on;
 declare @is_partitioned bit = 1;
 if @is_partitioned = 1
@@ -1094,7 +1192,7 @@ end
 go
 
 
-/* ***** 29) Remove boundaries with retention of 3 months ***************** */
+/* ***** 31) Remove boundaries with retention of 3 months ***************** */
 set nocount on;
 declare @is_partitioned bit = 1;
 if @is_partitioned = 1
@@ -1127,7 +1225,7 @@ end
 go
 
 
-/* ***** 30) Populate [dbo].[BlitzFirst_WaitStats_Categories] ***************** */
+/* ***** 32) Populate [dbo].[BlitzFirst_WaitStats_Categories] ***************** */
 IF OBJECT_ID('[dbo].[BlitzFirst_WaitStats_Categories]') IS NOT NULL
 BEGIN
 	-- Add new entries of Wait Types
