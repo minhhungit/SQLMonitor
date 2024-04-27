@@ -397,12 +397,6 @@
           <AssociatedConnUserName />
           <FullPath>SCH-usp_GetAllServerDashboardMail.sql</FullPath>
         </FileNode>
-        <FileNode Name="SCH-usp_GetAllServerHaDrLatency.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>SCH-usp_GetAllServerHaDrLatency.sql</FullPath>
-        </FileNode>
         <FileNode Name="SCH-usp_GetAllServerInfo.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>(local)</AssociatedConnSrvName>

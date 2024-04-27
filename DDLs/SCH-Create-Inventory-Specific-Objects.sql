@@ -111,6 +111,10 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[servi
 	DROP TABLE [dbo].[services_all_servers__staging]
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[alert_history_all_servers]') AND type in (N'U'))
+	DROP TABLE [dbo].[alert_history_all_servers]
+GO
+
 DECLARE @_sql NVARCHAR(MAX);
 DECLARE @MemoryOptimizedObjectUsage bit = 1;
 
@@ -707,3 +711,33 @@ CREATE TABLE [dbo].[services_all_servers__staging]
 	index [CI_services_all_servers__staging] clustered ([sql_instance])
 ) ON [PRIMARY]
 GO
+
+create table [dbo].[alert_history_all_servers]
+(
+	[collection_time_utc] [datetime2](7) NOT NULL,	
+	[sql_instance] [varchar](255) NOT NULL,
+	[server_name] [nvarchar](128) NULL,
+	[database_name] [sysname] NULL,
+	[error_number] [int] NULL,
+	[error_severity] [tinyint] NULL,
+	[error_message] [nvarchar](510) NULL,
+	[host_instance] [nvarchar](128) NULL,
+	[updated_time_utc] [datetime2](7) NOT NULL,
+
+	index ci_alert_history_all_servers clustered ([collection_time_utc]) on ps_dba_datetime2_daily ([collection_time_utc])
+) on ps_dba_datetime2_daily ([collection_time_utc]);
+go
+
+if not exists (select 1 from dbo.purge_table where table_name = 'dbo.alert_history_all_servers')
+begin
+	insert dbo.purge_table
+	(table_name, date_key, retention_days, purge_row_size, reference)
+	select	table_name = 'dbo.alert_history_all_servers', 
+			date_key = 'collection_time_utc', 
+			retention_days = 30, 
+			purge_row_size = 100000,
+			reference = 'SQLMonitor Data Collection'
+end
+go
+
+

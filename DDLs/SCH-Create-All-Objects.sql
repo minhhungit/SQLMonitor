@@ -1146,7 +1146,7 @@ begin
 	(table_name, date_key, retention_days, purge_row_size, reference)
 	select	table_name = 'dbo.alert_history', 
 			date_key = 'collection_time_utc', 
-			retention_days = 15, 
+			retention_days = 7, 
 			purge_row_size = 100000,
 			reference = 'SQLMonitor Data Collection'
 end
