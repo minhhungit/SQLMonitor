@@ -5,6 +5,8 @@ import argparse
 from datetime import datetime
 import os
 from slack_sdk import WebClient
+from multiprocessing import Pool
+import math
 
 parser = argparse.ArgumentParser(description="Script to execute sql query on multiple SQLServer",
                                   formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -39,13 +41,7 @@ servers = invCursor.fetchall()
 invCursor.close()
 invCon.close()
 
-disk_result = []
-ptable = PrettyTable()
-iter_no = 0
-
-for server_row in servers:
-    iter_no += 1
-
+def query_server(server_row):
     server = server_row.sql_instance
     port = server_row.sql_instance_port
     if port is None:
@@ -68,18 +64,28 @@ for server_row in servers:
     #print(sql_query)
     cursor = cnxn.cursor()
     cursor.execute(sql_query)
-
-    if iter_no == 1:
-      ptable.field_names = [column[0] for column in cursor.description]
-
-    for row in cursor.fetchall():
-      disk_result.append(row)
-      ptable.add_row(row)
-    #print(result)
+    result = cursor.fetchall()
     cursor.close()
     cnxn.close()
+    return result
+  
+def pool_handler():
+    threads = math.ceil((os.cpu_count())/2)
+    p = Pool(threads)
+    result_all = []
+    disk_result = []
+    ptable = PrettyTable()
 
-print(disk_result)
-print(ptable)
+    for allrows in p.map(query_server, servers):
+        for row in allrows:
+          disk_result.append(row)
+    
+    #print(disk_result)
+    ptable.field_names = [column[0] for column in disk_result[0].cursor_description]
+    ptable.add_rows(disk_result)
+    
+    print(ptable)
 
+if __name__ == '__main__':
+    pool_handler()
 
