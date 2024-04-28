@@ -57,12 +57,37 @@ def query_server(server_row):
     sql_query = f"""
     set nocount on;
 
-    select top 1 [sql_instance] = '{server}', *
+    waitfor delay '00:00:10';
+
+    select top 5 [sql_instance] = '{server}', *
     from dbo.disk_space ds
+    where 1=1
+    --and ds.collection_time_utc >= ?
+    """
+
+    collection_time = '2024-04-26 09:00'
+    sql_query = f"""
+    set nocount on;
+
+    declare @sql nvarchar(max);
+    declare @params nvarchar(max);
+
+    waitfor delay '00:00:06';
+
+    set @params = N'@sql_instance varchar(125), @collection_time_utc datetime2';
+    set @sql = N'
+    select top 5 [sql_instance] = @sql_instance, *
+    from dbo.disk_space ds
+    where 1=1
+    and ds.collection_time_utc >= @collection_time_utc
+    ';
+
+    exec sp_executesql @sql, @params, '{server}', '{collection_time}'
     """
 
     #print(sql_query)
     cursor = cnxn.cursor()
+    #cursor.execute(sql_query, '2024-04-26 09:00')
     cursor.execute(sql_query)
     result = cursor.fetchall()
     cursor.close()
