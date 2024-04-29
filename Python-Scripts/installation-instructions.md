@@ -6,4 +6,5 @@
   3. prettytable
   4. argparse
   5. slack_sdk
+  6. pyinstaller
 
