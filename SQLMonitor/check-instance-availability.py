@@ -66,9 +66,11 @@ def query_server(server_row):
     #print(f"Working on [{server}].[{database}]..")
 
     if port is None:
-      connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={server};DATABASE={database};Trusted_Connection=yes;TrustServerCertificate=YES;App={app_name};'
+      #connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={server};DATABASE={database};Trusted_Connection=yes;TrustServerCertificate=YES;App={app_name};UID=grafana;PWD=grafana;'
+      connectionString = f'DRIVER={{SQL Server Native Client 11.0}};SERVER={server};DATABASE={database};TrustServerCertificate=YES;App={app_name};UID=grafana;PWD=grafana;'
     else:
-      connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={server},{port};DATABASE={database};Trusted_Connection=yes;TrustServerCertificate=YES;App={app_name};'
+      #connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={server},{port};DATABASE={database};Trusted_Connection=yes;TrustServerCertificate=YES;App={app_name};UID=grafana;PWD=grafana;'
+      connectionString = f'DRIVER={{SQL Server Native Client 11.0}};SERVER={server},{port};DATABASE={database};TrustServerCertificate=YES;App={app_name};UID=grafana;PWD=grafana;'
     
     '''
     cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
