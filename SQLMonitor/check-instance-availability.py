@@ -1,12 +1,12 @@
 import pyodbc
 from prettytable import PrettyTable
-from prettytable import from_db_cursor
+#from prettytable import from_db_cursor
 import argparse
 from datetime import datetime
 import os
-from slack_sdk import WebClient
+#from slack_sdk import WebClient
 from multiprocessing import Pool
-import math
+#import math
 
 parser = argparse.ArgumentParser(description="Script to execute sql query on multiple SQLServer",
                                   formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -96,6 +96,7 @@ def log_result(result):
     final_result.append(result)
 
 def pool_handler():
+    global threads
     pool = Pool(threads)
 
     print(f"Loop {len(servers)} servers using {threads} threads ..\n")
@@ -200,3 +201,14 @@ if __name__ == '__main__':
     print(f"\n\nTime taken: {end_time-start_time}")
 
 
+
+'''
+# https://www.analyticsvidhya.com/blog/2024/01/ways-to-convert-python-scripts-to-exe-files/
+
+pip install pyinstaller
+
+PS C:\\Windows\\system32> cd C:\\sqlmonitor\\Work\
+PS C:\\sqlmonitor\\Work> pyinstaller.exe --onefile .\\Raise-AgHealthStateAlert.py
+
+C:\\sqlmonitor\\Work\\dist\\Raise-AgHealthStateAlert.exe
+'''
