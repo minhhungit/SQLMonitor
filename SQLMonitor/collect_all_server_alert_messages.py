@@ -276,8 +276,6 @@ def update_inventory():
        print(f"No records to populate into table [dbo].[alert_history_all_servers].")
 
     if(failed_servers_count > 0):
-      print(f"\nUpdate [is_available] flag for {failed_servers_count} servers..")
-
       servers_csv = ','.join([f"'{server}'" for server in failed_servers])
       print(f"Failure occurred for servers: ({servers_csv})")
       raise Exception(f"Failure occurred for servers: ({servers_csv})")
