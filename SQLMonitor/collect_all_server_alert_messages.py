@@ -6,7 +6,7 @@ from datetime import datetime
 import os
 #from slack_sdk import WebClient
 from multiprocessing import Pool
-#import math
+import time
 
 parser = argparse.ArgumentParser(description="Script to execute sql query on multiple SQLServer",
                                   formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -35,31 +35,7 @@ invCon = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
 
 invCursor = invCon.cursor()
 
-sql_get_servers = f"""
-declare @max_duration_threshold_minutes int = 120;
-
-;with cte_instances as (
-	select distinct [sql_instance], [sql_instance_port], [database]
-	from dbo.instance_details id
-	where is_enabled = 1 and is_alias = 0 and is_available = 1
-)
-select id.[sql_instance], [sql_instance_port], [database], 
-		collection_time_utc = coalesce(collection_time_utc, dateadd(minute,-@max_duration_threshold_minutes,sysutcdatetime()))
-from cte_instances id
-left join (
-		select sql_instance, collection_time_utc = max(collection_time_utc)
-		from [dbo].[alert_history_all_servers] ahas
-		group by sql_instance
-	) ahas
-	on ahas.sql_instance = id.sql_instance
-where 1=1;
-"""
-
-invCursor.execute(sql_get_servers)
-servers = invCursor.fetchall()
-#invCursor.close()
-#invCon.close()
-
+servers = []
 result_handles = []
 final_result = []
 pt_results = PrettyTable()
@@ -67,9 +43,56 @@ successful_servers = []
 failed_servers = []
 pt_successful_servers = PrettyTable()
 pt_failed_servers = PrettyTable()
-total_servers_count = len(servers)
+total_servers_count = 0
 success_servers_count = 0
 failed_servers_count = 0
+
+def get_servers_list():
+    global total_servers_count
+    global servers
+
+    servers.clear()
+    sql_get_servers = f"""
+    declare @max_duration_threshold_minutes int = 120;
+
+    ;with cte_instances as (
+      select distinct [sql_instance], [sql_instance_port], [database]
+      from dbo.instance_details id
+      where is_enabled = 1 and is_alias = 0 and is_available = 1
+    )
+    select id.[sql_instance], [sql_instance_port], [database], 
+        collection_time_utc = coalesce(collection_time_utc, dateadd(minute,-@max_duration_threshold_minutes,sysutcdatetime()))
+    from cte_instances id
+    left join (
+        select sql_instance, collection_time_utc = max(collection_time_utc)
+        from [dbo].[alert_history_all_servers] ahas
+        group by sql_instance
+      ) ahas
+      on ahas.sql_instance = id.sql_instance
+    where 1=1;
+    """
+
+    invCursor.execute(sql_get_servers)
+    for server_row in invCursor.fetchall():
+      servers.append(server_row)
+    #servers = invCursor.fetchall()
+
+
+    total_servers_count = len(servers)
+#invCursor.close()
+#invCon.close()
+
+#result_handles = []
+#final_result = []
+#pt_results = PrettyTable()
+#successful_servers = []
+#failed_servers = []
+#pt_successful_servers = PrettyTable()
+#pt_failed_servers = PrettyTable()
+#total_servers_count = len(servers)
+#success_servers_count = 0
+#failed_servers_count = 0
+#print(len(servers))
 
 def query_server(server_row):
     #app_name = "(dba) Run-MultiServerQuery"
@@ -107,7 +130,7 @@ def query_server(server_row):
     SET @sql_instance = ?;
     SET @collection_time_utc = ?;
 
-    --WAITFOR DELAY '00:00:10';
+    WAITFOR DELAY '00:00:10';
 
     SET @params = N'@sql_instance varchar(125), @collection_time_utc datetime2';
     SET @sql = N'
@@ -132,12 +155,29 @@ def query_server(server_row):
     cursor.execute(sql_query, server, collection_time_utc)
     #cursor.execute(sql_query)
     result = cursor.fetchall()
+
+    #print(len(result))
     cursor.close()
     cnxn.close()
 
     return result
 
 def pool_handler():
+    #global successful_servers
+    #global failed_servers
+    global success_servers_count
+    global failed_servers_count
+
+    successful_servers.clear()
+    failed_servers.clear()
+    result_handles.clear()
+    final_result.clear()
+    pt_results.clear()
+    pt_successful_servers.clear()
+    pt_failed_servers.clear()
+    success_servers_count = 0
+    failed_servers_count = 0
+
     global threads
     pool = Pool(threads)
 
@@ -180,8 +220,6 @@ def pool_handler():
           #final_result.append(row)
     
     #total_servers_count = len(servers)
-    global success_servers_count
-    global failed_servers_count
     #success_servers_count = len(final_result)
     success_servers_count = len(successful_servers)
     failed_servers_count = len(failed_servers)
@@ -216,48 +254,64 @@ def pool_handler():
 
 
 def update_inventory():
-    if(success_servers_count > 0):
-      print(f"\nUpdate [is_available] flag for {success_servers_count} servers..")
+    if(len(final_result) > 0):
+      print(f"\nPopulate table [dbo].[alert_history_all_servers]..")
 
       #print(final_result)
       #print([server_row[0] for server_row in final_result])
-      servers_csv = ','.join([f"'{server_row[0]}'" for server_row in final_result])
+      #servers_csv = ','.join([f"'{server_row[0]}'" for server_row in final_result])
       #print(servers_csv)
-      sql_update_online_servers = f"""
-      update dbo.instance_details set is_available = 1
-      where is_enabled = 1 and is_available = 0
-          and ( sql_instance in ({servers_csv}) or source_sql_instance in ({servers_csv}) )
+      sql_update_inventory_table = f"""
+      insert [dbo].[alert_history_all_servers]
+      (collection_time_utc, sql_instance, server_name, database_name, error_number, error_severity, error_message, host_instance, updated_time_utc)
+      values (?, ?, ?, ?, ?, ?, ?, ?, ?)
       """
-      invCursor.execute(sql_update_online_servers)
+      #invCursor.execute(sql_update_online_servers)
+      invCursor.executemany(sql_update_inventory_table, final_result)
       invCon.commit()
     else:
-       print(f"No successful servers found.")
+       print(f"No records to populate into table [dbo].[alert_history_all_servers].")
 
     if(failed_servers_count > 0):
       print(f"\nUpdate [is_available] flag for {failed_servers_count} servers..")
 
       servers_csv = ','.join([f"'{server}'" for server in failed_servers])
-      sql_update_offline_servers = f"""
-      update dbo.instance_details set is_available = 0, last_unavailability_time_utc = SYSUTCDATETIME()
-      where is_enabled = 1 and is_available = 1 
-          and ( sql_instance in ({servers_csv}) or source_sql_instance in ({servers_csv}) )
-      """
-      invCursor.execute(sql_update_offline_servers)
-      invCon.commit()
+      print(f"Failure occurred for servers: ({servers_csv})")
+      raise Exception(f"Failure occurred for servers: ({servers_csv})")
     else:
        print(f"No failed servers found.")
       #invCursor.execute(sql_get_servers)
       #servers = invCursor.fetchall()
-    invCursor.close()
-    invCon.close()
 
 if __name__ == '__main__':
 
-    pool_handler()
-    #update_inventory()
+  for i in range(1,3):
 
-    end_time = datetime.now()
-    print(f"\n\nTime taken: {end_time-start_time}")
+    print(f"\n**********************************************************************************************************")
+    print(f"***************************** START => Loop No: ({i}) ****************************************************")
+    #successful_servers.clear()
+    #failed_servers.clear()
+    #result_handles.clear()
+    #final_result.clear()
+    #pt_results.clear()
+    #pt_successful_servers.clear()
+    #pt_failed_servers.clear()
+    #success_servers_count = 0
+    #failed_servers_count = 0
+    get_servers_list()
+    pool_handler()
+    update_inventory()
+
+    time.sleep(3)
+    print(f"***************************** END => Loop No: ({i}) ****************************************************")
+    print(f"*********************************************************************************************************`n`n")
+
+  # Close connections after 3 iterations
+  invCursor.close()
+  invCon.close()
+  
+  end_time = datetime.now()
+  print(f"\n\nTime taken: {end_time-start_time}")
 
 
 
