@@ -47,6 +47,9 @@ total_servers_count = 0
 success_servers_count = 0
 failed_servers_count = 0
 
+def decode_sql_type_timestamp(raw_bytes):
+    return struct.unpack("<6HI", raw_bytes)
+
 def get_servers_list():
     global total_servers_count
     global servers
@@ -61,7 +64,7 @@ def get_servers_list():
       where is_enabled = 1 and is_alias = 0 and is_available = 1
     )
     select id.[sql_instance], [sql_instance_port], [database], 
-        collection_time_utc = coalesce(collection_time_utc, dateadd(minute,-@max_duration_threshold_minutes,sysutcdatetime()))
+        collection_time_utc = convert(varchar,coalesce(collection_time_utc, dateadd(minute,-@max_duration_threshold_minutes,sysutcdatetime())),121)
     from cte_instances id
     left join (
         select sql_instance, collection_time_utc = max(collection_time_utc)
@@ -130,11 +133,11 @@ def query_server(server_row):
     SET @sql_instance = ?;
     SET @collection_time_utc = ?;
 
-    WAITFOR DELAY '00:00:10';
+    --WAITFOR DELAY '00:00:10';
 
     SET @params = N'@sql_instance varchar(125), @collection_time_utc datetime2';
     SET @sql = N'
-    select	ah.collection_time_utc, [sql_instance] = @sql_instance, 
+    select	collection_time_utc = convert(varchar,ah.collection_time_utc,121), [sql_instance] = @sql_instance, 
         ah.server_name, ah.database_name, ah.error_number, 
         ah.error_severity, ah.error_message, ah.host_instance,
         [updated_time_utc] = sysutcdatetime()
