@@ -740,4 +740,11 @@ begin
 end
 go
 
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[sent_alert_history_all_servers]') AND type in (N'U'))
+BEGIN
+	create table dbo.sent_alert_history_all_servers
+	(	last_alert_time_utc datetime2 not null
+	);
+END
+go
 
