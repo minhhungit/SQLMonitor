@@ -22,7 +22,7 @@ create table [dbo].[sma_inventory]
 	[server_type] varchar(20) not null default 'windows',
 	[has_hadr] bit not null default 0,
 	[is_monitoring_enabled] bit not null default 1,
-	[is_decommission] bit not null default 0,
+	[is_decommissioned] bit not null default 0,
 	[backup_strategy] varchar(255) not null default 'native-backup',
 	[rpo_worst_case_minutes] int not null,
 	[rto_minutes] int not null,

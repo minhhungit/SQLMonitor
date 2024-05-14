@@ -69,6 +69,7 @@ $params = @{
     #XEventDirectory = 'D:\MSSQL15.MSSQLSERVER\XEvents\'
     #JobsExecutionWaitTimeoutMinutes = 15
     #MemoryOptimizedObjectsUsage = $false
+    #ReturnInlineErrorMessage = $true
 }
 
 #$preSQL = "EXEC dbo.usp_check_sql_agent_jobs @default_mail_recipient = 'sqlagentservice@gmail.com', @drop_recreate = 1"

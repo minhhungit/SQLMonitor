@@ -206,7 +206,10 @@ Param (
     [String]$PreQuery,
 
     [Parameter(Mandatory=$false)]
-    [String]$PostQuery
+    [String]$PostQuery,
+
+    [Parameter(Mandatory=$false)]
+    [bool]$ReturnInlineErrorMessage = $false
 )
 
 $startTime = Get-Date
@@ -808,10 +811,15 @@ if ( $instanceDetails.Count -gt 0 )
     # If more than 1 host is found, then confirm from user
     if ( $instanceDetails.Count -gt 1 ) 
     {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Multiple Hosts detected for SqlInstance [$SqlInstanceToBaseline]." | Write-Host -ForegroundColor Red
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly specify HostName parameter related to SqlInstance [$SqlInstanceToBaseline]." | Write-Host -ForegroundColor Red
+        if ($ReturnInlineErrorMessage) {
+            "Multiple Hosts detected for SqlInstance [$SqlInstanceToBaseline].`n Kindly specify HostName parameter related to SqlInstance [$SqlInstanceToBaseline]." | Write-Error
+        }
+        else {            
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Multiple Hosts detected for SqlInstance [$SqlInstanceToBaseline]." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly specify HostName parameter related to SqlInstance [$SqlInstanceToBaseline]." | Write-Host -ForegroundColor Red
         
-        "STOP here, and fix above issue." | Write-Error
+            "STOP here, and fix above issue." | Write-Error
+        }
     }    
 
     # If no DBA Mail provided, then fetch from dbo.instance_details
@@ -829,10 +837,15 @@ if ( $instanceDetails.Count -gt 0 )
     }
 
     if( ($RemoteSQLMonitorPath -ne $instanceDetails.sqlmonitor_script_path) -and $RemoteSQLMonitorPath -ne 'C:\SQLMonitor' ) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "RemoteSQLMonitorPath parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
+        if ($ReturnInlineErrorMessage) {
+            "RemoteSQLMonitorPath parameter value does not match with dbo.instance_details. `nConsider updating details of dbo.instance_details on Inventory & Local Instance both." | Write-Error
+        }
+        else {            
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "RemoteSQLMonitorPath parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
         
-        "STOP here, and fix above issue." | Write-Error
+            "STOP here, and fix above issue." | Write-Error
+        }
     }else {
         if( ($RemoteSQLMonitorPath -ne $instanceDetails.sqlmonitor_script_path) -and $RemoteSQLMonitorPath -eq 'C:\SQLMonitor' ) {
             $RemoteSQLMonitorPath = $instanceDetails.sqlmonitor_script_path
@@ -844,10 +857,15 @@ if ( $instanceDetails.Count -gt 0 )
     }
     else {
         if( $SqlInstanceAsDataDestination -ne $instanceDetails.data_destination_sql_instance ) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SqlInstanceAsDataDestination parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
+            if ($ReturnInlineErrorMessage) {
+                "SqlInstanceAsDataDestination parameter value does not match with dbo.instance_details. `nConsider updating details of dbo.instance_details on Inventory & Local Instance both." | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SqlInstanceAsDataDestination parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
         
-            "STOP here, and fix above issue." | Write-Error
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
     }
 
@@ -856,10 +874,15 @@ if ( $instanceDetails.Count -gt 0 )
     }
     else {
         if( $SqlInstanceForPowershellJobs -ne $instanceDetails.collector_powershell_jobs_server ) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SqlInstanceForPowershellJobs parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
+            if ($ReturnInlineErrorMessage) {
+                "SqlInstanceForPowershellJobs parameter value does not match with dbo.instance_details. `nConsider updating details of dbo.instance_details on Inventory & Local Instance both." | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SqlInstanceForPowershellJobs parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
         
-            "STOP here, and fix above issue." | Write-Error
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
     }
 
@@ -872,10 +895,15 @@ if ( $instanceDetails.Count -gt 0 )
     }
     else {
         if( $SqlInstanceForTsqlJobs -ne $instanceDetails.collector_tsql_jobs_server ) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SqlInstanceForTsqlJobs parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
+            if ($ReturnInlineErrorMessage) {
+                "SqlInstanceForTsqlJobs parameter value does not match with dbo.instance_details. `nConsider updating details of dbo.instance_details on Inventory & Local Instance both." | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SqlInstanceForTsqlJobs parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
         
-            "STOP here, and fix above issue." | Write-Error
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
     }
 
@@ -913,10 +941,15 @@ if ( $instanceDetails.Count -gt 0 )
     }
 
     if( ($DbaDatabase -ne $instanceDetails.database) -and $DbaDatabase -ne 'DBA' ) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "DbaDatabase parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
+        if ($ReturnInlineErrorMessage) {
+            "DbaDatabase parameter value does not match with dbo.instance_details.`nConsider updating details of dbo.instance_details on Inventory & Local Instance both." | Write-Error
+        }
+        else {            
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "DbaDatabase parameter value does not match with dbo.instance_details." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Consider updating details of dbo.instance_details on Inventory & Local Instance both."
         
-        "STOP here, and fix above issue." | Write-Error
+            "STOP here, and fix above issue." | Write-Error
+        }
     }else {
         if( ($DbaDatabase -ne $instanceDetails.database) -and $DbaDatabase -eq 'DBA' ) {
             $DbaDatabase = $instanceDetails.database
@@ -1028,8 +1061,13 @@ if( (($SkipRDPSessionSteps -eq $false) -or $ConfirmSetupOfTaskSchedulerJobs -or 
     }
 
     if ( [String]::IsNullOrEmpty($ssn4PerfmonSetup) ) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provide WindowsCredential for accessing server [$ssnHostName] of domain '$domain'." | Write-Host -ForegroundColor Red
-        "STOP here, and fix above issue." | Write-Error
+        if ($ReturnInlineErrorMessage) {
+            "Provide WindowsCredential for accessing server [$ssnHostName] of domain '$domain'." | Write-Error
+        }
+        else {            
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provide WindowsCredential for accessing server [$ssnHostName] of domain '$domain'." | Write-Host -ForegroundColor Red
+            "STOP here, and fix above issue." | Write-Error
+        }
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$ssn4PerfmonSetup PSSession for [$HostName].."
@@ -1075,8 +1113,13 @@ if( ($SkipPowerShellJobs -eq $false) -or ('21__CreateJobRemoveXEventFiles' -in $
         {
             # If Destination instance is not provided, throw error
             if([String]::IsNullOrEmpty($SqlInstanceAsDataDestination) -or (-not $ConfirmValidationOfMultiInstance)) {
-                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide values for parameter SqlInstanceAsDataDestination & ConfirmValidationOfMultiInstance as `$ssn4PerfmonSetup is null." | Write-Host -ForegroundColor Red
-                "STOP here, and fix above issue." | Write-Error
+                if ($ReturnInlineErrorMessage) {
+                    "Kindly provide values for parameter SqlInstanceAsDataDestination & ConfirmValidationOfMultiInstance as `$ssn4PerfmonSetup is null." | Write-Error
+                }
+                else {            
+                    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide values for parameter SqlInstanceAsDataDestination & ConfirmValidationOfMultiInstance as `$ssn4PerfmonSetup is null." | Write-Host -ForegroundColor Red
+                    "STOP here, and fix above issue." | Write-Error
+                }
             }
         }
         
@@ -1097,13 +1140,22 @@ if( ($SkipPowerShellJobs -eq $false) -or ('21__CreateJobRemoveXEventFiles' -in $
         if([String]::IsNullOrEmpty($SqlInstanceAsDataDestination) -or (-not $ConfirmValidationOfMultiInstance)) 
         {
             if([String]::IsNullOrEmpty($SqlInstanceAsDataDestination)) {
-                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide value for parameter SqlInstanceAsDataDestination as host has multiple database engine services, `n`t and Perfmon data can be saved on only on one SQLInstance." | Write-Host -ForegroundColor Red
+                $errMessage = "Kindly provide value for parameter SqlInstanceAsDataDestination as host has multiple database engine services, `n`t and Perfmon data can be saved on only on one SQLInstance."
+                #"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', $errMessage | Write-Host -ForegroundColor Red
             }
             if(-not $ConfirmValidationOfMultiInstance) {
-                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly set ConfirmValidationOfMultiInstance parameter to true as host has multiple database engine services, `n`t and Perfmon data can be saved on only on one SQLInstance." | Write-Host -ForegroundColor Red
+                $errMessage = "Kindly set ConfirmValidationOfMultiInstance parameter to true as host has multiple database engine services, `n`t and Perfmon data can be saved on only on one SQLInstance."
+                #"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly set ConfirmValidationOfMultiInstance parameter to true as host has multiple database engine services, `n`t and Perfmon data can be saved on only on one SQLInstance." | Write-Host -ForegroundColor Red
             }
 
-            "STOP here, and fix above issue." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+                $errMessage | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', $errMessage | Write-Host -ForegroundColor Red
+        
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
     }
 }
@@ -1212,8 +1264,13 @@ end
     }
     catch {
         $errMessage = $_.Exception.Message
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
-        "STOP here, and fix above issue." | Write-Error
+        if ($ReturnInlineErrorMessage) {
+            $errMessage | Write-Error
+        }
+        else {            
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
+            "STOP here, and fix above issue." | Write-Error
+        }
     }
 
     if($resultPerfmonRecord.Count -eq 0) {
@@ -1358,8 +1415,13 @@ if( (-not $SkipRDPSessionSteps) -and ($HostName -ne $jobServerDbServiceInfo.host
     }
 
     if ( [String]::IsNullOrEmpty($ssnJobServer) ) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provide WindowsCredential for accessing server [$ssnHostName] of domain '$($sqlServerInfo.domain)'." | Write-Host -ForegroundColor Red
-        "STOP here, and fix above issue." | Write-Error
+        if ($ReturnInlineErrorMessage) {
+            "Provide WindowsCredential for accessing server [$ssnHostName] of domain '$($sqlServerInfo.domain)'." | Write-Error
+        }
+        else {            
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provide WindowsCredential for accessing server [$ssnHostName] of domain '$($sqlServerInfo.domain)'." | Write-Host -ForegroundColor Red
+            "STOP here, and fix above issue." | Write-Error
+        }
     }
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "PSSession for [$($jobServerDbServiceInfo.host_name)].."
@@ -4790,10 +4852,15 @@ if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false) {
     }
 
     if($whoIsActiveExists.Count -eq 0) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Table [dbo].[WhoIsActive] does not exist." | Write-Host -ForegroundColor Red
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure job [(dba) Run-WhoIsActive] is running successfully." | Write-Host -ForegroundColor Red
+        if ($ReturnInlineErrorMessage) {
+            "Table [dbo].[WhoIsActive] does not exist.`nKindly ensure job [(dba) Run-WhoIsActive] is running successfully." | Write-Error
+        }
+        else {            
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Table [dbo].[WhoIsActive] does not exist." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure job [(dba) Run-WhoIsActive] is running successfully." | Write-Host -ForegroundColor Red
         
-        "STOP here, and fix above issue." | Write-Error
+            "STOP here, and fix above issue." | Write-Error
+        }
     }
     else {
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[WhoIsActive] into partitioned table.."
@@ -4841,8 +4908,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if($BlitzIndexExists.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex] to create table dbo.BlitzIndex." | Write-Host -ForegroundColor Red        
-            "STOP here, and fix above issue." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+                "Run job [(dba) Run-BlitzIndex] to create table dbo.BlitzIndex." | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex] to create table dbo.BlitzIndex." | Write-Host -ForegroundColor Red        
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex] into partitioned table.."
@@ -4882,8 +4954,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if($BlitzIndexMode0Exists.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode0." | Write-Host -ForegroundColor Red        
-            "STOP here, and fix above issue." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+                "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode0." | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode0." | Write-Host -ForegroundColor Red        
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode0] into partitioned table.."
@@ -4923,8 +5000,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if($BlitzIndexMode1Exists.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode1." | Write-Host -ForegroundColor Red        
-            "STOP here, and fix above issue." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+                "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode1." | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode1." | Write-Host -ForegroundColor Red        
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode1] into partitioned table.."
@@ -4964,8 +5046,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if($BlitzIndexMode4Exists.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode4." | Write-Host -ForegroundColor Red        
-            "STOP here, and fix above issue." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+                "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode4." | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.BlitzIndex_Mode4." | Write-Host -ForegroundColor Red        
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[BlitzIndex_Mode4] into partitioned table.."
@@ -5014,8 +5101,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if($BlitzExists.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.Blitz." | Write-Host -ForegroundColor Red        
-            "STOP here, and fix above issue." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+                "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.Blitz." | Write-Error
+            }
+            else {            
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Run job [(dba) Run-BlitzIndex - Weekly] to create table dbo.Blitz." | Write-Host -ForegroundColor Red        
+                "STOP here, and fix above issue." | Write-Error
+            }
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Seems table exists now. Convert [dbo].[Blitz] into partitioned table.."
@@ -5184,11 +5276,20 @@ else
     }
     catch {
         $errMessage = $_.Exception.Message
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
-        if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure all SQLAgent jobs on [$SqlInstanceForTsqlJobs], and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
+
+        if ($ReturnInlineErrorMessage) {
+            if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
+                $errMessage = "Kindly ensure all SQLAgent jobs on [$SqlInstanceForTsqlJobs], and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step.`n$errMessage";
+            }
+            "$errMessage.`n" | Write-Error
         }
-        "STOP here, and fix above issue." | Write-Error
+        else {            
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
+            if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure all SQLAgent jobs on [$SqlInstanceForTsqlJobs], and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
+            }
+            "STOP here, and fix above issue." | Write-Error
+        }
     }
 
 
@@ -5213,11 +5314,19 @@ else
     }
     catch {
         $errMessage = $_.Exception.Message
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
-        if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure all SQLAgent jobs on [$SqlInstanceForPowershellJobs], and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
+        if ($ReturnInlineErrorMessage) {
+            if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
+                $errMessage = "Kindly ensure all SQLAgent jobs on [$SqlInstanceForPowershellJobs], and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step.`n$errMessage";
+            }
+            "$errMessage.`n" | Write-Error
         }
-        "STOP here, and fix above issue." | Write-Error
+        else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$errMessage" | Write-Host -ForegroundColor Red
+            if($errMessage -like "Invalid object name 'dbo.sql_agent_job_thresholds*") {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure all SQLAgent jobs on [$SqlInstanceForPowershellJobs], and then finally [(dba) Check-SQLAgentJobs] is executed at least once, and then retry from this step." | Write-Host -ForegroundColor Red
+            }
+            "STOP here, and fix above issue." | Write-Error
+        }
     }
 }
 
@@ -5385,6 +5494,8 @@ $timeTaken = New-TimeSpan -Start $startTime -End $(Get-Date)
     TSQL String that should be executed before actual SQLMonitor scripts are run. This is useful when specific pre-changes are required for SQLMonitor. For example, drop/create few columns etc.
     .PARAMETER PostQuery
     TSQL String that should be executed after actual SQLMonitor scripts are run. This is useful when specific post-changes are required due to environment specific needs.
+    .PARAMETER ReturnInlineErrorMessage
+    On PS Script failure, when set to true, actual error message is returned. Otherwise, by default, user friendly error message is returned.
     .EXAMPLE
 $params = @{
     SqlInstanceToBaseline = 'Workstation'
