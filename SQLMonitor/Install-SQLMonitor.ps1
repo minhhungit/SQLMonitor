@@ -394,8 +394,13 @@ $RDPSessionSteps = @("9__CopyDbaToolsModule2Host", "10__CopyPerfmonFolder2Host",
 
 # Validate to ensure either of Skip Or Only Steps are provided
 if($OnlySteps.Count -gt 0 -and $SkipSteps.Count -gt 0) {
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Parameters {OnlySteps} & {SkipSteps} are mutually exclusive.`n`tOnly one of these should be provided." | Write-Host -ForegroundColor Red
-    Write-Error "Stop here. Fix above issue."
+    if ($ReturnInlineErrorMessage) {
+        "Parameters {OnlySteps} & {SkipSteps} are mutually exclusive.`n`tOnly one of these should be provided." | Write-Error
+    }
+    else {            
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Parameters {OnlySteps} & {SkipSteps} are mutually exclusive.`n`tOnly one of these should be provided." | Write-Host -ForegroundColor Red
+        Write-Error "Stop here. Fix above issue."
+    }
 }
 
 # Print warning if OnlySteps are provided
@@ -439,8 +444,13 @@ if($SkipTsqlJobs -and $SkipPowerShellJobs) {
 Get-PSSession | Remove-PSSession
 
 if($SqlInstanceToBaseline -eq '.' -or $SqlInstanceToBaseline -eq 'localhost') {
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "'localhost' or '.' are not validate SQLInstance names." | Write-Host -ForegroundColor Red
-    Write-Error "Stop here. Fix above issue."
+    if ($ReturnInlineErrorMessage) {
+        "'localhost' or '.' are not validate SQLInstance names." | Write-Error
+    }
+    else {            
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "'localhost' or '.' are not validate SQLInstance names." | Write-Host -ForegroundColor Red
+        Write-Error "Stop here. Fix above issue."
+    }
 }
 
 # Evaluate path of SQLMonitor folder
@@ -451,8 +461,13 @@ if( (-not [String]::IsNullOrEmpty($PSScriptRoot)) -or ((-not [String]::IsNullOrE
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$SQLMonitorPath = '$SQLMonitorPath'"
 }
 else {
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide 'SQLMonitorPath' parameter value" | Write-Host -ForegroundColor Red
-    Write-Error "Stop here. Fix above issue."
+    if ($ReturnInlineErrorMessage) {
+		"Kindly provide 'SQLMonitorPath' parameter value" | Write-Error
+	}
+	else {            
+		"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide 'SQLMonitorPath' parameter value" | Write-Host -ForegroundColor Red
+        Write-Error "Stop here. Fix above issue."
+    }
 }
 
 # Logs folder
@@ -614,13 +629,26 @@ try {
 catch {
     $errMessage = $_
     
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SQL Connection to [$InventoryServer] failed." | Write-Host -ForegroundColor Red
-    if([String]::IsNullOrEmpty($SqlCredential)) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide SqlCredentials." | Write-Host -ForegroundColor Red
-    } else {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided SqlCredentials seems to be NOT working." | Write-Host -ForegroundColor Red
+    if ($ReturnInlineErrorMessage) 
+    {
+        if([String]::IsNullOrEmpty($SqlCredential)) {
+            $errMessage = "SQL Connection to [$InventoryServer] failed.`nKindly provide SqlCredentials.`n$($errMessage.Exception.Message).."
+        } else {
+            $errMessage = "SQL Connection to [$InventoryServer] failed.`nProvided SqlCredentials seems to be NOT working.`n$($errMessage.Exception.Message).."
+        }
+
+        $errMessage | Write-Error
     }
-    Write-Error "Stop here. Fix above issue."
+    else
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SQL Connection to [$InventoryServer] failed." | Write-Host -ForegroundColor Red
+        if([String]::IsNullOrEmpty($SqlCredential)) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide SqlCredentials." | Write-Host -ForegroundColor Red
+        } else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided SqlCredentials seems to be NOT working." | Write-Host -ForegroundColor Red
+        }
+        Write-Error "Stop here. Fix above issue."
+    }
 }
 
 # Get dbo.instance_details info
@@ -670,13 +698,26 @@ try {
 catch {
     $errMessage = $_
     
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SQL Connection to [$SqlInstanceToBaseline] failed." | Write-Host -ForegroundColor Red
-    if([String]::IsNullOrEmpty($SqlCredential)) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide SqlCredentials." | Write-Host -ForegroundColor Red
-    } else {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided SqlCredentials seems to be NOT working." | Write-Host -ForegroundColor Red
+    if ($ReturnInlineErrorMessage) 
+    {
+        if([String]::IsNullOrEmpty($SqlCredential)) {
+            $errMessage = "SQL Connection to [$SqlInstanceToBaseline] failed.`nKindly provide SqlCredentials.`n$($errMessage.Exception.Message).."
+        } else {
+            $errMessage = "SQL Connection to [$SqlInstanceToBaseline] failed.`nProvided SqlCredentials seems to be NOT working.`n$($errMessage.Exception.Message).."
+        }
+
+        $errMessage | Write-Error
     }
-    Write-Error "Stop here. Fix above issue."
+    else
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SQL Connection to [$SqlInstanceToBaseline] failed." | Write-Host -ForegroundColor Red
+        if([String]::IsNullOrEmpty($SqlCredential)) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide SqlCredentials." | Write-Host -ForegroundColor Red
+        } else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided SqlCredentials seems to be NOT working." | Write-Host -ForegroundColor Red
+        }
+        Write-Error "Stop here. Fix above issue."
+    }
 }
 
 
@@ -721,13 +762,26 @@ try {
 catch {
     $errMessage = $_
     
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SQL Connection to [$SqlInstanceToBaseline] failed."
-    if([String]::IsNullOrEmpty($SqlCredential)) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide SqlCredentials." | Write-Host -ForegroundColor Red
-    } else {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided SqlCredentials seems to be NOT working." | Write-Host -ForegroundColor Red
+    if ($ReturnInlineErrorMessage) 
+    {
+        if([String]::IsNullOrEmpty($SqlCredential)) {
+            $errMessage = "SQL Connection to [$SqlInstanceToBaseline] failed.`nKindly provide SqlCredentials.`n$($errMessage.Exception.Message).."
+        } else {
+            $errMessage = "SQL Connection to [$SqlInstanceToBaseline] failed.`nProvided SqlCredentials seems to be NOT working.`n$($errMessage.Exception.Message).."
+        }
+
+        $errMessage | Write-Error
     }
-    Write-Error "Stop here. Fix above issue."
+    else
+    {
+        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SQL Connection to [$SqlInstanceToBaseline] failed."
+        if([String]::IsNullOrEmpty($SqlCredential)) {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide SqlCredentials." | Write-Host -ForegroundColor Red
+        } else {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided SqlCredentials seems to be NOT working." | Write-Host -ForegroundColor Red
+        }
+        Write-Error "Stop here. Fix above issue."
+    }
 }
 
 # Extract Version Info & Partition Info
@@ -969,8 +1023,13 @@ if(-not $isUpgradeScenario) {
 }
 
 if($DbaGroupMailId -eq 'some_dba_mail_id@gmail.com') {
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide a valid value for DbaGroupMailId parameter." | Write-Host -ForegroundColor Red
-    Write-Error "Stop here. Fix above issue."
+    if ($ReturnInlineErrorMessage) {
+		"Kindly provide a valid value for DbaGroupMailId parameter." | Write-Error
+	}
+	else {            
+		"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide a valid value for DbaGroupMailId parameter." | Write-Host -ForegroundColor Red
+        Write-Error "Stop here. Fix above issue."
+    }
 }
 
 
@@ -1318,10 +1377,16 @@ and name in ('master','msdb','tempdb','$DbaDatabase')
     $dbCollationResult = @()
     $dbCollationResult += $conSqlInstanceToBaseline | Invoke-DbaQuery -Query $sqlDbCollation -EnableException
     if($dbCollationResult.Count -ne 0) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Collation of below databases is not [SQL_Latin1_General_CP1_CI_AS]." | Write-Host -ForegroundColor Red
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly rectify this collation problem, or Using SkipCollationCheck parameter." | Write-Host -ForegroundColor Red
-        $dbCollationResult | Format-Table -AutoSize #| Write-Host -ForegroundColor Red
-        Write-Error "Stop here. Fix above issue."
+        if ($ReturnInlineErrorMessage) 
+        {
+		    "Collation of below databases is not [SQL_Latin1_General_CP1_CI_AS].`nKindly rectify this collation problem, or Using SkipCollationCheck parameter.`n`n$($dbCollationResult | Format-Table -AutoSize)" | Write-Error
+	    }
+	    else {            
+		    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Collation of below databases is not [SQL_Latin1_General_CP1_CI_AS]." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly rectify this collation problem, or Using SkipCollationCheck parameter." | Write-Host -ForegroundColor Red
+            $dbCollationResult | Format-Table -AutoSize #| Write-Host -ForegroundColor Red
+            Write-Error "Stop here. Fix above issue."
+        }
     }
 }
 
@@ -1339,13 +1404,26 @@ if($SqlInstanceToBaseline -ne $SqlInstanceForPowershellJobs)
     catch {
         $errMessage = $_
     
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SQL Connection to [$SqlInstanceToBaseline] failed."
-        if([String]::IsNullOrEmpty($SqlCredential)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide SqlCredentials." | Write-Host -ForegroundColor Red
-        } else {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided SqlCredentials seems to be NOT working." | Write-Host -ForegroundColor Red
+        if ($ReturnInlineErrorMessage) 
+        {
+            if([String]::IsNullOrEmpty($SqlCredential)) {
+                $errMessage = "SQL Connection to [$SqlInstanceToBaseline] failed.`nKindly provide SqlCredentials.`n$($errMessage.Exception.Message).."
+            } else {
+                $errMessage = "SQL Connection to [$SqlInstanceToBaseline] failed.`nProvided SqlCredentials seems to be NOT working.`n$($errMessage.Exception.Message).."
+            }
+
+            $errMessage | Write-Error
         }
-        Write-Error "Stop here. Fix above issue."
+        else
+        {
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "SQL Connection to [$SqlInstanceToBaseline] failed."
+            if([String]::IsNullOrEmpty($SqlCredential)) {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide SqlCredentials." | Write-Host -ForegroundColor Red
+            } else {
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided SqlCredentials seems to be NOT working." | Write-Host -ForegroundColor Red
+            }
+            Write-Error "Stop here. Fix above issue."
+        }
     }
 }
 else {
@@ -1376,9 +1454,14 @@ if( (-not $SkipRDPSessionSteps) -and ($HostName -ne $jobServerDbServiceInfo.host
 
     # Try reaching using FQDN, if fails & not a clustered instance, then use SqlInstanceToBaseline itself
     if ( -not (Test-Connection -ComputerName $ssnHostName -Quiet -Count 1) ) {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Host [$ssnHostName] not pingable." | Write-Host -ForegroundColor Red
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure pssession is working for `$SqlInstanceForPowershellJobs [$SqlInstanceForPowershellJobs]." | Write-Host -ForegroundColor Red
-        "STOP and check above error message" | Write-Error
+        if ($ReturnInlineErrorMessage) {
+		    "Host [$ssnHostName] not pingable.`nKindly ensure pssession is working for `$SqlInstanceForPowershellJobs [$SqlInstanceForPowershellJobs]." | Write-Error
+	    }
+	    else {            
+		    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Host [$ssnHostName] not pingable." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly ensure pssession is working for `$SqlInstanceForPowershellJobs [$SqlInstanceForPowershellJobs]." | Write-Host -ForegroundColor Red
+            "STOP and check above error message" | Write-Error
+        }
     }
 
     $ssnJobServer = $null
@@ -1475,8 +1558,13 @@ if($SkipWindowsAdminAccessTest -eq $false)
         }
 
         if($testWindowsAdminAccessJobHistory.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Status of job [(dba) Test-WindowsAdminAccess] on [$SqlInstanceForPowershellJobs] could not be fetched on time. Kindly validate." | Write-Host -ForegroundColor Red
-            "STOP and check above error message" | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Status of job [(dba) Test-WindowsAdminAccess] on [$SqlInstanceForPowershellJobs] could not be fetched on time. Kindly validate." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Status of job [(dba) Test-WindowsAdminAccess] on [$SqlInstanceForPowershellJobs] could not be fetched on time. Kindly validate." | Write-Host -ForegroundColor Red
+                "STOP and check above error message" | Write-Error
+            }
         }
         else {
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "[(dba) Test-WindowsAdminAccess] Job history => '$($testWindowsAdminAccessJobHistory.Message)'."
@@ -1502,8 +1590,13 @@ if($SkipWindowsAdminAccessTest -eq $false)
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$requireProxy = $requireProxy"
 
         if($requireProxy -and [String]::IsNullOrEmpty($WindowsCredential)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide WindowsCredential to create SQL Agent Job Proxy." | Write-Host -ForegroundColor Red
-            "STOP and check above error message" | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Kindly provide WindowsCredential to create SQL Agent Job Proxy." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide WindowsCredential to create SQL Agent Job Proxy." | Write-Host -ForegroundColor Red
+                "STOP and check above error message" | Write-Error
+            }
         }
     }
 }
@@ -1542,7 +1635,12 @@ WHERE pp.is_default = 1
             $mailProfile | Format-Table -AutoSize
         }
 
-        Write-Error "Stop here. Fix above issue."
+        if ($ReturnInlineErrorMessage) {
+		    "Kindly create default global mail profile.." | Write-Error
+	    }
+	    else {            
+		    Write-Error "Stop here. Fix above issue."
+        }
     }
 }
 
@@ -1561,8 +1659,13 @@ order by file_id;
 $resultDbaDatabasePath = @()
 $resultDbaDatabasePath += $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlDbaDatabasePath -EnableException
 if($resultDbaDatabasePath.Count -eq 0) {
-    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Seems either [$DbaDatabase] does not exists, or the data/log files are present in C:\ drive. `n`t Kindly rectify this issue." | Write-Host -ForegroundColor Red
-    Write-Error "Stop here. Fix above issue."
+    if ($ReturnInlineErrorMessage) {
+		"Seems either [$DbaDatabase] does not exists, or the data/log files are present in C:\ drive. `n`t Kindly rectify this issue." | Write-Error
+	}
+	else {            
+		"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Seems either [$DbaDatabase] does not exists, or the data/log files are present in C:\ drive. `n`t Kindly rectify this issue." | Write-Host -ForegroundColor Red
+        Write-Error "Stop here. Fix above issue."
+    }
 }
 else {
     $dbaDatabasePath = $resultDbaDatabasePath[0].physical_name
@@ -1656,10 +1759,15 @@ if($stepName -in $Steps2Execute)
     catch {
         $errMessage = $_
 
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Below error occurred while trying to execute script '$tempAllDatabaseObjectsFilePath'." | Write-Host -ForegroundColor Red
-        $($errMessage.Exception.Message -Split [Environment]::NewLine) | % {"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$_"} | Write-Host -ForegroundColor Red
+        if ($ReturnInlineErrorMessage) {
+		    "Below error occurred while trying to execute script '$tempAllDatabaseObjectsFilePath'.`n$($errMessage.Exception.Message)" | Write-Error
+	    }
+	    else {            
+		    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Below error occurred while trying to execute script '$tempAllDatabaseObjectsFilePath'." | Write-Host -ForegroundColor Red
+            $($errMessage.Exception.Message -Split [Environment]::NewLine) | % {"$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "$_"} | Write-Host -ForegroundColor Red
 
-        Write-Error "Stop here. Fix above issue."
+            Write-Error "Stop here. Fix above issue."
+        }
     }
 
     # Cleanup temporary file path
@@ -2262,8 +2370,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 30 minutes"
@@ -2374,8 +2487,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 2 minutes"
@@ -2486,8 +2604,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Provide WindowsCredential for accessing server [$ssnHostName] of domain '$($sqlServerInfo.domain)'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 1 minutes"
@@ -2596,8 +2719,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 1 minutes"
@@ -2692,8 +2820,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 1 minutes"
@@ -2790,8 +2923,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 10 minutes"
@@ -2887,8 +3025,13 @@ if($stepName -in $Steps2Execute -and $IsNonPartitioned -eq $false)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily at 12:00 am"
@@ -2985,8 +3128,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily at 12:00 am"
@@ -3086,8 +3234,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 30 minutes"
@@ -3196,8 +3349,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 5 minutes"
@@ -3294,8 +3452,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 5 minutes"
@@ -3396,8 +3559,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 2 minutes"
@@ -3496,8 +3664,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily at 7:00 pm"
@@ -3597,8 +3770,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily at 10:00 pm"
@@ -3700,8 +3878,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily at 8:00 PM"
@@ -3799,8 +3982,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 2 minutes"
@@ -3898,8 +4086,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 5 minutes"
@@ -3996,8 +4189,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 5 minutes"
@@ -4095,8 +4293,13 @@ if($stepName -in $Steps2Execute)
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 5 minutes"
@@ -4231,8 +4434,13 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 1 minutes"
@@ -4445,8 +4653,13 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
         }
 
         if($jobArguments.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 20 seconds"
@@ -4553,8 +4766,13 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
         }
 
         if($jobArguments.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 20 seconds"
@@ -4661,8 +4879,13 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
         }
 
         if($jobArguments.Count -eq 0) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 8 hours"
@@ -4754,8 +4977,13 @@ if($stepName -in $Steps2Execute -and $SqlInstanceToBaseline -eq $InventoryServer
         }
 
         if([String]::IsNullOrEmpty($jobArguments)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Failure in extracting Job command in '$stepName'." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Failure in extracting Job command in '$stepName'." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly Resolve above error." | Write-Error
+            }
         }
 
         $jobDescription = "Run Job [$jobName] daily every 1 hour"
@@ -5185,9 +5413,14 @@ if( ($stepName -in $Steps2Execute) -and ($SqlInstanceToBaseline -ne $SqlInstance
         "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "Creating linked server named [$SqlInstanceAsDataDestination] on [$SqlInstanceToBaseline].."
         $conSqlInstanceToBaseline | Invoke-DbaQuery -Database master -Query $sqlLinkedServerForDataDestinationInstance -EnableException
     } else {
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Linked server named [$SqlInstanceAsDataDestination] already exists on [$SqlInstanceToBaseline]." | Write-Host -ForegroundColor Red
-        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly validate if linked server is able to access data of [$SqlInstanceAsDataDestination].[$DbaDatabase] database." | Write-Host -ForegroundColor Red
-        "STOP and check above error message" | Write-Error
+        if ($ReturnInlineErrorMessage) {
+		    "Linked server named [$SqlInstanceAsDataDestination] already exists on [$SqlInstanceToBaseline].`nKindly validate if linked server is able to access data of [$SqlInstanceAsDataDestination].[$DbaDatabase] database." | Write-Error
+	    }
+	    else {            
+		    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Linked server named [$SqlInstanceAsDataDestination] already exists on [$SqlInstanceToBaseline]." | Write-Host -ForegroundColor Red
+            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly validate if linked server is able to access data of [$SqlInstanceAsDataDestination].[$DbaDatabase] database." | Write-Host -ForegroundColor Red
+            "STOP and check above error message" | Write-Error
+        }
     }
 }
 
