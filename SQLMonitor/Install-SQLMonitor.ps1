@@ -1044,8 +1044,13 @@ else {
     # If not sql cluster, then host should be same
     if(-not $isClustered) {
         if($HostName -ne $dbServiceInfo.host_name) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided HostName does not match with SQLInstance host name." | Write-Host -ForegroundColor Red
-            "STOP and check above error message" | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Provided HostName does not match with SQLInstance host name." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Provided HostName does not match with SQLInstance host name." | Write-Host -ForegroundColor Red
+                "STOP and check above error message" | Write-Error
+            }
         }
     }
 }
@@ -1076,9 +1081,14 @@ if( (($SkipRDPSessionSteps -eq $false) -or $ConfirmSetupOfTaskSchedulerJobs -or 
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Host [$ssnHostName] not pingable." | Write-Host -ForegroundColor Cyan
             "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'WARNING:', "Skip ping validation to Host [$ssnHostName].." | Write-Host -ForegroundColor Cyan
         }else {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Host [$ssnHostName] not pingable." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide HostName either in FQDN or ipv4 format." | Write-Host -ForegroundColor Red
-            "STOP and check above error message" | Write-Error        
+            if ($ReturnInlineErrorMessage) {
+		        "Host [$ssnHostName] not pingable.`nKindly provide HostName either in FQDN or ipv4 format." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Host [$ssnHostName] not pingable." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Kindly provide HostName either in FQDN or ipv4 format." | Write-Host -ForegroundColor Red
+                "STOP and check above error message" | Write-Error      
+            }  
         }
     }
 
@@ -1348,18 +1358,34 @@ if($dbServiceInfo.Edition -like 'Express*') {
     $isExpressEdition = $true
     if($ConfirmSetupOfTaskSchedulerJobs -eq $false) 
     {
-        if( ($SqlInstanceForTsqlJobs -eq $SqlInstanceToBaseline) -or ($SqlInstanceForPowershellJobs -eq $SqlInstanceToBaseline) ) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Curent instance is Express edition." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Option 01: Kindly provide a different SQLInstance for parameters SqlInstanceForTsqlJobs & SqlInstanceForPowershellJobs." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Option 02: Using parameter ConfirmSetupOfTaskSchedulerJobs, kindly confirm for windows Task Scheduler based jobs." | Write-Host -ForegroundColor Red
-            "STOP and check above error message" | Write-Error
+        if( ($SqlInstanceForTsqlJobs -eq $SqlInstanceToBaseline) -or ($SqlInstanceForPowershellJobs -eq $SqlInstanceToBaseline) ) 
+        {
+            if ($ReturnInlineErrorMessage) 
+            {
+		        @"
+Curent instance is Express edition.
+Option 01: Kindly provide a different SQLInstance for parameters SqlInstanceForTsqlJobs & SqlInstanceForPowershellJobs.
+Option 02: Using parameter ConfirmSetupOfTaskSchedulerJobs, kindly confirm for windows Task Scheduler based jobs.
+"@ | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Curent instance is Express edition." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Option 01: Kindly provide a different SQLInstance for parameters SqlInstanceForTsqlJobs & SqlInstanceForPowershellJobs." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Option 02: Using parameter ConfirmSetupOfTaskSchedulerJobs, kindly confirm for windows Task Scheduler based jobs." | Write-Host -ForegroundColor Red
+                "STOP and check above error message" | Write-Error
+            }
         }
     }
     else {
         if([String]::IsNullOrEmpty($WindowsCredential)) {
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Curent instance is Express edition." | Write-Host -ForegroundColor Red
-            "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "So, parameter WindowsCredential is must." | Write-Host -ForegroundColor Red
-            "STOP and check above error message" | Write-Error
+            if ($ReturnInlineErrorMessage) {
+		        "Curent instance is Express edition.`nSo, parameter WindowsCredential is must." | Write-Error
+	        }
+	        else {            
+		        "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "Curent instance is Express edition." | Write-Host -ForegroundColor Red
+                "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'ERROR:', "So, parameter WindowsCredential is must." | Write-Host -ForegroundColor Red
+                "STOP and check above error message" | Write-Error
+            }
         }
     }
 }
@@ -5785,7 +5811,5 @@ Owner Ajay Kumar Dwivedi (ajay.dwivedi2007@gmail.com)
     https://ajaydwivedi.com/youtube/sqlmonitor
     https://ajaydwivedi.com/blog/sqlmonitor    
 #>
-
-
 
 
