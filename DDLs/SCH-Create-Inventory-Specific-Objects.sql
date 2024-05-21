@@ -115,6 +115,9 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[alert
 	DROP TABLE [dbo].[alert_history_all_servers]
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[alert_history_all_servers_last_actioned]') AND type in (N'U'))
+	DROP TABLE dbo.alert_history_all_servers_last_actioned
+
 DECLARE @_sql NVARCHAR(MAX);
 DECLARE @MemoryOptimizedObjectUsage bit = 1;
 
@@ -746,5 +749,9 @@ BEGIN
 	(	last_alert_time_utc datetime2 not null
 	);
 END
+go
+
+create table dbo.alert_history_all_servers_last_actioned
+(	updated_time_utc datetime2 not null  );
 go
 
