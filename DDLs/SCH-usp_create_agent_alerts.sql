@@ -24,7 +24,8 @@ BEGIN
 	/*
 		https://learn.microsoft.com/en-us/sql/ssms/agent/use-tokens-in-job-steps?view=sql-server-ver16
 		Version:		1.0.0
-		Date:			2024-04-26 - Initial Draft
+		Pre-requisites:	dbo.alert_categories, dbo.alert_history, dbo.usp_capture_alert_messages, job [(dba) Capture-AlertMessages]
+		Date:			2024-05-23 - Updated to include Sev 19-25
 
 		EXEC dbo.usp_create_agent_alerts
 	*/
@@ -38,6 +39,7 @@ BEGIN
 	DECLARE @_job_name nvarchar(500);
 	DECLARE @c_alert_name varchar(255);
 	DECLARE @c_alert_error_number int;
+	DECLARE @c_error_severity int;
 
 	-- Variables for Try/Catch Block
 	DECLARE	@_errorNumber int,
@@ -62,29 +64,27 @@ BEGIN
 		end
 
 		DECLARE cur_ForEachErrorNumber CURSOR LOCAL FAST_FORWARD FOR
-			SELECT ac.error_number, ac.alert_name
+			SELECT ac.error_number, ac.error_severity, ac.alert_name
 			FROM dbo.alert_categories ac;
 
 		OPEN cur_ForEachErrorNumber;
-		FETCH NEXT FROM cur_ForEachErrorNumber INTO @c_alert_error_number, @c_alert_name;
+		FETCH NEXT FROM cur_ForEachErrorNumber INTO @c_alert_error_number, @c_error_severity, @c_alert_name;
 
 		WHILE @@fetch_status = 0
 		BEGIN
-			IF NOT EXISTS ( SELECT 1/0 FROM msdb.dbo.sysalerts WHERE message_id = @c_alert_error_number )
+			IF NOT EXISTS ( SELECT 1/0 FROM msdb.dbo.sysalerts WHERE name = @c_alert_name  )
 			BEGIN
-				EXECUTE msdb.dbo.sp_add_alert @name = @c_alert_name, @message_id = @c_alert_error_number, @severity = 0, @enabled = 1, @delay_between_responses = 0, @include_event_description_in = 1, @job_name = N'(dba) Capture-AlertMessages';
+				EXECUTE msdb.dbo.sp_add_alert @name = @c_alert_name, @message_id = @c_alert_error_number, @severity = @c_error_severity, @enabled = 1, @delay_between_responses = 0, @include_event_description_in = 1, @job_name = N'(dba) Capture-AlertMessages';
 
 				if @alert_operator_name is  not null
 					EXECUTE msdb.dbo.sp_add_notification @alert_name = @c_alert_name, @operator_name = @alert_operator_name, @notification_method = 1;
 
-				print 'Alert ['+@c_alert_name+'] for error number '+convert(varchar,@c_alert_error_number)+' created.'
+				print 'Alert ['+@c_alert_name+'] created.'
 			END
 			ELSE
-				print 'Alert ['+@c_alert_name+'] for error number '+convert(varchar,@c_alert_error_number)+' already exists.'
+				print 'Alert ['+@c_alert_name+'] already exists.'
 
-			FETCH NEXT
-			FROM cur_ForEachErrorNumber
-			INTO @c_alert_error_number, @c_alert_name;
+			FETCH NEXT FROM cur_ForEachErrorNumber INTO @c_alert_error_number, @c_error_severity, @c_alert_name;
 		END
 
 		--==== Close/Deallocate cursor
@@ -97,12 +97,6 @@ BEGIN
 		IF @verbose > 0
 			PRINT 'Start Catch Block.'
 
-		--SELECT @_errorNumber	 = Error_Number()
-		--		,@_errorSeverity = Error_Severity()
-		--		,@_errorState	 = Error_State()
-		--		,@_errorLine	 = Error_Line()
-		--		,@_errorMessage	 = Error_Message();
-
 		print  '	ErrorNumber => '+convert(varchar,ERROR_NUMBER());
 		print  '	ErrorSeverity => '+convert(varchar,ERROR_SEVERITY());
 		print  '	ErrorState => '+convert(varchar,ERROR_STATE());
@@ -112,3 +106,16 @@ BEGIN
 	END CATCH
 END
 GO
+
+
+/*
+select @@SPID;
+RAISERROR (N'This is message %s %d.', -- Message text.
+           19, -- Severity,
+           1, -- State,
+           N'number', -- First argument.
+           5)
+	with log; -- Second argument.
+-- The message text returned is: This is message number 5.
+GO
+*/
