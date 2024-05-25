@@ -1,16 +1,37 @@
-USE DBA
-GO
+use DBA
+go
 
 /*
-ALTER TABLE dbo.sma_inventory SET ( SYSTEM_VERSIONING = OFF)
-go
-drop table dbo.sma_inventory
-go
-drop table dbo.sma_inventory_history
-go
+	Version -> 2024-05-25
+	2024-04-26 - #10 - Setup Alert Engine Using Python+SQLServer
+	-----------------
+
+	https://github.com/imajaydwivedi/SQLMonitor/issues/10
+
+	*** Self Pre Steps ***
+	----------------------
+	1) Python, Git needs to be installed on Inventory server
+	2) Credential Manager needs to be installed on Inventory Server
+
+	*** Steps in this Script ****
+	-----------------------------
+	1) Create table dbo.sma_inventory
+	2) Create table dbo.sma_oncall_teams
+	3) Create table dbo.sma_oncall_schedule
+	4) Create table dbo.sma_errorlog
+	5) Create sequence object dbo.sma_alert_sequence
+	6) Create table dbo.sma_alert
+	7) Create table dbo.sma_alert_rules
+	8) Create table dbo.sma_alert_history
+	9) Create table dbo.sma_alert_affected_servers
 */
+
+IF DB_NAME() = 'master'
+	raiserror ('Kindly execute all queries in [DBA] database', 20, -1) with log;
 go
 
+/* ***** 1) Create table dbo.sma_inventory ***************************** */
+-- drop table [dbo].[sma_inventory]
 create table [dbo].[sma_inventory]
 (	
 	[sql_instance] varchar(255) not null,
@@ -65,6 +86,43 @@ go
 alter table dbo.sma_inventory add constraint chk_sma_inventory__stability check ( [stability] in ('dev', 'uat', 'qa', 'stg', 'prod', 'proddr', 'stgdr','qadr', 'uatdr', 'devdr') )
 go
 
+/* ***** 2) Create table dbo.sma_oncall_teams ***************************** */
+-- drop table [dbo].[sma_oncall_teams]
+create table [dbo].[sma_oncall_teams]
+(
+	[team_name] varchar(125) not null,
+	[description] varchar(500) not null,
+	[team_lead_email] varchar(125) null,
+	[team_lead_slack_account] varchar(125) null,
+	[created_by] varchar(125) not null default suser_name(),
+	[created_date_utc] smalldatetime not null default getutcdate()
+
+	,constraint pk_sma_oncall_teams primary key clustered ([team_name])
+)
+go
+
+
+/* ***** 3) Create table dbo.sma_oncall_schedule ***************************** */
+-- drop table [dbo].[sma_oncall_schedule]
+create table [dbo].[sma_oncall_schedule]
+(
+	[team_name] varchar(125) not null,
+	[oncall_role] varchar(50) not null default 'primary', -- primary, secondary
+	[oncall_email] varchar(125) null,
+	[oncall_slack_account] varchar(125) null,
+	[oncall_start_time] datetime2 not null,
+	[oncall_end_time] datetime2 not null,
+
+	[created_by] varchar(125) not null default suser_name(),
+	[created_date_utc] smalldatetime not null default getutcdate()
+
+	,index ci_sma_oncall_schedule clustered ([oncall_start_time],[oncall_end_time])
+)
+go
+
+
+/* ***** 4) Create table dbo.sma_errorlog ***************************** */
+-- drop table [dbo].[sma_errorlog]
 create table [dbo].[sma_errorlog]
 ( 	[collection_time_utc] datetime2 not null default getutcdate(), 
 	[sql_instance] varchar(255) null,
@@ -78,24 +136,33 @@ create table [dbo].[sma_errorlog]
 go
 
 
+/* ***** 5) Create sequence object dbo.sma_alert_sequence ***************************** */
+-- drop sequence dbo.sma_alert_sequence  
+create sequence dbo.sma_alert_sequence  
+    AS bigint start with 1 increment by 1 cycle cache 500;
+go
+
+/* ***** 6) Create table dbo.sma_alert ***************************** */
+-- drop table [dbo].[sma_alert]
 create table [dbo].[sma_alert]
-(	[id] bigint identity(1,1) not null,
+(	[id] bigint not null constraint DF__sma_alert__id default next value for dbo.sma_alert_sequence,
 	[created_date_utc] datetime2 not null default sysutcdatetime(),
 	[alert_key] varchar(255) not null,
-	[email_to] varchar(500) not null,
-	[state] varchar(15) not null default 'Active', -- 'Active','Suppressed','Cleared'
+	[alert_owner_team] varchar(125) not null, -- 'DBA'
+	[state] varchar(15) not null default 'Active', -- 'Active','Suppressed','Cleared', 'Resolved'
 	[severity] varchar(15) not null default 'High', -- 'Critical', 'High', 'Medium', 'Low'
-    [last_occurred_date_utc] datetime not null default getutcdate(),
-	[last_notified_date_utc] datetime not null default getutcdate(),
-	[notification_counts] int not null default 1,
+	--[email_to] varchar(500) not null,
+	--[last_occurred_date_utc] datetime not null default getutcdate(),
+	--[last_notified_date_utc] datetime not null default getutcdate(),
+	--[notification_counts] int not null default 1,
 	[suppress_start_date_utc] datetime null,
-	[suppress_end_date_utc] datetime null,
-    [servers_affected] varchar(1000) null
+	[suppress_end_date_utc] datetime null
+    --[servers_affected] varchar(1000) null
 )
 go
 alter table dbo.sma_alert add constraint pk_sma_alert primary key (id)
 go
-alter table dbo.sma_alert add constraint chk_sma_alert__state check ( [state] in ('Active','Suppressed','Cleared') )
+alter table dbo.sma_alert add constraint chk_sma_alert__state check ( [state] in ('Active','Suppressed','Cleared','Resolved') )
 go
 alter table dbo.sma_alert add constraint chk_sma_alert__severity check ( [severity] in ('Critical', 'High', 'Medium', 'Low') )
 go
@@ -111,30 +178,24 @@ alter table dbo.sma_alert add constraint chk_sma_alert__suppress_state
 					else	1
 					end) = 1 )
 go
---create index ix_sma_alert__alert_key__active on dbo.sma_alert (alert_key) where [state] in ('Active','Suppressed')
-create unique index uq_sma_alert__alert_key__severity__active on dbo.sma_alert (alert_key, severity, email_to) where [state] in ('Active','Suppressed')
+create index ix_sma_alert__alert_key__active on dbo.sma_alert (alert_key) where [state] in ('Active','Suppressed')
+go
+create unique index uq_sma_alert__alert_key__severity__active on dbo.sma_alert (alert_key, severity, alert_owner_team) where [state] in ('Active','Suppressed')
 go
 create index ix_sma_alert__created_date_utc__alert_key on dbo.sma_alert (created_date_utc, alert_key)
 go
 create index ix_sma_alert__state__active on dbo.sma_alert ([state]) where [state] in ('Active','Suppressed')
 go
-create index ix_sma_alert__servers_affected on dbo.sma_alert ([servers_affected]);
-go
+--create index ix_sma_alert__servers_affected on dbo.sma_alert ([servers_affected]);
+--go
 
 
-/*
-ALTER TABLE dbo.sma_alert_rules SET ( SYSTEM_VERSIONING = OFF)
-go
-drop table dbo.sma_alert_rules
-go
-drop table dbo.sma_alert_rules_history
-go
-*/
+/* ***** 7) Create table dbo.sma_alert_rules ***************************** */
+-- drop table [dbo].[sma_alert_rules]
 create table dbo.sma_alert_rules
 (	rule_id bigint identity(1,1) not null,
 	alert_key varchar(255) not null,
 	server_friendly_name varchar(255) null,
-	--server_owner varchar(500) null,
 	[database_name] varchar(255) null,
 	client_app_name varchar(255) null,
 	login_name varchar(125) null,
@@ -144,8 +205,7 @@ create table dbo.sma_alert_rules
 	severity_medium_threshold decimal(5,2) null,
 	severity_high_threshold decimal(5,2) null,
 	severity_critical_threshold decimal(5,2) null,
-	alert_receiver varchar(500) not null,
-	alert_receiver_name varchar(120) not null,
+	alert_owner_team varchar(125) not null, /* Alert Owner */
 	delay_minutes smallint null,
 	compute_duration_minutes smallint null,
 	[start_date] date null,
@@ -173,3 +233,31 @@ alter table dbo.sma_alert_rules add constraint chk_sma_alert_rules__severity che
 go
 --alter table dbo.sma_alert_rules add constraint chk_sma_alert_rules__group_by check ( server_friendly_name is null or server_owner is null )
 --go
+
+
+/* ***** 8) Create table dbo.sma_alert_history ***************************** */
+-- drop table [dbo].[sma_alert_history]
+create table [dbo].[sma_alert_history]
+(	[log_time] datetime2 not null default sysutcdatetime(),
+	[alert_id] bigint not null,
+	[logger] varchar(125) not null,	
+    --[servers_affected] varchar(1000) null
+	[header] varchar(500) not null,
+	[description] nvarchar(max) null
+)
+go
+
+/* ***** 9) Create table dbo.sma_alert_affected_servers ***************************** */
+-- drop table dbo.sma_alert_affected_servers
+create table [dbo].[sma_alert_affected_servers]
+(
+	[alert_id] bigint not null,
+	[sql_instance] varchar(255) null,
+	[host_name] varchar(255) null
+
+	,index ci_sma_alert_affected_servers clustered ([alert_id])
+)
+go
+
+
+
