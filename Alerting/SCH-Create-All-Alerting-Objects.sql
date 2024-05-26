@@ -19,9 +19,9 @@ go
 	2) Create table dbo.sma_oncall_teams
 	3) Create table dbo.sma_oncall_schedule
 	4) Create table dbo.sma_errorlog
-	5) Create sequence object dbo.sma_alert_sequence
-	6) Create table dbo.sma_alert
-	7) Create table dbo.sma_alert_rules
+	5) Create table dbo.sma_alert_rules
+	6) Create sequence object dbo.sma_alert_sequence
+	7) Create table dbo.sma_alert	
 	8) Create table dbo.sma_alert_history
 	9) Create table dbo.sma_alert_affected_servers
 */
@@ -167,47 +167,7 @@ create table [dbo].[sma_errorlog]
 go
 
 
-/* ***** 5) Create sequence object dbo.sma_alert_sequence ***************************** */
--- drop sequence dbo.sma_alert_sequence  
-create sequence dbo.sma_alert_sequence  
-    AS bigint start with 1 increment by 1 cycle cache 500;
-go
-
-
-/* ***** 6) Create table dbo.sma_alert ***************************** */
--- drop table [dbo].[sma_alert]
-create table [dbo].[sma_alert]
-(	[id] bigint not null constraint DF__sma_alert__id default next value for dbo.sma_alert_sequence,
-	[created_date_utc] datetime2 not null default sysutcdatetime(),
-	[alert_key] varchar(255) not null,
-	[alert_owner_team] varchar(125) not null, -- 'DBA'
-	[state] varchar(15) not null default 'Active', -- 'Active','Suppressed','Cleared', 'Resolved'
-	[severity] varchar(15) not null default 'High', -- 'Critical', 'High', 'Medium', 'Low'
-	[suppress_start_date_utc] datetime null,
-	[suppress_end_date_utc] datetime null
-
-	,id_part_no as [id] % 10 persisted
-
-	,constraint pk_sma_alert primary key (id, id_part_no) on ps_dba_bigint_10part (id_part_no)
-	,constraint chk_sma_alert__state check ( [state] in ('Active','Suppressed','Cleared','Resolved') )
-	,constraint chk_sma_alert__severity check ( [severity] in ('Critical', 'High', 'Medium', 'Low') )
-	,constraint chk_sma_alert__suppress_state check ([state] in ('Active','Cleared','Resolved') 
-								or (	[state] = 'Suppressed' and suppress_start_date_utc is not null and suppress_end_date_utc is not null and  suppress_start_date_utc < suppress_end_date_utc)
-								)
-
-	--,index uq_sma_alert__alert_key__severity__active unique (alert_key, severity, alert_owner_team) where [state] in ('Active','Suppressed')
-	--,index ix_sma_alert__created_date_utc__alert_key (created_date_utc, alert_key)
-	--,index ix_sma_alert__state__active ([state]) where [state] in ('Active','Suppressed')
-) on ps_dba_bigint_10part (id_part_no)
-go
-create index ix_sma_alert__alert_key__active on [dbo].[sma_alert]
-	(alert_key) 
-	include ([state]) 
-	where [state] in ('Active','Suppressed')
-go
-
-
-/* ***** 7) Create table dbo.sma_alert_rules ***************************** */
+/* ***** 5) Create table dbo.sma_alert_rules ***************************** */
 	/*
 		ALTER TABLE dbo.sma_alert_rules SET ( SYSTEM_VERSIONING = OFF)
 		go
@@ -259,20 +219,64 @@ go
 --go
 
 
+/* ***** 6) Create sequence object dbo.sma_alert_sequence ***************************** */
+-- drop sequence dbo.sma_alert_sequence  
+create sequence dbo.sma_alert_sequence  
+    AS bigint start with 1 increment by 1 cycle cache 500;
+go
+
+
+/* ***** 7) Create table dbo.sma_alert ***************************** */
+-- drop table [dbo].[sma_alert]
+create table [dbo].[sma_alert]
+(	[id] bigint not null constraint DF__sma_alert__id default next value for dbo.sma_alert_sequence,
+	[created_date_utc] datetime2 not null default sysutcdatetime(),
+	[alert_key] varchar(255) not null,
+	[alert_owner_team] varchar(125) not null, -- 'DBA'
+	[state] varchar(15) not null default 'Active', -- 'Active','Suppressed','Cleared', 'Resolved'
+	[severity] varchar(15) not null default 'High', -- 'Critical', 'High', 'Medium', 'Low'
+	[suppress_start_date_utc] datetime null,
+	[suppress_end_date_utc] datetime null
+
+	,id_part_no as [id] % 10 persisted
+
+	,constraint pk_sma_alert primary key (id, id_part_no) on ps_dba_bigint_10part (id_part_no)
+	,constraint chk_sma_alert__state check ( [state] in ('Active','Suppressed','Cleared','Resolved') )
+	,constraint chk_sma_alert__severity check ( [severity] in ('Critical', 'High', 'Medium', 'Low') )
+	,constraint chk_sma_alert__suppress_state check ([state] in ('Active','Cleared','Resolved') 
+								or (	[state] = 'Suppressed' and suppress_start_date_utc is not null and suppress_end_date_utc is not null and  suppress_start_date_utc < suppress_end_date_utc)
+								)
+
+	--,index uq_sma_alert__alert_key__severity__active unique (alert_key, severity, alert_owner_team) where [state] in ('Active','Suppressed')
+	--,index ix_sma_alert__created_date_utc__alert_key (created_date_utc, alert_key)
+	--,index ix_sma_alert__state__active ([state]) where [state] in ('Active','Suppressed')
+) on ps_dba_bigint_10part (id_part_no)
+go
+create index ix_sma_alert__alert_key__active on [dbo].[sma_alert]
+	(alert_key) 
+	include ([state]) 
+	where [state] in ('Active','Suppressed')
+go
+
+
 /* ***** 8) Create table dbo.sma_alert_history ***************************** */
 -- drop table [dbo].[sma_alert_history]
 create table [dbo].[sma_alert_history]
 (	[log_time] datetime2 not null default sysutcdatetime(),
 	[alert_id] bigint not null,
-	[logger] varchar(125) not null,	
-    --[servers_affected] varchar(1000) null
+	[alert_id_part_no] bigint not null,
+	[logger] varchar(125) not null,
 	[header] varchar(500) not null,
 	[description] nvarchar(max) null
 
-	,index ci_sma_alert_history clustered ([log_time])
-	,index [alert_id__log_time] ([alert_id], [log_time])
-)
+	,index ci_sma_alert_history clustered ([log_time]) on ps_dba_datetime2_daily ([log_time])
+	,index [alert_id__log_time] ([alert_id], [log_time]) on ps_dba_datetime2_daily ([log_time])
+	
+	--,constraint fk_alert_id foreign key ([alert_id],[alert_id_part_no]) references [dbo].[sma_alert] (id, id_part_no)
+) 
+on ps_dba_datetime2_daily ([log_time])
 go
+
 
 
 /* ***** 9) Create table dbo.sma_alert_affected_servers ***************************** */
