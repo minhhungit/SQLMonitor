@@ -21,8 +21,8 @@
 
 	*** Steps in this Script ****
 	-----------------------------
-	1) Create Partition function for [datetime2] & [datetime]
-	2) Create Partition Scheme for [datetime2] & [datetime]
+	1) Create Partition function for [datetime2], [datetime] & [bigint]
+	2) Create Partition Scheme for [datetime2], [datetime] & [bigint]
 	3) Create table dbo.purge_table
 	4) Create table dbo.instance_hosts
 	5) Create table dbo.instance_details
@@ -59,7 +59,7 @@ IF DB_NAME() = 'master'
 	raiserror ('Kindly execute all queries in [DBA] database', 20, -1) with log;
 go
 
-/* ****** 1) Partition function for [datetime2] & [datetime] ******* */
+/* ****** 1) Create Partition function for [datetime2], [datetime] & [bigint] ******* */
 --drop partition function pf_dba_datetime2_hourly
 declare @is_partitioned bit = 1;
 if not exists (select * from sys.partition_functions where name = 'pf_dba_datetime2_hourly') and @is_partitioned = 1
@@ -100,8 +100,13 @@ declare @is_partitioned bit = 1;
 if not exists (select * from sys.partition_functions where name = 'pf_dba_datetime_quarterly') and @is_partitioned = 1
 	exec ('create partition function pf_dba_datetime_quarterly (datetime) as range right for values (convert(smalldatetime,cast(getdate() as date)))')
 go
+--drop partition function pf_dba_bigint_10part
+declare @is_partitioned bit = 1;
+if not exists (select * from sys.partition_functions where name = 'pf_dba_bigint_10part') and @is_partitioned = 1
+	exec ('create partition function pf_dba_bigint_10part (bigint) as range left for values (0,1,2,3,4,5,6,7,8,9)')
+go
 
-/* ****** 2) Partition Scheme for [datetime2] & [datetime] ******* */
+/* ****** 2) Create Partition Scheme for [datetime2], [datetime] & [bigint] ******* */
 --drop partition scheme ps_dba_datetime2_hourly
 declare @is_partitioned bit = 1;
 if not exists (select * from sys.partition_schemes where name = 'ps_dba_datetime2_hourly') and @is_partitioned = 1
@@ -142,6 +147,12 @@ declare @is_partitioned bit = 1;
 if not exists (select * from sys.partition_schemes where name = 'ps_dba_datetime_quarterly') and @is_partitioned = 1
 	exec ('create partition scheme ps_dba_datetime_quarterly as partition pf_dba_datetime_quarterly all to ([PRIMARY])')
 go
+--drop partition scheme ps_dba_bigint_10part
+declare @is_partitioned bit = 1;
+if not exists (select * from sys.partition_schemes where name = 'ps_dba_bigint_10part') and @is_partitioned = 1
+	exec ('create partition scheme ps_dba_bigint_10part as partition pf_dba_bigint_10part all to ([PRIMARY])')
+go
+
 
 
 /* ***** 3) Create table dbo.purge_table ***************************** */

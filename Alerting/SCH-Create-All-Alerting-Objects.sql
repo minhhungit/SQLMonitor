@@ -188,7 +188,7 @@ create table [dbo].[sma_alert]
 
 	,id_part_no as [id] % 10 persisted
 
-	,constraint pk_sma_alert primary key (id, id_part_no)
+	,constraint pk_sma_alert primary key (id, id_part_no) on ps_dba_bigint_10part (id_part_no)
 	,constraint chk_sma_alert__state check ( [state] in ('Active','Suppressed','Cleared','Resolved') )
 	,constraint chk_sma_alert__severity check ( [severity] in ('Critical', 'High', 'Medium', 'Low') )
 	,constraint chk_sma_alert__suppress_state check ([state] in ('Active','Cleared','Resolved') 
@@ -198,7 +198,7 @@ create table [dbo].[sma_alert]
 	--,index uq_sma_alert__alert_key__severity__active unique (alert_key, severity, alert_owner_team) where [state] in ('Active','Suppressed')
 	--,index ix_sma_alert__created_date_utc__alert_key (created_date_utc, alert_key)
 	--,index ix_sma_alert__state__active ([state]) where [state] in ('Active','Suppressed')
-)
+) on ps_dba_bigint_10part (id_part_no)
 go
 create index ix_sma_alert__alert_key__active on [dbo].[sma_alert]
 	(alert_key) 
@@ -268,6 +268,9 @@ create table [dbo].[sma_alert_history]
     --[servers_affected] varchar(1000) null
 	[header] varchar(500) not null,
 	[description] nvarchar(max) null
+
+	,index ci_sma_alert_history clustered ([log_time])
+	,index [alert_id__log_time] ([alert_id], [log_time])
 )
 go
 
