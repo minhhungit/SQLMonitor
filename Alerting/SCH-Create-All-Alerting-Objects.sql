@@ -41,10 +41,10 @@ go
 	*/
 create table [dbo].[sma_inventory]
 (	
-	[sql_instance] varchar(255) not null,
+	[sql_instance] varchar(125) not null,
 	[sql_instance_port] varchar(10) null,
-	[host_name] varchar(255) not null,
-	[friendly_name] varchar(255) null,
+	[host_name] varchar(125) not null,
+	[friendly_name] varchar(125) null,
 	[stability] varchar(20) not null default 'dev',
 	[priority] tinyint not null default '2',
 	[server_type] varchar(20) not null default 'windows',
@@ -96,7 +96,16 @@ go
 
 
 /* ***** 2) Create table dbo.sma_oncall_teams ***************************** */
--- drop table [dbo].[sma_oncall_teams]
+	/*
+		ALTER TABLE dbo.sma_oncall_teams SET ( SYSTEM_VERSIONING = OFF)
+		go
+		drop table [dbo].[sma_oncall_schedule]
+		go
+		drop table dbo.sma_oncall_teams
+		go
+		drop table dbo.sma_oncall_teams_history
+		go
+	*/
 create table [dbo].[sma_oncall_teams]
 (
 	[team_name] varchar(125) not null,
@@ -108,10 +117,15 @@ create table [dbo].[sma_oncall_teams]
 	[created_by] varchar(125) not null default suser_name(),
 	[created_date_utc] smalldatetime not null default getutcdate()
 
+	,[valid_from] DATETIME2 GENERATED ALWAYS AS ROW START HIDDEN NOT NULL
+    ,[valid_to] DATETIME2 GENERATED ALWAYS AS ROW END HIDDEN NOT NULL
+    ,PERIOD FOR SYSTEM_TIME ([valid_from],[valid_to])
+
 	,constraint pk_sma_oncall_teams primary key clustered ([team_name])
 	,constraint chk_team_lead_email_or_slack check ([team_lead_email] is not null or [team_lead_slack_account] is not null)
 	,constraint chk_team_email_or_slack check ([team_email] is not null or [team_slack_channel] is not null)
 )
+WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = dbo.sma_oncall_teams_history))
 go
 
 
@@ -129,7 +143,7 @@ create table [dbo].[sma_oncall_schedule]
 	[created_by] varchar(125) not null default suser_name(),
 	[created_date_utc] smalldatetime not null default getutcdate()
 
-	,index ci_sma_oncall_schedule clustered ([oncall_start_time],[oncall_end_time])
+	,index ci_sma_oncall_schedule clustered ([team_name],[oncall_start_time],[oncall_end_time])
 
 	,constraint fk_team_name foreign key ([team_name]) references [dbo].[sma_oncall_teams] ([team_name])
 	,constraint chk_oncall_role check ([oncall_role] in ('primary','secondary'))
@@ -142,7 +156,7 @@ go
 -- drop table [dbo].[sma_errorlog]
 create table [dbo].[sma_errorlog]
 ( 	[collection_time_utc] datetime2 not null default getutcdate(), 
-	[sql_instance] varchar(255) null,
+	[sql_instance] varchar(125) null,
     [function_name] varchar(125) not null, 
 	[function_call_arguments] varchar(1000) null, 
 	[error] varchar(1000) not null, 
@@ -159,6 +173,7 @@ create sequence dbo.sma_alert_sequence
     AS bigint start with 1 increment by 1 cycle cache 500;
 go
 
+
 /* ***** 6) Create table dbo.sma_alert ***************************** */
 -- drop table [dbo].[sma_alert]
 create table [dbo].[sma_alert]
@@ -173,18 +188,22 @@ create table [dbo].[sma_alert]
 
 	,id_part_no as [id] % 10 persisted
 
-	,constraint pk_sma_alert primary key (id)
+	,constraint pk_sma_alert primary key (id, id_part_no)
 	,constraint chk_sma_alert__state check ( [state] in ('Active','Suppressed','Cleared','Resolved') )
 	,constraint chk_sma_alert__severity check ( [severity] in ('Critical', 'High', 'Medium', 'Low') )
 	,constraint chk_sma_alert__suppress_state check ([state] in ('Active','Cleared','Resolved') 
 								or (	[state] = 'Suppressed' and suppress_start_date_utc is not null and suppress_end_date_utc is not null and  suppress_start_date_utc < suppress_end_date_utc)
 								)
 
-	,index ix_sma_alert__alert_key__active (alert_key) where [state] in ('Active','Suppressed')
 	--,index uq_sma_alert__alert_key__severity__active unique (alert_key, severity, alert_owner_team) where [state] in ('Active','Suppressed')
 	--,index ix_sma_alert__created_date_utc__alert_key (created_date_utc, alert_key)
 	--,index ix_sma_alert__state__active ([state]) where [state] in ('Active','Suppressed')
 )
+go
+create index ix_sma_alert__alert_key__active on [dbo].[sma_alert]
+	(alert_key) 
+	include ([state]) 
+	where [state] in ('Active','Suppressed')
 go
 
 
@@ -198,13 +217,13 @@ go
 		go
 	*/
 create table dbo.sma_alert_rules
-(	rule_id bigint identity(1,1) not null,
-	alert_key varchar(255) not null,
-	server_friendly_name varchar(255) null,
-	[database_name] varchar(255) null,
+(	[sql_instance] varchar(125) not null,
+	[alert_key] varchar(255) not null,	
+	[host_name] varchar(125) null,
+	[database_name] varchar(125) null,
 	client_app_name varchar(255) null,
 	login_name varchar(125) null,
-	client_host_name varchar(255) null,
+	client_host_name varchar(125) null,
 	severity varchar(15) null,
 	severity_low_threshold decimal(5,2) null,
 	severity_medium_threshold decimal(5,2) null,
@@ -213,10 +232,10 @@ create table dbo.sma_alert_rules
 	alert_owner_team varchar(125) not null, /* Alert Owner */
 	delay_minutes smallint null,
 	compute_duration_minutes smallint null,
-	[start_date] date null,
-	[start_time] time null,
-	[end_date] date null,
-	[end_time] time null,
+	[start_date_utc] date null,
+	[start_time_utc] time null,
+	[end_date_utc] date null,
+	[end_time_utc] time null,
 	copy_dba bit not null default 1,
 	created_by varchar(125) not null default suser_name(),
 	created_date_utc datetime not null default getutcdate(),
@@ -227,7 +246,7 @@ create table dbo.sma_alert_rules
     ,valid_to DATETIME2 GENERATED ALWAYS AS ROW END HIDDEN NOT NULL
     ,PERIOD FOR SYSTEM_TIME (valid_from,valid_to)
 
-	,constraint pk_sma_alert_rules__rule_id primary key clustered (rule_id)
+	,constraint pk_sma_alert_rules primary key ([sql_instance],[alert_key])
 	,constraint chk_sma_alert_rules__severity check ( [severity] in ('Critical', 'High', 'Medium', 'Low') )
 
 )
@@ -258,8 +277,8 @@ go
 create table [dbo].[sma_alert_affected_servers]
 (
 	[alert_id] bigint not null,
-	[sql_instance] varchar(255) null,
-	[host_name] varchar(255) null
+	[sql_instance] varchar(125) null,
+	[host_name] varchar(125) null
 
 	,index ci_sma_alert_affected_servers clustered ([alert_id])
 )
