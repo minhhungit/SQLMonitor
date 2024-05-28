@@ -1908,14 +1908,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1941,7 +1943,8 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-purple"
+                          "color": "super-light-purple",
+                          "value": null
                         }
                       ]
                     }
@@ -1971,7 +1974,8 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue"
+                          "color": "blue",
+                          "value": null
                         }
                       ]
                     }
@@ -2011,7 +2015,8 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "green"
+                          "color": "green",
+                          "value": null
                         }
                       ]
                     }
@@ -2053,7 +2058,8 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "super-light-yellow"
+                          "color": "super-light-yellow",
+                          "value": null
                         },
                         {
                           "color": "#EAB839",
@@ -2177,7 +2183,8 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue"
+                          "color": "blue",
+                          "value": null
                         }
                       ]
                     }
@@ -2210,7 +2217,8 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "blue"
+                          "color": "blue",
+                          "value": null
                         }
                       ]
                     }
@@ -2255,7 +2263,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 6
           },
           "id": 864,
           "options": {
@@ -2270,7 +2278,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "10.1.0",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "datasource": {
@@ -2280,7 +2288,7 @@
               "editorMode": "code",
               "format": "table",
               "rawQuery": true,
-              "rawSql": "declare @_buffer_time_minutes int = 30;\r\ndeclare @_sql nvarchar(max);\r\ndeclare @_params nvarchar(max);\r\n\r\nset @_params = N'@_buffer_time_minutes int';\r\nset quoted_identifier off;\r\nset @_sql = \"\r\nselect\t/* [Tsql-Stop-Job] = 'exec msdb.dbo.sp_stop_job @job_name = '''+sj.JobName+'''' ,\r\n\t\t[Tsql-Start-Job] = 'exec msdb.dbo.sp_start_job @job_name = '''+sj.JobName+'''' , \r\n\t\t*/\r\n\t\t[CollectionTimeUTC] = [UpdatedDateUTC],\r\n\t\t[sql_instance], [JobName],\r\n\t\t[Job-Delay-Minutes] = case when sj.Last_Successful_ExecutionTime is null then 10080 else datediff(minute, sj.Last_Successful_ExecutionTime, dateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate())) end,\r\n\t\t [Last_RunTime], [Last_Run_Duration_Seconds], [Last_Run_Outcome], \r\n\t\t [Successfull_Execution_ClockTime_Threshold_Minutes], \r\n\t\t [Expected_Max_Duration_Minutes],\r\n\t\t [Last_Successful_ExecutionTime], [Last_Successful_Execution_Hours], \r\n\t\t [Running_Since], [Running_StepName], [Running_Since_Min] \r\nfrom dbo.sql_agent_jobs_all_servers sj\r\nwhere 1=1\r\nand exists (select 1/0 from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1)\r\nand sj.JobCategory = '(dba) SQLMonitor'\r\nand sj.JobName like '(dba) %'\r\nand sj.IsDisabled = 0\r\nand (\tdateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate()) > sj.Last_Successful_ExecutionTime\r\n\t\t\tor sj.Last_Successful_ExecutionTime is null\r\n\t\t)\r\n--order by Last_Run_Outcome\r\n\"\r\nset quoted_identifier off;\r\n\r\nexec sp_executesql @_sql, @_params, @_buffer_time_minutes = @_buffer_time_minutes;",
+              "rawSql": "declare @_buffer_time_minutes int = 30;\r\ndeclare @_sql nvarchar(max);\r\ndeclare @_params nvarchar(max);\r\n\r\nset @_params = N'@_buffer_time_minutes int';\r\nset quoted_identifier off;\r\nset @_sql = \"\r\nselect\t/* [Tsql-Stop-Job] = 'exec msdb.dbo.sp_stop_job @job_name = '''+sj.JobName+'''' ,\r\n\t\t[Tsql-Start-Job] = 'exec msdb.dbo.sp_start_job @job_name = '''+sj.JobName+'''' , \r\n\t\t*/\r\n\t\t[CollectionTimeUTC] = [UpdatedDateUTC],\r\n\t\tsj.[sql_instance], [JobName],\r\n\t\t[Job-Delay-Minutes] = case when sj.Last_Successful_ExecutionTime is null then 10080 else datediff(minute, sj.Last_Successful_ExecutionTime, dateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate())) end,\r\n\t\t [Last_RunTime], [Last_Run_Duration_Seconds], [Last_Run_Outcome], \r\n\t\t [Successfull_Execution_ClockTime_Threshold_Minutes], \r\n\t\t [Expected_Max_Duration_Minutes],\r\n\t\t [Last_Successful_ExecutionTime], [Last_Successful_Execution_Hours], \r\n\t\t [Running_Since], [Running_StepName], [Running_Since_Min] \r\nfrom dbo.sql_agent_jobs_all_servers sj\r\ninner join dbo.services_all_servers sas\r\n\ton sas.sql_instance = sj.sql_instance\r\n\tand sas.service_type = 'Agent'\r\n\tand sas.status_desc = 'Running'\r\nwhere 1=1\r\nand exists (select 1/0 from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1)\r\nand sj.JobCategory = '(dba) SQLMonitor'\r\nand sj.JobName like '(dba) %'\r\nand sj.IsDisabled = 0\r\nand (\tdateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate()) > sj.Last_Successful_ExecutionTime\r\n\t\t\tor sj.Last_Successful_ExecutionTime is null\r\n\t\t)\r\n--order by Last_Run_Outcome\r\n\"\r\nset quoted_identifier off;\r\n\r\nexec sp_executesql @_sql, @_params, @_buffer_time_minutes = @_buffer_time_minutes;",
               "refId": "A",
               "sql": {
                 "columns": [
@@ -5482,8 +5490,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1715578180628",
-          "value": "1715578180628"
+          "text": "1716874021185",
+          "value": "1716874021185"
         },
         "datasource": {
           "type": "mssql",
@@ -6330,21 +6338,21 @@
       {
         "current": {
           "selected": false,
-          "text": "4",
-          "value": "4"
+          "text": "8",
+          "value": "8"
         },
         "datasource": {
           "type": "mssql",
           "uid": "${sqlmonitor_datasource}"
         },
-        "definition": "declare @_buffer_time_minutes int = 30;\ndeclare @_sql nvarchar(max);\ndeclare @_params nvarchar(max);\n\nset @_params = N'@_buffer_time_minutes int';\nset quoted_identifier off;\nset @_sql = \"\nselect\tcount(*) /* [Tsql-Stop-Job] = 'exec msdb.dbo.sp_stop_job @job_name = '''+sj.JobName+'''' ,\n\t\t[Tsql-Start-Job] = 'exec msdb.dbo.sp_start_job @job_name = '''+sj.JobName+'''' , \n\t\t\n\t\t[CollectionTimeUTC] = [UpdatedDateUTC],\n\t\t[sql_instance] = sql_instance_with_port, [JobName],\n\t\t[Job-Delay-Minutes] = case when sj.Last_Successful_ExecutionTime is null then 10080 else datediff(minute, sj.Last_Successful_ExecutionTime, dateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate())) end,\n\t\t [Last_RunTime], [Last_Run_Duration_Seconds], [Last_Run_Outcome], \n\t\t [Successfull_Execution_ClockTime_Threshold_Minutes], \n\t\t [Expected_Max_Duration_Minutes],\n\t\t [Last_Successful_ExecutionTime], [Last_Successful_Execution_Hours], \n\t\t [Running_Since], [Running_StepName], [Running_Since_Min] \n*/\nfrom dbo.sql_agent_jobs_all_servers sj\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+sql_instance_port,id.sql_instance) from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1) id\nwhere 1=1\n--and exists (select 1/0 from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1)\nand sj.JobCategory = '(dba) SQLMonitor'\nand sj.JobName like '(dba) %'\nand sj.IsDisabled = 0\nand (\tdateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate()) > sj.Last_Successful_ExecutionTime\n\t\t\tor sj.Last_Successful_ExecutionTime is null\n\t\t)\n--order by Last_Run_Outcome\n\"\nset quoted_identifier off;\n\nexec sp_executesql @_sql, @_params, @_buffer_time_minutes = @_buffer_time_minutes;",
+        "definition": "declare @_buffer_time_minutes int = 30;\ndeclare @_sql nvarchar(max);\ndeclare @_params nvarchar(max);\n\nset @_params = N'@_buffer_time_minutes int';\nset quoted_identifier off;\nset @_sql = \"\nselect\tcount(*) /* [Tsql-Stop-Job] = 'exec msdb.dbo.sp_stop_job @job_name = '''+sj.JobName+'''' ,\n\t\t[Tsql-Start-Job] = 'exec msdb.dbo.sp_start_job @job_name = '''+sj.JobName+'''' , \n\t\t\n\t\t[CollectionTimeUTC] = [UpdatedDateUTC],\n\t\t[sql_instance] = sql_instance_with_port, [JobName],\n\t\t[Job-Delay-Minutes] = case when sj.Last_Successful_ExecutionTime is null then 10080 else datediff(minute, sj.Last_Successful_ExecutionTime, dateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate())) end,\n\t\t [Last_RunTime], [Last_Run_Duration_Seconds], [Last_Run_Outcome], \n\t\t [Successfull_Execution_ClockTime_Threshold_Minutes], \n\t\t [Expected_Max_Duration_Minutes],\n\t\t [Last_Successful_ExecutionTime], [Last_Successful_Execution_Hours], \n\t\t [Running_Since], [Running_StepName], [Running_Since_Min] \n*/\nfrom dbo.sql_agent_jobs_all_servers sj\ninner join dbo.services_all_servers sas\n\ton sas.sql_instance = sj.sql_instance\n\tand sas.service_type = 'Agent'\n\tand sas.status_desc = 'Running'\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+sql_instance_port,id.sql_instance) from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1) id\nwhere 1=1\n--and exists (select 1/0 from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1)\nand sj.JobCategory = '(dba) SQLMonitor'\nand sj.JobName like '(dba) %'\nand sj.IsDisabled = 0\nand (\tdateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate()) > sj.Last_Successful_ExecutionTime\n\t\t\tor sj.Last_Successful_ExecutionTime is null\n\t\t)\n--order by Last_Run_Outcome\n\"\nset quoted_identifier off;\n\nexec sp_executesql @_sql, @_params, @_buffer_time_minutes = @_buffer_time_minutes;",
         "hide": 0,
         "includeAll": false,
         "label": "Database Count With Backup Issue",
         "multi": false,
         "name": "dba_jobs_with_issue_counts",
         "options": [],
-        "query": "declare @_buffer_time_minutes int = 30;\ndeclare @_sql nvarchar(max);\ndeclare @_params nvarchar(max);\n\nset @_params = N'@_buffer_time_minutes int';\nset quoted_identifier off;\nset @_sql = \"\nselect\tcount(*) /* [Tsql-Stop-Job] = 'exec msdb.dbo.sp_stop_job @job_name = '''+sj.JobName+'''' ,\n\t\t[Tsql-Start-Job] = 'exec msdb.dbo.sp_start_job @job_name = '''+sj.JobName+'''' , \n\t\t\n\t\t[CollectionTimeUTC] = [UpdatedDateUTC],\n\t\t[sql_instance] = sql_instance_with_port, [JobName],\n\t\t[Job-Delay-Minutes] = case when sj.Last_Successful_ExecutionTime is null then 10080 else datediff(minute, sj.Last_Successful_ExecutionTime, dateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate())) end,\n\t\t [Last_RunTime], [Last_Run_Duration_Seconds], [Last_Run_Outcome], \n\t\t [Successfull_Execution_ClockTime_Threshold_Minutes], \n\t\t [Expected_Max_Duration_Minutes],\n\t\t [Last_Successful_ExecutionTime], [Last_Successful_Execution_Hours], \n\t\t [Running_Since], [Running_StepName], [Running_Since_Min] \n*/\nfrom dbo.sql_agent_jobs_all_servers sj\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+sql_instance_port,id.sql_instance) from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1) id\nwhere 1=1\n--and exists (select 1/0 from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1)\nand sj.JobCategory = '(dba) SQLMonitor'\nand sj.JobName like '(dba) %'\nand sj.IsDisabled = 0\nand (\tdateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate()) > sj.Last_Successful_ExecutionTime\n\t\t\tor sj.Last_Successful_ExecutionTime is null\n\t\t)\n--order by Last_Run_Outcome\n\"\nset quoted_identifier off;\n\nexec sp_executesql @_sql, @_params, @_buffer_time_minutes = @_buffer_time_minutes;",
+        "query": "declare @_buffer_time_minutes int = 30;\ndeclare @_sql nvarchar(max);\ndeclare @_params nvarchar(max);\n\nset @_params = N'@_buffer_time_minutes int';\nset quoted_identifier off;\nset @_sql = \"\nselect\tcount(*) /* [Tsql-Stop-Job] = 'exec msdb.dbo.sp_stop_job @job_name = '''+sj.JobName+'''' ,\n\t\t[Tsql-Start-Job] = 'exec msdb.dbo.sp_start_job @job_name = '''+sj.JobName+'''' , \n\t\t\n\t\t[CollectionTimeUTC] = [UpdatedDateUTC],\n\t\t[sql_instance] = sql_instance_with_port, [JobName],\n\t\t[Job-Delay-Minutes] = case when sj.Last_Successful_ExecutionTime is null then 10080 else datediff(minute, sj.Last_Successful_ExecutionTime, dateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate())) end,\n\t\t [Last_RunTime], [Last_Run_Duration_Seconds], [Last_Run_Outcome], \n\t\t [Successfull_Execution_ClockTime_Threshold_Minutes], \n\t\t [Expected_Max_Duration_Minutes],\n\t\t [Last_Successful_ExecutionTime], [Last_Successful_Execution_Hours], \n\t\t [Running_Since], [Running_StepName], [Running_Since_Min] \n*/\nfrom dbo.sql_agent_jobs_all_servers sj\ninner join dbo.services_all_servers sas\n\ton sas.sql_instance = sj.sql_instance\n\tand sas.service_type = 'Agent'\n\tand sas.status_desc = 'Running'\ncross apply (select top 1 sql_instance_with_port = coalesce(id.sql_instance+','+sql_instance_port,id.sql_instance) from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1) id\nwhere 1=1\n--and exists (select 1/0 from dbo.instance_details id where id.sql_instance = sj.sql_instance and id.is_enabled = 1)\nand sj.JobCategory = '(dba) SQLMonitor'\nand sj.JobName like '(dba) %'\nand sj.IsDisabled = 0\nand (\tdateadd(minute,-(sj.Successfull_Execution_ClockTime_Threshold_Minutes+@_buffer_time_minutes),getutcdate()) > sj.Last_Successful_ExecutionTime\n\t\t\tor sj.Last_Successful_ExecutionTime is null\n\t\t)\n--order by Last_Run_Outcome\n\"\nset quoted_identifier off;\n\nexec sp_executesql @_sql, @_params, @_buffer_time_minutes = @_buffer_time_minutes;",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -6513,6 +6521,6 @@
   "timezone": "browser",
   "title": "Monitoring - Live - All Servers",
   "uid": "distributed_live_dashboard_all_servers",
-  "version": 117,
+  "version": 119,
   "weekStart": ""
 }
