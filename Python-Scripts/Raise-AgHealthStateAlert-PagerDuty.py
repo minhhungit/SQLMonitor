@@ -53,6 +53,7 @@ declare @_params nvarchar(max);
 declare @_latency_minutes int;
 declare @_redo_queue_size_gb int;
 declare @_log_send_queue_size_gb int;
+declare @_filter_out_offline_sqlagent bit = 1;
 
 set @_latency_minutes = {latency_minutes};
 set @_redo_queue_size_gb = {redo_queue_size_gb};
@@ -90,7 +91,8 @@ and (	ahs.synchronization_health_desc <> ''HEALTHY''
 	or	(ahs.latency_seconds is not null and ahs.latency_seconds >= @_latency_minutes*60)
 	or	(ahs.log_send_queue_size is not null and ahs.log_send_queue_size >= @_log_send_queue_size_gb*1024*1024)
 	or	(ahs.redo_queue_size is not null and ahs.redo_queue_size >= @_redo_queue_size_gb*1024*1024)
-	);
+	)
+'+(case when @_filter_out_offline_sqlagent = 0 then '--' else '' end)+'and exists (select 1/0 from dbo.services_all_servers sas where sas.sql_instance = ahs.sql_instance and sas.service_type = ''Agent''	and sas.status_desc = ''Running'');
 ';
 
 exec sp_executesql @_sql, @_params, @_latency_minutes, @_redo_queue_size_gb, @_log_send_queue_size_gb;
