@@ -214,11 +214,12 @@ Param (
 
 $startTime = Get-Date
 $ErrorActionPreference = "Stop"
-$sqlmonitorVersion = '2024-04-26'
-$sqlmonitorVersionDate = '2024-Apr-26'
+$sqlmonitorVersion = '2024-06-05'
+$sqlmonitorVersionDate = '2024-Jun-05'
 $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 <#
     v2024-Jun-30
+        -> Issue$43 - Add avg_disk_wait_ms
         -> Issue#38 - Add Infra to Track AG State Change
 
     v2024-Mar-31
@@ -280,6 +281,7 @@ $releaseDiscussionURL = "https://ajaydwivedi.com/sqlmonitor/common-errors"
 [String]$UspRunWhoIsActiveFileName = "SCH-usp_run_WhoIsActive.sql"
 [String]$UspActiveRequestsCountFileName = "SCH-usp_active_requests_count.sql"
 [String]$UspWaitsPerCorePerMinuteFileName = "SCH-usp_waits_per_core_per_minute.sql"
+[String]$UspAvgDiskWaitMsFileName = "SCH-usp_avg_disk_wait_ms.sql"
 [String]$UspEnablePageCompressionFileName = "SCH-usp_enable_page_compression.sql"
 [String]$UspCollectMemoryClerksFileName = "SCH-usp_collect_memory_clerks.sql"
 [String]$UspCollectAgHealthStateFileName = "SCH-usp_collect_ag_health_state.sql"
@@ -521,6 +523,7 @@ $UspPurgeTablesFilePath = "$ddlPath\$UspPurgeTablesFileName"
 $UspRunWhoIsActiveFilePath = "$ddlPath\$UspRunWhoIsActiveFileName"
 $UspActiveRequestsCountFilePath = "$ddlPath\$UspActiveRequestsCountFileName"
 $UspWaitsPerCorePerMinuteFilePath = "$ddlPath\$UspWaitsPerCorePerMinuteFileName"
+$UspAvgDiskWaitMsFilePath = "$ddlPath\$UspAvgDiskWaitMsFileName"
 $UspEnablePageCompressionFilePath = "$ddlPath\$UspEnablePageCompressionFileName"
 $UspCollectMemoryClerksFilePath = "$ddlPath\$UspCollectMemoryClerksFileName"
 $UspCollectAgHealthStateFilePath = "$ddlPath\$UspCollectAgHealthStateFileName"
@@ -1853,6 +1856,9 @@ if($stepName -in $Steps2Execute)
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspWaitsPerCorePerMinuteFilePath = '$UspWaitsPerCorePerMinuteFilePath'"
     $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspWaitsPerCorePerMinuteFilePath -EnableException
+
+    "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspAvgDiskWaitMsFilePath = '$UspAvgDiskWaitMsFilePath'"
+    $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspAvgDiskWaitMsFilePath -EnableException
 
     "$(Get-Date -Format yyyyMMMdd_HHmm) {0,-10} {1}" -f 'INFO:', "`$UspEnablePageCompressionFilePath = '$UspEnablePageCompressionFilePath'"
     $conSqlInstanceToBaseline | Invoke-DbaQuery -Database $DbaDatabase -File $UspEnablePageCompressionFilePath -EnableException

@@ -106,16 +106,3 @@ BEGIN
 	END CATCH
 END
 GO
-
-
-/*
-select @@SPID;
-RAISERROR (N'This is message %s %d.', -- Message text.
-           19, -- Severity,
-           1, -- State,
-           N'number', -- First argument.
-           5)
-	with log; -- Second argument.
--- The message text returned is: This is message number 5.
-GO
-*/

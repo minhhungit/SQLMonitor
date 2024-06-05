@@ -239,5 +239,17 @@ BEGIN
 
 	IF @_errorMessage IS NOT NULL --AND @send_error_mail = 0
     raiserror (@_errorMessage, 20, -1) with log;
+
+
+/*
+select @@SPID;
+RAISERROR (N'This is message %s %d.', -- Message text.
+           19, -- Severity,
+           1, -- State,
+           N'number', -- First argument.
+           5)
+	with log; -- Second argument.
+-- The message text returned is: This is message number 5.
+*/
 END
 GO

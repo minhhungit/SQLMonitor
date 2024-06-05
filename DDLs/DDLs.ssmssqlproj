@@ -3,7 +3,7 @@
   <Items>
     <LogicalFolder Name="Connections" Type="2" Sorted="true">
       <Items>
-        <ConnectionNode Name="(local):LAB\adwivedi">
+        <ConnectionNode Name="(local):21L-LTPABL-1187\Ajay">
           <Created>2022-09-13T12:36:47.2472846+05:30</Created>
           <Type>SQL</Type>
           <Server>(local)</Server>
@@ -15,7 +15,7 @@
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
         </ConnectionNode>
-        <ConnectionNode Name="(local)\SQL2014:LAB\adwivedi">
+        <ConnectionNode Name="(local)\SQL2014:21L-LTPABL-1187\Ajay">
           <Created>2022-06-01T03:49:36.5223563+05:30</Created>
           <Type>SQL</Type>
           <Server>(local)\SQL2014</Server>
@@ -27,7 +27,7 @@
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
         </ConnectionNode>
-        <ConnectionNode Name="localhost:LAB\adwivedi">
+        <ConnectionNode Name="localhost:21L-LTPABL-1187\Ajay">
           <Created>2023-10-09T13:26:06.1703448+05:30</Created>
           <Type>SQL</Type>
           <Server>localhost</Server>
@@ -312,6 +312,12 @@
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>SCH-usp_active_requests_count.sql</FullPath>
+        </FileNode>
+        <FileNode Name="SCH-usp_avg_disk_wait_ms.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>SCH-usp_avg_disk_wait_ms.sql</FullPath>
         </FileNode>
         <FileNode Name="SCH-usp_capture_alert_messages.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local):True</AssociatedConnectionMoniker>
