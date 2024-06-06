@@ -61,6 +61,8 @@ $servers = @()
 $servers += $conInventoryServer | Invoke-DbaQuery -Database $InventoryDatabase -Query $sqlGetServers | Select-Object -Property sql_instance,sql_instance_port,sql_instance_with_port,database -Unique
 
 $fileWithDDLs = 'D:\GitHub-Personal\SQLMonitor\DDLs\SCH-usp_avg_disk_wait_ms.sql'
+$grafanaPermissionsFile = 'D:\GitHub-Personal\SQLMonitor\Work-Solve-SQLMonitor-Issues\grafana-login.sql'
+
 $preSQL = @"
 declare @_action_taken bit = 0;
 declare @_sql_instance varchar(125);
@@ -78,11 +80,6 @@ end
 
 select sql_instance = @_sql_instance, action_taken = @_action_taken;
 "@
-$preSQLGrafanaPermissions = @"
-if OBJECT_ID('dbo.usp_avg_ms_per_disk_wait') is not null
-	exec ('grant execute on object::dbo.usp_avg_ms_per_disk_wait TO [grafana]')
-"@
-
 
 
 # Loop through servers list, and perform required action
@@ -117,6 +114,7 @@ foreach($srvDtls in $servers)
         # Update threshold using file script
         #if ($actionRequired4SqlInstance) {
             $srvObj | Invoke-DbaQuery -File $fileWithDDLs -EnableException
+            $srvObj | Invoke-DbaQuery -File $grafanaPermissionsFile -EnableException
         #}
                 
         $successServers.Add([PSCustomObject]@{server = $sqlInstance; server_with_port = $sqlInstanceWithPort; action_taken = $actionRequired4SqlInstance}) | Out-Null
