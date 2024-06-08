@@ -16,7 +16,7 @@ GO
 
 ALTER PROCEDURE dbo.usp_avg_disk_wait_ms
 	@avg_disk_wait_ms decimal(20,2) = -1.0 output,
-	@snapshot_interval_minutes int = 5,
+	@snapshot_interval_minutes int = 10,
 	@verbose tinyint = 0
 --WITH RECOMPILE, EXECUTE AS OWNER 
 AS 
