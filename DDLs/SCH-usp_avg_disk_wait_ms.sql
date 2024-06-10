@@ -17,6 +17,8 @@ GO
 ALTER PROCEDURE dbo.usp_avg_disk_wait_ms
 	@avg_disk_wait_ms decimal(20,2) = -1.0 output,
 	@snapshot_interval_minutes int = 10,
+	@consider_other_disk_io_waits bit = 1,
+	@consider_tran_log_io_waits bit = 1,
 	@verbose tinyint = 0
 --WITH RECOMPILE, EXECUTE AS OWNER 
 AS 
@@ -62,7 +64,11 @@ BEGIN
 		where s1.collection_time_utc = @collect_time_utc_snap1
 		and [wait_type] IN ( select wc.[WaitType] from [dbo].[BlitzFirst_WaitStats_Categories] wc 
 								where wc.Ignorable = 0 
-								and wc.WaitCategory in ('Other Disk IO','Tran Log IO','Buffer IO') )
+								and (	wc.WaitCategory = 'Buffer IO'
+									or	( @consider_other_disk_io_waits = 1 and wc.WaitCategory = 'Other Disk IO' )
+									or	( @consider_tran_log_io_waits = 1 and wc.WaitCategory = 'Tran Log IO' )
+									)
+							)
 		AND [waiting_tasks_count] > 0
 	)
 	,wait_snap2 as (
@@ -72,7 +78,11 @@ BEGIN
 		where s2.collection_time_utc = @collect_time_utc_snap2
 		and [wait_type] IN ( select wc.[WaitType] from [dbo].[BlitzFirst_WaitStats_Categories] wc 
 								where wc.Ignorable = 0 
-								and wc.WaitCategory in ('Other Disk IO','Tran Log IO','Buffer IO') )
+								and (	wc.WaitCategory = 'Buffer IO'
+									or	( @consider_other_disk_io_waits = 1 and wc.WaitCategory = 'Other Disk IO' )
+									or	( @consider_tran_log_io_waits = 1 and wc.WaitCategory = 'Tran Log IO' )
+									)
+							)
 		AND [waiting_tasks_count] > 0
 	)
 	select	@avg_disk_wait_ms = (s2.wait_time_ms - s1.wait_time_ms) / (s2.waiting_tasks_count - s1.waiting_tasks_count)
@@ -86,6 +96,8 @@ IF APP_NAME() = 'Microsoft SQL Server Management Studio - Query'
 BEGIN
 	--declare @avg_disk_wait_ms decimal(20,2);
 	exec usp_avg_disk_wait_ms @verbose = 0 --@avg_disk_wait_ms = @avg_disk_wait_ms output;
+	exec usp_avg_disk_wait_ms @consider_other_disk_io_waits = 0, @consider_tran_log_io_waits = 0
+	exec usp_avg_disk_wait_ms @snapshot_interval_minutes = 25
 	--select [waits_seconds__per_core_per_minute] = @avg_disk_wait_ms;
 END
 go
